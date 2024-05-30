@@ -10,6 +10,7 @@ An idea for this project was to easily maintain project repositories and also us
 :white_check_mark:&nbsp;&nbsp;Base version of wireframe design.<br />
 :white_check_mark:&nbsp;&nbsp;Initialized a react native project with expo router.<br />
 :white_check_mark:&nbsp;&nbsp;Splash screen with logo<br />
+:white_check_mark:&nbsp;&nbsp;Entry screen with choosing git server.<br />
 
 ## Features to implement
 :hourglass:&nbsp;&nbsp;Entry screen that redirects an user to sing in screen or dashboard<br />
@@ -20,3 +21,7 @@ An idea for this project was to easily maintain project repositories and also us
 
 ## Design
 ![Wireframe design for appliccation](readme/git_connect_wireframe.png "Wireframe design for Git Connect")
+
+## Screenshots
+<img src="readme/screenshot_1.png" width="128" />
+<img src="readme/screenshot_2.png" width="128" />
