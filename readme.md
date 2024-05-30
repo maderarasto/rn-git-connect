@@ -9,9 +9,9 @@ An idea for this project was to easily maintain project repositories and also us
 ## What is finished
 :white_check_mark:&nbsp;&nbsp;Base version of wireframe design.<br />
 :white_check_mark:&nbsp;&nbsp;Initialized a react native project with expo router.<br />
+:white_check_mark:&nbsp;&nbsp;Splash screen with logo<br />
 
 ## Features to implement
-:hourglass:&nbsp;&nbsp;Splash screen with logo<br />
 :hourglass:&nbsp;&nbsp;Entry screen that redirects an user to sing in screen or dashboard<br />
 :hourglass:&nbsp;&nbsp;SignIn screen for signing user to git server<br />
 :hourglass:&nbsp;&nbsp;Register screen for creating an account for GitHub and GitLab<br />
