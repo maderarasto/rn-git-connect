@@ -1,4 +1,4 @@
-# RN Git Connect (react native app)
+# Git Connect (react native app)
 This project is mobile cross-platform application developed using **[React Native](https://reactnative.dev/)** library and **[Typescript](https://www.typescriptlang.org/)** language. The application serves as **[git](https://git-scm.com/)** client for managing remote repositories directly from your phone.
 
 Tags: [React](https://react.dev/), [React Native](https://reactnative.dev/), [Typescript](https://www.typescriptlang.org/), [GitHub](https://github.com/), [GitLab](https://about.gitlab.com/), [Git](https://git-scm.com/)
