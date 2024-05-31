@@ -5,17 +5,17 @@ import {AntDesign, FontAwesome6, FontAwesome5} from '@expo/vector-icons';
 import PickServerButton from './PickServerButton'
 import { ServerType } from '@src/types';
 
-type GitServerModalParams = {
+type AccountTypeModalParams = {
   onChooseServer?: (type: ServerType) => void,
   shown?: boolean
 }
 
-export type GitServerModalMethods = {
+export type AccountTypeModalMethods = {
   open: () => void,
   close: () => void
 }
 
-const GitServerModal = forwardRef<GitServerModalMethods, GitServerModalParams>(({
+const AccountTypeModal = forwardRef<AccountTypeModalMethods, AccountTypeModalParams>(({
   onChooseServer = () => {},
   shown = false
 }, ref) => {
@@ -113,4 +113,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default GitServerModal
+export default AccountTypeModal;
