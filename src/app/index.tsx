@@ -1,15 +1,16 @@
-import { ActivityIndicator, Button, Dimensions, Image, Pressable, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View, useWindowDimensions } from "react-native";
-import GitServerModal, { AccountTypeModalMethods } from "../components/AccountTypeModal";
-import { useEffect, useRef, useState } from "react";
-import { SplashScreen } from "expo-router";
+import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useRef } from "react";
 import { useFonts } from "expo-font";
+
 import { 
   Inter_300Light, 
   Inter_400Regular, 
   Inter_600SemiBold, 
   Inter_700Bold 
 } from "@expo-google-fonts/inter";
-import SlidedModal from "@src/components/SlidedModal";
+
+import AccountTypeModal, { AccountTypeModalMethods } from "@src/components/AccountTypeModal";
+import { AccountType } from "@src/types";
 
 export default function Page() {
   const modalRef = useRef<AccountTypeModalMethods>(null);
@@ -26,7 +27,15 @@ export default function Page() {
       return;
     }
 
-    modalRef.current.open();
+    modalRef.current.show();
+  }
+
+  function onAccountTypeChoose(accountType: AccountType) {
+    if (!modalRef.current) {
+      return;
+    }
+
+    modalRef.current.hide();
   }
 
   if (!fontsLoaded && !fontError) {
@@ -42,9 +51,7 @@ export default function Page() {
           <Text style={{ fontSize: 16, color: 'white' }}>Connect</Text>
         </TouchableOpacity>
       </View>
-      <SlidedModal modalStyle={{ height: '20%' }} shown>
-        <Text>asd</Text>
-      </SlidedModal>
+      <AccountTypeModal ref={modalRef} title="Select account type" modalStyle={{ height: '20%', }} onTypeChoose={onAccountTypeChoose} />
     </View>
   );
 }

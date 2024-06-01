@@ -1,6 +1,6 @@
 import { StyleProp, ViewStyle } from "react-native";
 
-export type ServerType = (
+export type AccountType = (
     | 'GitHub'
     | 'GitLab'
     | 'Git'

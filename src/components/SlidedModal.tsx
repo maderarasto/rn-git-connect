@@ -4,12 +4,12 @@ import {FontAwesome6} from '@expo/vector-icons';
 
 import { PropViewStyle } from '@src/types'
 
-type SlidedModalMethods = {
+export type SlidedModalMethods = {
     show: () => void,
     hide: () => void,
 }
 
-type SlidedModalParams = {
+export type SlidedModalParams = {
     title?: string
     backdropStyle?: PropViewStyle
     modalStyle?: PropViewStyle
