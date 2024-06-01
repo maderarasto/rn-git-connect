@@ -11,9 +11,12 @@ import {
 
 import AccountTypeModal, { AccountTypeModalMethods } from "@src/components/AccountTypeModal";
 import { AccountType } from "@src/types";
+import { useRouter } from "expo-router";
+import { convertFromSlug, convertToSlug } from "@src/utils";
 
 export default function Page() {
   const modalRef = useRef<AccountTypeModalMethods>(null);
+  const router = useRouter();
 
   let [fontsLoaded, fontError] = useFonts({
     Inter_300Light,
@@ -36,6 +39,7 @@ export default function Page() {
     }
 
     modalRef.current.hide();
+    router.navigate(`auth/pat?type=${convertToSlug(accountType)}`);
   }
 
   if (!fontsLoaded && !fontError) {
