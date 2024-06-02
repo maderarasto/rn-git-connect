@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, Pressable, Button, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native'
-import React from 'react'
+import { View, Text, StyleSheet, Pressable, Button, TouchableOpacity, TouchableWithoutFeedback, Keyboard, BackHandler } from 'react-native'
+import React, { useEffect, useRef } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import {AntDesign} from '@expo/vector-icons';
 
@@ -7,11 +7,16 @@ import AuthHeader from '@src/components/AuthHeader';
 import { capitalize, convertFromSlug } from '@src/utils';
 import { AccountType } from '@src/types';
 import LabeledTextInput from '@src/components/LabeledTextInput';
-import TextButton from '@src/components/TextButton';
-import SlidedModal from '@src/components/SlidedModal';
+import TextButton from '@src/components/buttons/TextButton';
+import SlidedModal, { SlidedModalMethods } from '@src/components/modals/SlidedModal';
+import BulletList from '@src/components/BulletList';
+import PrimaryButton from '@src/components/buttons/PrimaryButton';
+import AuthPATGitHubTemplate from '@src/templates/help/AuthPATGitHubTemplate';
+import AuthPATGitLabTemplate from '@src/templates/help/AuthPATGitLabTemplate';
 
 const Page = () => {
   const {type} = useLocalSearchParams();
+  const modalRef = useRef<SlidedModalMethods>(null);
   const router = useRouter();
   
   const accountType: AccountType = convertFromSlug(type as string) as AccountType;
@@ -21,15 +26,39 @@ const Page = () => {
   }
   
   function resolveHeaderIcon() {
-    return <AntDesign name={accountType === 'GitHub' ? 'github' : 'gitlab'} size={92} color="black" />;
+    return <AntDesign 
+      name={accountType === 'GitHub' ? 'github' : 'gitlab'} 
+      size={92} 
+      color={accountType === 'GitHub' ? '#1e293b' : '#ea580c'} />;
+  }
+
+  function resolveModalTemplate() {
+    return accountType === 'GitHub' 
+      ? <AuthPATGitHubTemplate />
+      : <AuthPATGitLabTemplate />;
+  }
+
+  function resolveLinkUrl() {
+    return accountType === 'GitHub' ? 'https://github.com/settings/profile' : 'https://gitlab.com/-/profile/preferences';
   }
 
   function onInfoButtonPress() {
     Keyboard.dismiss();
+
+    if (!modalRef.current) {
+      return;
+    }
+
+    modalRef.current.show();
   }
 
   function onSubmitButtonPress() {
     Keyboard.dismiss();
+  }
+
+  function onGoButtonPressed() {
+    modalRef.current?.hide();
+    router.navigate(resolveLinkUrl())
   }
   
   if (!accountType || accountType === 'Git') {
@@ -47,10 +76,18 @@ const Page = () => {
             text="How to get personal access token?" 
             onPress={onInfoButtonPress} 
             underlined />
-          <TouchableOpacity style={styles.submitButton} onPress={onSubmitButtonPress}>
+          <PrimaryButton onPress={onSubmitButtonPress}>
             <Text style={{ color: 'white' }}>Authorize</Text>
-          </TouchableOpacity>
+          </PrimaryButton>
         </View>
+        <SlidedModal ref={modalRef} title="Personal Access Tokens" contentContainerStyle={{ paddingBottom: 16 }}>
+          <>
+            {resolveModalTemplate()}
+            <PrimaryButton style={{ alignSelf: "center" }} onPress={onGoButtonPressed}>
+              <Text style={{ color: "white" }}>Go to {accountType}</Text>
+            </PrimaryButton>
+          </>
+        </SlidedModal>
       </View>
     </TouchableWithoutFeedback>
   )
@@ -58,6 +95,7 @@ const Page = () => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     alignItems: 'center',
   },
 
@@ -73,15 +111,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginBottom: 16,
   },
-
-  submitButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    paddingHorizontal: 32,
-    paddingVertical: 12,
-    borderRadius: 5,
-    backgroundColor: '#2563eb',
-  }
 })
 
 export default Page

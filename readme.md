@@ -23,5 +23,10 @@ An idea for this project was to easily maintain project repositories and also us
 ![Wireframe design for appliccation](readme/git_connect_wireframe.png "Wireframe design for Git Connect")
 
 ## Screenshots
-<img src="readme/screenshot_1.png" width="128" />
-<img src="readme/screenshot_2.png" width="128" />
+<div>
+    <img src="readme/screenshot_1.png" width="128" />
+    <img src="readme/screenshot_2.png" width="128" />
+    <img src="readme/screenshot_3.png" width="128" />
+    <img src="readme/screenshot_4.png" width="128" />
+    <img src="readme/screenshot_5.png" width="128" />
+</div>
