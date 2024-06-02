@@ -9,11 +9,14 @@ import {
   Inter_700Bold 
 } from "@expo-google-fonts/inter";
 
-import AccountTypeModal, { AccountTypeModalMethods } from "@src/components/AccountTypeModal";
+import AccountTypeModal, { AccountTypeModalMethods } from "@src/components/modals/AccountTypeModal";
 import { AccountType } from "@src/types";
+import { useRouter } from "expo-router";
+import { convertFromSlug, convertToSlug } from "@src/utils";
 
 export default function Page() {
   const modalRef = useRef<AccountTypeModalMethods>(null);
+  const router = useRouter();
 
   let [fontsLoaded, fontError] = useFonts({
     Inter_300Light,
@@ -36,6 +39,7 @@ export default function Page() {
     }
 
     modalRef.current.hide();
+    router.navigate(`auth/pat?type=${convertToSlug(accountType)}`);
   }
 
   if (!fontsLoaded && !fontError) {
@@ -51,7 +55,7 @@ export default function Page() {
           <Text style={{ fontSize: 16, color: 'white' }}>Connect</Text>
         </TouchableOpacity>
       </View>
-      <AccountTypeModal ref={modalRef} title="Select account type" modalStyle={{ height: '20%', }} onTypeChoose={onAccountTypeChoose} />
+      <AccountTypeModal ref={modalRef} title="Select account type" onTypeChoose={onAccountTypeChoose} />
     </View>
   );
 }
@@ -70,7 +74,6 @@ const styles = StyleSheet.create({
   },
 
   connectBtn: {
-
     paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 10,

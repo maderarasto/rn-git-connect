@@ -2,7 +2,7 @@ import { View, Text, Modal, StyleSheet, TouchableOpacity, StyleProp, ViewStyle, 
 import React, { RefObject, forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import {AntDesign, FontAwesome6, FontAwesome5} from '@expo/vector-icons';
 
-import PickServerButton from './PickServerButton'
+import PickServerButton from '../buttons/PickServerButton'
 import { AccountType } from '@src/types';
 import SlidedModal, { SlidedModalMethods, SlidedModalParams } from './SlidedModal';
 
@@ -21,6 +21,14 @@ const AccountTypeModal = forwardRef<AccountTypeModalMethods, AccountTypeModalPar
   const modalRef = useRef<SlidedModalMethods>(null);
 
   useImperativeHandle(ref, () => ({
+    isShown: () => {
+      if (!modalRef.current) {
+        return false;
+      }
+
+      return modalRef.current.isShown();
+    },
+
     show: () => {
       if (!modalRef.current) {
         return;
@@ -45,9 +53,19 @@ const AccountTypeModal = forwardRef<AccountTypeModalMethods, AccountTypeModalPar
   return (
     <SlidedModal ref={modalRef} {...modalProps}>
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 16, }}>
-        <PickServerButton icon={<AntDesign name="github" size={42} color="black" />} text="GitHub" onPress={() => chooseAccountType('GitHub')} />
-        <PickServerButton icon={<AntDesign name="gitlab" size={42} color="#ea580c" />} text="GitLab" onPress={() => chooseAccountType('GitLab')} />
-        <PickServerButton icon={<FontAwesome5 name="git-alt" size={42} color="#dc2626" />} text="Git" onPress={() => chooseAccountType('Git')} />
+        <PickServerButton 
+          icon={<AntDesign name="github" size={42} color="#1e293b" />} 
+          text="GitHub" 
+          onPress={() => chooseAccountType('GitHub')} />
+        <PickServerButton 
+          icon={<AntDesign name="gitlab" size={42} color="#ea580c" />} 
+          text="GitLab" 
+          onPress={() => chooseAccountType('GitLab')} />
+        <PickServerButton 
+          icon={<FontAwesome5 name="git-alt" size={42} color="#dc2626" />} 
+          text="Git" 
+          onPress={() => chooseAccountType('Git')}
+          disabled />
       </View> 
     </SlidedModal>
   )

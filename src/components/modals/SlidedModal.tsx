@@ -1,12 +1,14 @@
-import { View, Text, StyleProp, ViewStyle, StyleSheet, Modal, Pressable, TouchableWithoutFeedback, TouchableOpacity } from 'react-native'
-import React, { forwardRef, useImperativeHandle, useState } from 'react'
+import { View, Text, StyleProp, ViewStyle, StyleSheet, Modal, Pressable, TouchableWithoutFeedback, TouchableOpacity, BackHandler } from 'react-native'
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 import {FontAwesome6} from '@expo/vector-icons';
 
 import { PropViewStyle } from '@src/types'
+import { useNavigation } from 'expo-router';
 
 export type SlidedModalMethods = {
-    show: () => void,
-    hide: () => void,
+  isShown: () => boolean,
+  show: () => void,
+  hide: () => void,
 }
 
 export type SlidedModalParams = {
@@ -27,8 +29,13 @@ const SlidedModal = forwardRef<SlidedModalMethods, SlidedModalParams>(({
   children
 }, ref) => {
   const [visible, setVisible] = useState(shown);
+  // const navigation = useNavigation();
 
   useImperativeHandle(ref, () => ({
+    isShown: () => {
+      return visible;
+    },
+
     show: () => {
       setVisible(true);
     },
@@ -81,7 +88,12 @@ const SlidedModal = forwardRef<SlidedModalMethods, SlidedModalParams>(({
 
   return (
     <View style={resolveBackdropStyle()}>
-      <Modal animationType="slide" transparent={true} visible={visible}>
+      <Modal 
+        animationType="slide" 
+        transparent={true} 
+        visible={visible} 
+        style={styles.modalContainer} 
+        onRequestClose={() => setVisible(false)}>
         <Pressable style={styles.pressableBackdrop} onPress={onBackdropPress}>
           <View style={resolveModalStyle()}>
             <TouchableWithoutFeedback>
@@ -125,7 +137,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    height: '100%',
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     backgroundColor: 'white',
