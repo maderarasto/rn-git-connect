@@ -1,15 +1,18 @@
-import axios from "axios";
+import { AxiosError } from "axios";
+import ApiClient from "./ApiClient";
 
-export const GitHubAxios = axios.create({
-    baseURL: 'https://api.github.com',
-    headers: {
-        Accept: 'application/json',
-    },
-    timeout: 3000,
-});
+const GitHubClient = new ApiClient(
+    'https://api.github.com'
+);
 
-export const GitHubUsers = {
-    getAuthUser: function () {
-
+const auth = {
+    user: async function () {
+       return await GitHubClient.get('/user');
     }
 }
+
+const GitHubAPI = {
+    auth,
+};
+
+export default GitHubAPI;
