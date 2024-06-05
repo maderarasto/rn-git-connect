@@ -1,25 +1,39 @@
-import { View, Text, StyleSheet, Pressable, Button, TouchableOpacity, TouchableWithoutFeedback, Keyboard, BackHandler } from 'react-native'
-import React, { useEffect, useRef } from 'react'
+import { View, Text, StyleSheet, TouchableWithoutFeedback, Keyboard, ActivityIndicator, ToastAndroid } from 'react-native'
+import React, { useRef, useState } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import {AntDesign} from '@expo/vector-icons';
 
 import AuthHeader from '@src/components/AuthHeader';
-import { capitalize, convertFromSlug } from '@src/utils';
+import { convertFromSlug } from '@src/utils';
 import { AccountType } from '@src/types';
 import LabeledTextInput from '@src/components/LabeledTextInput';
 import TextButton from '@src/components/buttons/TextButton';
 import SlidedModal, { SlidedModalMethods } from '@src/components/modals/SlidedModal';
-import BulletList from '@src/components/BulletList';
 import PrimaryButton from '@src/components/buttons/PrimaryButton';
 import AuthPATGitHubTemplate from '@src/templates/help/AuthPATGitHubTemplate';
 import AuthPATGitLabTemplate from '@src/templates/help/AuthPATGitLabTemplate';
+import * as SecureStore from 'expo-secure-store';
+import useAuthQuery from '@src/hooks/useAuthQuery';
+
+const UNAUTHORIZED_MESSAGES = [
+  'Bad credentials',
+  '401 Unauthorized',
+];
 
 const Page = () => {
-  const {type} = useLocalSearchParams();
-  const modalRef = useRef<SlidedModalMethods>(null);
+  const [token, setToken] = useState('');
+
   const router = useRouter();
-  
+  const {type} = useLocalSearchParams();
   const accountType: AccountType = convertFromSlug(type as string) as AccountType;
+
+  if (!accountType || accountType === 'Git') {
+    router.replace('/');
+    return;
+  }
+
+  const modalRef = useRef<SlidedModalMethods>(null);
+  const {data: authUser, isLoading, error, refetch} = useAuthQuery(accountType, false);
 
   function resolveHeaderTitle() {
     return `Sign In to ${accountType}`
@@ -42,6 +56,22 @@ const Page = () => {
     return accountType === 'GitHub' ? 'https://github.com/settings/profile' : 'https://gitlab.com/-/profile/preferences';
   }
 
+  function resolveError() {
+    if (!error) {
+      return '';
+    }
+
+    if (UNAUTHORIZED_MESSAGES.includes(error.message)) {
+      return 'Your token is invalid!';
+    }
+
+    return error.message;
+  }
+
+  function onTokenChangeText(token: string) {
+    setToken(token);
+  }
+
   function onInfoButtonPress() {
     Keyboard.dismiss();
 
@@ -52,17 +82,21 @@ const Page = () => {
     modalRef.current.show();
   }
 
-  function onSubmitButtonPress() {
+  async function onSubmitButtonPress() {
     Keyboard.dismiss();
+    await SecureStore.setItemAsync('pat', token);
+    refetch();
   }
 
   function onGoButtonPressed() {
     modalRef.current?.hide();
     router.navigate(resolveLinkUrl())
   }
-  
-  if (!accountType || accountType === 'Git') {
-    router.replace('/');
+
+  if (authUser) {
+    // TODO: set context user
+    // TODO: redirect user to dashboard
+    ToastAndroid.show('Authenticated', ToastAndroid.SHORT);
   }
 
   return (
@@ -70,7 +104,12 @@ const Page = () => {
       <View style={styles.container}>
         <AuthHeader title={resolveHeaderTitle()} icon={resolveHeaderIcon()} />
         <View style={styles.form}>
-          <LabeledTextInput style={styles.inputPAT} label="Personal Access Token" />
+          <LabeledTextInput 
+            errorText={resolveError()}
+            label="Personal Access Token"
+            style={styles.inputPAT}
+            value={token} 
+            onChangeText={onTokenChangeText} />
           <TextButton 
             style={styles.infoButton} 
             text="How to get personal access token?" 
@@ -88,6 +127,9 @@ const Page = () => {
             </PrimaryButton>
           </>
         </SlidedModal>
+        {isLoading ? (
+          <ActivityIndicator size={42} color="#2563eb" style={styles.loadingIndicator} />
+        ) : ''}
       </View>
     </TouchableWithoutFeedback>
   )
@@ -95,6 +137,7 @@ const Page = () => {
 
 const styles = StyleSheet.create({
   container: {
+    position: 'relative',
     flex: 1,
     alignItems: 'center',
   },
@@ -111,6 +154,11 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginBottom: 16,
   },
+
+  loadingIndicator: {
+    position: 'absolute',
+    bottom: 50,
+  }
 })
 
 export default Page

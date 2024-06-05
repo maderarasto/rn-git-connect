@@ -23,12 +23,11 @@
     },
     "plugins": [
       "expo-router",
+      "expo-font",
       [
-        "expo-font",
+        "expo-secure-store",
         {
-          "fonts": [
-            "node_modules/@expo-google-fonts/inter/Inter_500Medium.ttf"
-          ]
+          "faceIDPermission": "Allow git-connect to access your Face ID biometric data."
         }
       ]
     ]

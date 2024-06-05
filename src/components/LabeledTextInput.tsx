@@ -4,6 +4,7 @@ import { PropViewStyle } from '@src/types'
 
 type LabeledTextInputParams = TextInputProps & {
   label?: string
+  errorText?: string
   accentColor?: string
   style?: PropViewStyle
 }
@@ -12,6 +13,7 @@ const DEFAULT_BORDER_COLOR = '#a3a3a3';
 
 const LabeledTextInput = ({
   label,
+  errorText = '',
   accentColor = '#2563eb',
   style = {},
   ...inputProps
@@ -37,12 +39,15 @@ const LabeledTextInput = ({
     return style;
   }
 
+  function resolveErrorText() {
+    return `Error: ${errorText}`;
+  }
+
   function onInputFocus() {
     setFocused(true);
   }
 
   function onInputBlur() {
-    console.log('blur')
     setFocused(false);
   }
 
@@ -52,17 +57,17 @@ const LabeledTextInput = ({
         <Text style={styles.label}>{label}</Text>
       ) : ''}
       <TextInput style={resolveInputStyle()} onFocus={onInputFocus} onBlur={onInputBlur} {...inputProps} />
+      {errorText ? <Text style={styles.errorText}>{resolveErrorText()}</Text> : ''}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
     container: {
-
+      gap: 5,
     },
 
     label: {
-      marginBottom: 5,
       fontSize: 16,
       fontFamily: 'Inter_600SemiBold'
     },
@@ -73,6 +78,11 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: DEFAULT_BORDER_COLOR,
         borderRadius: 5,
+    },
+
+    errorText: {
+      fontSize: 14,
+      color: '#dc2626'
     }
 })
 
