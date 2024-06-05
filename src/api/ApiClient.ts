@@ -24,9 +24,6 @@ export default class ApiClient {
         }
         
         const requestConfig: AxiosRequestConfig = {
-            headers: {
-                Authorization: `token ${await SecureStore.getItemAsync('pat')}`
-            },
             ...config
         };
 
@@ -52,9 +49,6 @@ export default class ApiClient {
         }
 
         const requestConfig: AxiosRequestConfig = {
-            headers: {
-                Authorization: `token ${await SecureStore.getItemAsync('pat')}`
-            },
             ...config
         };
 
@@ -67,9 +61,6 @@ export default class ApiClient {
         }
 
         const requestConfig: AxiosRequestConfig = {
-            headers: {
-                Authorization: `token ${await SecureStore.getItemAsync('pat')}`
-            },
             ...config
         };
 
@@ -82,9 +73,6 @@ export default class ApiClient {
         }
 
         const requestConfig: AxiosRequestConfig = {
-            headers: {
-                Authorization: `token ${await SecureStore.getItemAsync('pat')}`
-            },
             ...config
         };
 
@@ -97,9 +85,6 @@ export default class ApiClient {
         }
 
         const requestConfig: AxiosRequestConfig = {
-            headers: {
-                Authorization: `token ${await SecureStore.getItemAsync('pat')}`
-            },
             ...config
         };
 

@@ -1,4 +1,5 @@
-import axios from "axios";
+import { AxiosRequestConfig } from "axios";
+import * as SecureStore from 'expo-secure-store';
 import ApiClient from "./ApiClient";
 import { AuthUser } from "./types";
 
@@ -8,7 +9,13 @@ const GitHubClient = new ApiClient(
 
 const auth = {
     user: async function () {
-        return GitHubClient.get<AuthUser>('/user');
+        const config: AxiosRequestConfig = {
+            headers: {
+                Authorization: `token ${await SecureStore.getItemAsync('pat')}`
+            }
+        };
+
+        return GitHubClient.get<AuthUser>('/user', config);
     }
 }
 
