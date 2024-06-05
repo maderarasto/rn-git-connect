@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableWithoutFeedback, Keyboard, ActivityIndicator, ToastAndroid } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import {AntDesign} from '@expo/vector-icons';
 
@@ -14,6 +14,8 @@ import AuthPATGitHubTemplate from '@src/templates/help/AuthPATGitHubTemplate';
 import AuthPATGitLabTemplate from '@src/templates/help/AuthPATGitLabTemplate';
 import * as SecureStore from 'expo-secure-store';
 import useAuthQuery from '@src/hooks/useAuthQuery';
+import { AuthUser } from '@src/api/types';
+import { AuthUserContext } from '@src/context/AuthUserContext';
 
 const UNAUTHORIZED_MESSAGES = [
   'Bad credentials',
@@ -22,6 +24,11 @@ const UNAUTHORIZED_MESSAGES = [
 
 const Page = () => {
   const [token, setToken] = useState('');
+  const authUserContext = useContext(AuthUserContext);
+
+  if (!authUserContext) {
+    throw new Error('AuthUserContext must be used withing AUthUserProvider!');
+  }
 
   const router = useRouter();
   const {type} = useLocalSearchParams();
@@ -34,6 +41,14 @@ const Page = () => {
 
   const modalRef = useRef<SlidedModalMethods>(null);
   const {data: authUser, isLoading, error, refetch} = useAuthQuery(accountType, false);
+
+  useEffect(() => {
+    if (!authUser) return;
+
+    authUserContext.setUser(authUser);
+    ToastAndroid.show('Authenticated', ToastAndroid.SHORT);
+    router.replace('dashboard');
+  }, [authUser]);
 
   function resolveHeaderTitle() {
     return `Sign In to ${accountType}`
@@ -91,12 +106,6 @@ const Page = () => {
   function onGoButtonPressed() {
     modalRef.current?.hide();
     router.navigate(resolveLinkUrl())
-  }
-
-  if (authUser) {
-    // TODO: set context user
-    // TODO: redirect user to dashboard
-    ToastAndroid.show('Authenticated', ToastAndroid.SHORT);
   }
 
   return (
