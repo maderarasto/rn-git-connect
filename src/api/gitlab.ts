@@ -1,9 +1,8 @@
-import axios from "axios";
 import ApiClient from "./ApiClient";
 import { AuthUser } from "./types";
 
 const GitHubClient = new ApiClient(
-    'https://api.github.com'
+    'https://gitlab.com/api/v4'
 );
 
 const auth = {
@@ -12,8 +11,8 @@ const auth = {
     }
 }
 
-const GitHubAPI = {
+const GitLabAPI = {
     auth,
 };
 
-export default GitHubAPI;
+export default GitLabAPI;

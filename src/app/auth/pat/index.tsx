@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable, Button, TouchableOpacity, TouchableWithoutFeedback, Keyboard, BackHandler, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, Pressable, Button, TouchableOpacity, TouchableWithoutFeedback, Keyboard, BackHandler, ActivityIndicator, ToastAndroid } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import {AntDesign} from '@expo/vector-icons';
@@ -14,33 +14,30 @@ import AuthPATGitHubTemplate from '@src/templates/help/AuthPATGitHubTemplate';
 import AuthPATGitLabTemplate from '@src/templates/help/AuthPATGitLabTemplate';
 import { useQuery } from '@tanstack/react-query';
 import GitHubAPI from '@src/api/github';
-import {  AxiosError } from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { ErrorData } from '@src/api/ApiClient';
+import { AuthUser } from '@src/api/types';
+import useAuthQuery from '@src/hooks/useAuthQuery';
 
-type AuthAxiosError = AxiosError & {
-  response: {
-    data: {
-      documentation_url: string
-      message: string
-    }
-  }
-}
+const UNAUTHORIZED_MESSAGES = [
+  'Bad credentials',
+  '401 Unauthorized',
+];
 
 const Page = () => {
   const [token, setToken] = useState('');
 
+  const router = useRouter();
   const {type} = useLocalSearchParams();
   const accountType: AccountType = convertFromSlug(type as string) as AccountType;
-  
-  const router = useRouter();
-  const modalRef = useRef<SlidedModalMethods>(null);
-  const {data, isLoading, error, refetch} = useQuery<unknown, AuthAxiosError>({
-    queryKey: ['authUser'],
-    queryFn: () => GitHubAPI.auth.user(),
-    enabled: false
-  })
 
-  console.log(data);
+  if (!accountType || accountType === 'Git') {
+    router.replace('/');
+    return;
+  }
+
+  const modalRef = useRef<SlidedModalMethods>(null);
+  const {data: authUser, isLoading, error, refetch} = useAuthQuery(accountType, false);
 
   function resolveHeaderTitle() {
     return `Sign In to ${accountType}`
@@ -68,11 +65,11 @@ const Page = () => {
       return '';
     }
 
-    if (error.response?.data.message === 'Bad credentials') {
+    if (UNAUTHORIZED_MESSAGES.includes(error.message)) {
       return 'Your token is invalid!';
     }
 
-    return error.response?.data.message ?? error.message;
+    return error.message;
   }
 
   function onTokenChangeText(token: string) {
@@ -99,9 +96,11 @@ const Page = () => {
     modalRef.current?.hide();
     router.navigate(resolveLinkUrl())
   }
-  
-  if (!accountType || accountType === 'Git') {
-    router.replace('/');
+
+  if (authUser) {
+    // TODO: set context user
+    // TODO: redirect user to dashboard
+    ToastAndroid.show('Authenticated', ToastAndroid.SHORT);
   }
 
   return (
