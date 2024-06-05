@@ -1,5 +1,4 @@
 import axios, { Axios, AxiosRequestConfig } from "axios";
-import * as SecureStore from 'expo-secure-store';
 
 export type ErrorData = {
     message: string

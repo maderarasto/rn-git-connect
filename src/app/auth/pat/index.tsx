@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, Pressable, Button, TouchableOpacity, TouchableWithoutFeedback, Keyboard, BackHandler, ActivityIndicator, ToastAndroid } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import { View, Text, StyleSheet, TouchableWithoutFeedback, Keyboard, ActivityIndicator, ToastAndroid } from 'react-native'
+import React, { useRef, useState } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import {AntDesign} from '@expo/vector-icons';
 
@@ -12,11 +12,7 @@ import SlidedModal, { SlidedModalMethods } from '@src/components/modals/SlidedMo
 import PrimaryButton from '@src/components/buttons/PrimaryButton';
 import AuthPATGitHubTemplate from '@src/templates/help/AuthPATGitHubTemplate';
 import AuthPATGitLabTemplate from '@src/templates/help/AuthPATGitLabTemplate';
-import { useQuery } from '@tanstack/react-query';
-import GitHubAPI from '@src/api/github';
 import * as SecureStore from 'expo-secure-store';
-import { ErrorData } from '@src/api/ApiClient';
-import { AuthUser } from '@src/api/types';
 import useAuthQuery from '@src/hooks/useAuthQuery';
 
 const UNAUTHORIZED_MESSAGES = [
