@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet, TouchableWithoutFeedback, Keyboard, ActivityIndicator, ToastAndroid } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import {AntDesign} from '@expo/vector-icons';
 
 import AuthHeader from '@src/components/AuthHeader';
-import { convertFromSlug } from '@src/utils';
+import { convertFromSlug, saveAccount } from '@src/utils';
 import { AccountType } from '@src/types';
 import LabeledTextInput from '@src/components/LabeledTextInput';
 import TextButton from '@src/components/buttons/TextButton';
@@ -12,8 +12,9 @@ import SlidedModal, { SlidedModalMethods } from '@src/components/modals/SlidedMo
 import PrimaryButton from '@src/components/buttons/PrimaryButton';
 import AuthPATGitHubTemplate from '@src/templates/help/AuthPATGitHubTemplate';
 import AuthPATGitLabTemplate from '@src/templates/help/AuthPATGitLabTemplate';
-import * as SecureStore from 'expo-secure-store';
 import useAuthQuery from '@src/hooks/useAuthQuery';
+import { AuthUser } from '@src/api/types';
+import { AuthUserContext, AuthUserContextType } from '@src/context/AuthUserContext';
 
 const UNAUTHORIZED_MESSAGES = [
   'Bad credentials',
@@ -21,11 +22,16 @@ const UNAUTHORIZED_MESSAGES = [
 ];
 
 const Page = () => {
-  const [token, setToken] = useState('');
+  const authUserContext = useContext(AuthUserContext);
+
+  if (!authUserContext) {
+    throw new Error('AuthUserContext must be used withing AUthUserProvider!');
+  }
 
   const router = useRouter();
   const {type} = useLocalSearchParams();
-  const accountType: AccountType = convertFromSlug(type as string) as AccountType;
+  const accountType: AccountType 
+    = convertFromSlug(type as string) as AccountType;
 
   if (!accountType || accountType === 'Git') {
     router.replace('/');
@@ -33,7 +39,21 @@ const Page = () => {
   }
 
   const modalRef = useRef<SlidedModalMethods>(null);
-  const {data: authUser, isLoading, error, refetch} = useAuthQuery(accountType, false);
+  const {
+    data: authUser, 
+    isLoading, 
+    error,
+    authToken,
+    setAuthToken, 
+    refetch
+  } = useAuthQuery(accountType);
+
+  useEffect(() => {
+    if (!authUser) return;
+
+    signUserIn(authUserContext, authUser);
+    router.replace('dashboard');
+  }, [authUser]);
 
   function resolveHeaderTitle() {
     return `Sign In to ${accountType}`
@@ -68,8 +88,28 @@ const Page = () => {
     return error.message;
   }
 
+  function resolveUsername() {
+    if (!authUser) {
+      return '';
+    }
+
+    const user: AuthUser = {
+      ...authUser,
+    };
+
+    user.type = accountType === 'GitHub' ? 'GitHub' : 'GitLab';
+    return user.type === 'GitHub' ? user.login : user.username;
+  }
+
+  function signUserIn(context: AuthUserContextType, user: AuthUser) {
+    saveAccount(accountType, resolveUsername(), authToken);
+    context.setUser(user);
+
+    ToastAndroid.show('Authenticated', ToastAndroid.SHORT);
+  }
+
   function onTokenChangeText(token: string) {
-    setToken(token);
+    setAuthToken(token);
   }
 
   function onInfoButtonPress() {
@@ -84,19 +124,12 @@ const Page = () => {
 
   async function onSubmitButtonPress() {
     Keyboard.dismiss();
-    await SecureStore.setItemAsync('pat', token);
     refetch();
   }
 
   function onGoButtonPressed() {
     modalRef.current?.hide();
     router.navigate(resolveLinkUrl())
-  }
-
-  if (authUser) {
-    // TODO: set context user
-    // TODO: redirect user to dashboard
-    ToastAndroid.show('Authenticated', ToastAndroid.SHORT);
   }
 
   return (
@@ -108,7 +141,7 @@ const Page = () => {
             errorText={resolveError()}
             label="Personal Access Token"
             style={styles.inputPAT}
-            value={token} 
+            value={authToken} 
             onChangeText={onTokenChangeText} />
           <TextButton 
             style={styles.infoButton} 
