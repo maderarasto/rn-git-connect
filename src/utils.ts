@@ -33,8 +33,8 @@ export function convertFromSlug(text: string) {
 }
 
 export async function saveAccount(accountType: AccountType, accountUsername: string, accountToken: string) {
-    const accountId = `token:${accountUsername}@${convertToSlug(accountType)}`;
-
+    const accountId = `${convertToSlug(accountType)}-token.${accountUsername}`;
+    
     await AsyncStorage.setItem('active_account_id', accountId);
     await SecureStore.setItemAsync(accountId, accountToken);
 }
