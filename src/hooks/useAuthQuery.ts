@@ -3,8 +3,11 @@ import GitHubAPI from "@src/api/github";
 import GitLabAPI from "@src/api/gitlab";
 import { ApiType, AuthUser } from "@src/api/types";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
-export default function useAuthQuery(api: ApiType, enabled = false) {
+export default function useAuthQuery(api: ApiType, token = '', enabled = false) {
+    const [authToken, setAuthToken] = useState(token);
+
     const {
         data: githubData, 
         isLoading: githubIsLoading, 
@@ -12,8 +15,8 @@ export default function useAuthQuery(api: ApiType, enabled = false) {
         refetch: githubRefetch
     } = useQuery<AuthUser, ErrorData>({
         queryKey: ['githubAuthUser'],
-        queryFn: () => GitHubAPI.auth.user(),
-        enabled: false
+        queryFn: () => GitHubAPI.auth.user(authToken),
+        enabled: false,
     });
 
     const {
@@ -23,8 +26,8 @@ export default function useAuthQuery(api: ApiType, enabled = false) {
         refetch: gitlabRefetch
     } = useQuery<AuthUser, ErrorData>({
         queryKey: ['gitlabAuthUser'],
-        queryFn: () => GitLabAPI.auth.user(),
-        enabled: false
+        queryFn: () => GitLabAPI.auth.user(authToken),
+        enabled: false,
     });
 
     const data = api === 'GitHub' ? githubData : gitlabData;
@@ -40,6 +43,8 @@ export default function useAuthQuery(api: ApiType, enabled = false) {
         data,
         isLoading,
         error,
-        refetch
+        authToken,
+        setAuthToken,
+        refetch,
     };
 }
