@@ -14,7 +14,7 @@ const Page = () => {
 
   return (
     <SafeAreaView>
-      <Text>Dashboard</Text>
+      
     </SafeAreaView>
   );
 };
