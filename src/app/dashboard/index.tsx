@@ -10,11 +10,11 @@ const Page = () => {
     throw new Error('AuthUserContext must be used withing AUthUserProvider!');
   }
   
-  console.log(authUserContext.user);
+  console.log(`UserId: ${authUserContext.user?.id}`);
 
   return (
     <SafeAreaView>
-      <Text>Dashboard</Text>
+      
     </SafeAreaView>
   );
 };
