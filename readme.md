@@ -11,8 +11,9 @@ An idea for this project was to easily maintain project repositories and also us
 :white_check_mark:&nbsp;&nbsp;Initialized a react native project with expo router.<br />
 :white_check_mark:&nbsp;&nbsp;Splash screen with logo<br />
 :white_check_mark:&nbsp;&nbsp;Entry screen with choosing git server.<br />
-:white_check_mark:&nbsp;&nbsp;SignIn screen for signing user to github or gitlab server<br />
 :white_check_mark:&nbsp;&nbsp;Entry screen that redirects an user to sing in screen or dashboard<br />
+:white_check_mark:&nbsp;&nbsp;SignIn screen for signing user to github or gitlab<br />
+:white_check_mark:&nbsp;&nbsp;Dashboard drawer for routing to another in-app screens.<br />
 
 ## Features to implement
 :hourglass:&nbsp;&nbsp;Services for interacting with GitHub and GitLab<br />
@@ -27,5 +28,5 @@ An idea for this project was to easily maintain project repositories and also us
     <img src="readme/screenshot_3.png" width="128" />
     <img src="readme/screenshot_4.png" width="128" />
     <img src="readme/screenshot_5.png" width="128" />
-    <img src="readme/screenshot_6.png" width="128" />
+    <img src="readme/screenshot_6.jpg" width="128" />
 </div>
