@@ -1,5 +1,5 @@
 import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useFonts } from "expo-font";
 
 import { 
@@ -16,6 +16,7 @@ import { convertFromSlug, convertToSlug } from "@src/utils";
 import useActiveAccount from "@src/hooks/useActiveAccount";
 import useAuthQuery from "@src/hooks/useAuthQuery";
 import { ApiType } from "@src/api/types";
+import { AuthUserContext, AuthUserContextType } from "@src/context/AuthUserContext";
 
 export default function Page() {
   const [canRedirect, setCanRedirect] = useState(false);
@@ -27,11 +28,13 @@ export default function Page() {
   } = useActiveAccount();
 
   const {
+    data: authUser,
     isLoading: isAuthLoading,
     error: authError,
     refetch
   } = useAuthQuery(accountType as ApiType);
 
+  const authUserContext = useContext(AuthUserContext);
   const modalRef = useRef<AccountTypeModalMethods>(null);
   const router = useRouter();
 
@@ -43,13 +46,14 @@ export default function Page() {
   });
 
   useEffect(() => {    
-    if (!isLoading && accountType && accountToken) {
+    if (hasAnyAccount()) {
       refetch(); 
     }
   }, [isLoading]);
 
   useEffect(() => {
-    if (!isLoading && !isAuthLoading && !authError) {
+    if (isAuthorized() && authUser) {
+      authUserContext?.setUser(authUser);
       setCanRedirect(true);
     }
   }, [isAuthLoading]);
@@ -58,7 +62,15 @@ export default function Page() {
     if (canRedirect) {
       router.replace('dashboard');
     }
-  }, [canRedirect])
+  }, [canRedirect]);
+
+  function hasAnyAccount() {
+    return !isLoading && accountType && accountToken;
+  }
+
+  function isAuthorized() {
+    return !isLoading && !isAuthLoading && !authError;
+  }
 
   function onConnectButtonPress() {
     if (!modalRef.current) {
@@ -86,7 +98,7 @@ export default function Page() {
       <Image source={require('@assets/img/splash.png')} style={{ width: '100%', height: '100%'}} resizeMode="center" />
       <View style={styles.bottomArea}>
         {isLoading || isAuthLoading ? (<ActivityIndicator size={42} color="black" />) : ''}
-        {!isAuthLoading && authError ? (
+        {!accountType || (!isAuthLoading && authError) ? (
           <TouchableOpacity style={styles.connectBtn} onPress={onConnectButtonPress}>
             <Text style={{ fontSize: 16, color: 'white' }}>Connect</Text>
           </TouchableOpacity>
