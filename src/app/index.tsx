@@ -16,8 +16,9 @@ import useActiveAccount from "@src/hooks/useActiveAccount";
 import useAuthQuery from "@src/hooks/useAuthQuery";
 import { ApiType } from "@src/api/types";
 import { AuthUserContext} from "@src/context/AuthUserContext";
-import AccountTypeDialog from "@src/components/modals/AccountTypeDialog";
-import { DialogMethods } from "@src/components/modals/Dialog";
+import AccountTypeDialog from "@src/components/dialogs/AccountTypeDialog";
+import { DialogMethods } from "@src/components/dialogs/Dialog";
+import PrimaryButton from "@src/components/buttons/PrimaryButton";
 
 export default function Page() {
   const [canRedirect, setCanRedirect] = useState(false);
@@ -87,7 +88,9 @@ export default function Page() {
     }
 
     dialogRef.current.hide();
-    router.navigate(`auth/pat?type=${convertToSlug(accountType)}`);
+    setTimeout(() => {
+      router.navigate(`auth/pat?type=${convertToSlug(accountType)}`);
+    }, 150);
   }
 
   if (!fontsLoaded && !fontError) {
@@ -100,9 +103,9 @@ export default function Page() {
       <View style={styles.bottomArea}>
         {isLoading || isAuthLoading ? (<ActivityIndicator size={42} color="black" />) : ''}
         {!accountType || (!isAuthLoading && authError) ? (
-          <TouchableOpacity style={styles.connectBtn} onPress={onConnectButtonPress}>
+          <PrimaryButton style={styles.connectBtn} onPress={onConnectButtonPress}>
             <Text style={{ fontSize: 16, color: 'white' }}>Connect</Text>
-          </TouchableOpacity>
+          </PrimaryButton>
         ) : ''}
       </View>
       <AccountTypeDialog 
@@ -130,7 +133,5 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 10,
-    textTransform: 'uppercase',
-    backgroundColor: 'black'
   }
 });

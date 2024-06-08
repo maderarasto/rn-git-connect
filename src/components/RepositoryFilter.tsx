@@ -3,7 +3,7 @@ import React, { RefObject } from "react";
 import LabeledTextInput from "./LabeledTextInput";
 import PrimaryButton from "./buttons/PrimaryButton";
 import { FontAwesome } from "@expo/vector-icons";
-import SlidedModal, { SlidedModalMethods } from "./modals/SlidedModal";
+import SlidedModal, { SlidedModalMethods } from "./dialogs/SlidedModal";
 
 export type RepositoryFilterProps = {
   modalRef?: RefObject<SlidedModalMethods>

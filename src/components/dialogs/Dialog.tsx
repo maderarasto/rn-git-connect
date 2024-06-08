@@ -1,5 +1,5 @@
-import { View, Text, Modal, StyleSheet, StyleProp, ViewStyle, TouchableOpacity, TouchableWithoutFeedback, Pressable, ModalProps } from "react-native";
-import React, { ReactNode, forwardRef, useImperativeHandle, useState } from "react";
+import { View, Text, Modal, StyleSheet, StyleProp, ViewStyle, TouchableOpacity, TouchableWithoutFeedback, Pressable, ModalProps, Animated, LayoutChangeEvent, Dimensions } from "react-native";
+import React, { ReactNode, forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {FontAwesome6} from '@expo/vector-icons';
 
@@ -17,6 +17,7 @@ export type DialogProps = ModalProps & {
 }
 
 const DEFAULT_BACKDROP_BG_COLOR = 'rgba(0, 0, 0, 0.7)';
+const screenDimensions = Dimensions.get('screen');
 
 const Dialog = forwardRef<DialogMethods, DialogProps>(({
   title = 'Dialog',
@@ -26,6 +27,14 @@ const Dialog = forwardRef<DialogMethods, DialogProps>(({
   ...modalProps
 }, ref) => {
   const [visible, setVisible] = useState(shown);
+  
+  const animatedOpacity = useRef(
+    new Animated.Value(0)
+  ).current;
+
+  const animatedTranslate = useRef(
+    new Animated.Value(screenDimensions.height)
+  ).current;
 
   useImperativeHandle(ref, () => ({
     isShown: function () {
@@ -33,11 +42,11 @@ const Dialog = forwardRef<DialogMethods, DialogProps>(({
     },
 
     show: function () {
-      setVisible(true);
+      showModal();
     },
 
     hide: function () {
-      setVisible(false);
+      closeModal();
     }
   }));
 
@@ -45,13 +54,55 @@ const Dialog = forwardRef<DialogMethods, DialogProps>(({
     let style: StyleProp<ViewStyle> = {
       ...styles.backdropContainer,
       ...backdropStyle as object,
+      opacity: animatedOpacity,
     };
 
     return style;
   }
 
+  function resolveDialogBodyStyle() {
+    let style: StyleProp<ViewStyle> = {
+      ...styles.dialogBody,
+      transform: [
+        { translateY: animatedTranslate }
+      ]
+    };
+    
+    return style;
+  }
+
+  function showModal() {
+    setVisible(true);
+    
+    Animated.timing(animatedOpacity, {
+      useNativeDriver: true,
+      toValue: 1,
+      duration: 500,
+    }).start();
+
+    Animated.timing(animatedTranslate, {
+      useNativeDriver: true,
+      toValue: 0,
+      duration: 500,
+    }).start();
+  }
+
   function closeModal() {
-    setVisible(false);
+    setTimeout(() => {
+      setVisible(false);
+    }, 500)
+
+    Animated.timing(animatedOpacity, {
+      useNativeDriver: true,
+      toValue: 0,
+      duration: 500,
+    }).start();
+
+    Animated.timing(animatedTranslate, {
+      useNativeDriver: true,
+      toValue: screenDimensions.height,
+      duration: 500,
+    }).start();
   }
 
   function onBackdropPress() {
@@ -68,9 +119,9 @@ const Dialog = forwardRef<DialogMethods, DialogProps>(({
       onRequestClose={() => closeModal()}
     >
       <Pressable style={styles.pressableBackdrop} onPress={onBackdropPress}>
-        <View style={resolveBackdropStyle()}>
+        <Animated.View style={resolveBackdropStyle()}>
           <TouchableWithoutFeedback>
-            <View style={styles.dialogBody}>
+            <Animated.View style={resolveDialogBodyStyle()}>
               {/* Dialog Header */}
               <View style={styles.dialogHeader}>
                 <View></View>
@@ -84,9 +135,9 @@ const Dialog = forwardRef<DialogMethods, DialogProps>(({
               <View style={styles.dialogContent}>
                 {children}
               </View>
-            </View>
+            </Animated.View>
           </TouchableWithoutFeedback>
-        </View>
+        </Animated.View>
       </Pressable>
     </Modal>
   );

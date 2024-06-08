@@ -1,19 +1,16 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React, { useRef } from 'react'
 import RepositoryFilter from '@src/components/RepositoryFilter'
-import SlidedModal, { SlidedModalMethods } from '@src/components/modals/SlidedModal'
+import { DialogMethods } from '@src/components/dialogs/Dialog';
 
 const Page = () => {
-  const filterModalRef = useRef<SlidedModalMethods>(null);
+  const filterModalRef = useRef<DialogMethods>(null);
 
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
         <RepositoryFilter modalRef={filterModalRef} />
       </View>
-      <SlidedModal ref={filterModalRef}>
-        <Text>Hello</Text>
-      </SlidedModal>
     </View>
   )
 }

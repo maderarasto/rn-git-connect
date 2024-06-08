@@ -1,7 +1,6 @@
 import { View, Text, Modal } from "react-native";
 import React, { useContext } from "react";
 import { AuthUserContext } from "@src/context/AuthUserContext";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const Page = () => {
   const authUserContext = useContext(AuthUserContext);

@@ -8,7 +8,7 @@ import { convertFromSlug, saveAccount } from '@src/utils';
 import { AccountType } from '@src/types';
 import LabeledTextInput from '@src/components/LabeledTextInput';
 import TextButton from '@src/components/buttons/TextButton';
-import Dialog, { DialogMethods } from '@src/components/modals/Dialog';
+import Dialog, { DialogMethods } from '@src/components/dialogs/Dialog';
 import PrimaryButton from '@src/components/buttons/PrimaryButton';
 import AuthPATGitHubTemplate from '@src/templates/help/AuthPATGitHubTemplate';
 import AuthPATGitLabTemplate from '@src/templates/help/AuthPATGitLabTemplate';
