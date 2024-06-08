@@ -9,14 +9,15 @@ import {
   Inter_700Bold 
 } from "@expo-google-fonts/inter";
 
-import AccountTypeModal, { AccountTypeModalMethods } from "@src/components/modals/AccountTypeModal";
 import { AccountType } from "@src/types";
 import { useRouter } from "expo-router";
-import { convertFromSlug, convertToSlug } from "@src/utils";
+import { convertToSlug } from "@src/utils";
 import useActiveAccount from "@src/hooks/useActiveAccount";
 import useAuthQuery from "@src/hooks/useAuthQuery";
 import { ApiType } from "@src/api/types";
-import { AuthUserContext, AuthUserContextType } from "@src/context/AuthUserContext";
+import { AuthUserContext} from "@src/context/AuthUserContext";
+import AccountTypeDialog from "@src/components/modals/AccountTypeDialog";
+import { DialogMethods } from "@src/components/modals/Dialog";
 
 export default function Page() {
   const [canRedirect, setCanRedirect] = useState(false);
@@ -35,7 +36,7 @@ export default function Page() {
   } = useAuthQuery(accountType as ApiType);
 
   const authUserContext = useContext(AuthUserContext);
-  const modalRef = useRef<AccountTypeModalMethods>(null);
+  const dialogRef = useRef<DialogMethods>(null);
   const router = useRouter();
 
   let [fontsLoaded, fontError] = useFonts({
@@ -73,19 +74,19 @@ export default function Page() {
   }
 
   function onConnectButtonPress() {
-    if (!modalRef.current) {
+    if (!dialogRef.current) {
       return;
     }
 
-    modalRef.current.show();
+    dialogRef.current.show();
   }
 
   function onAccountTypeChoose(accountType: AccountType) {
-    if (!modalRef.current) {
+    if (!dialogRef.current) {
       return;
     }
 
-    modalRef.current.hide();
+    dialogRef.current.hide();
     router.navigate(`auth/pat?type=${convertToSlug(accountType)}`);
   }
 
@@ -104,7 +105,10 @@ export default function Page() {
           </TouchableOpacity>
         ) : ''}
       </View>
-      <AccountTypeModal ref={modalRef} title="Select account type" onTypeChoose={onAccountTypeChoose} />
+      <AccountTypeDialog 
+        ref={dialogRef} 
+        title="Select account type" 
+        onTypeChoose={onAccountTypeChoose} />
     </View>
   );
 }
