@@ -26,8 +26,11 @@ const DrawerContent = (props: any) => {
 const Layout = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Drawer drawerContent={DrawerContent} screenOptions={{
-        drawerLabelStyle: styles.drawerLabel,
+      <Drawer 
+        initialRouteName="repositories/index"
+        drawerContent={DrawerContent}
+        screenOptions={{
+          drawerLabelStyle: styles.drawerLabel,
       }}>
         <Drawer.Screen
           name="index"

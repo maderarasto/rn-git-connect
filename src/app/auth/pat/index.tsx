@@ -8,7 +8,7 @@ import { convertFromSlug, saveAccount } from '@src/utils';
 import { AccountType } from '@src/types';
 import LabeledTextInput from '@src/components/LabeledTextInput';
 import TextButton from '@src/components/buttons/TextButton';
-import SlidedModal, { SlidedModalMethods } from '@src/components/modals/SlidedModal';
+import Dialog, { DialogMethods } from '@src/components/dialogs/Dialog';
 import PrimaryButton from '@src/components/buttons/PrimaryButton';
 import AuthPATGitHubTemplate from '@src/templates/help/AuthPATGitHubTemplate';
 import AuthPATGitLabTemplate from '@src/templates/help/AuthPATGitLabTemplate';
@@ -38,7 +38,7 @@ const Page = () => {
     return;
   }
 
-  const modalRef = useRef<SlidedModalMethods>(null);
+  const modalRef = useRef<DialogMethods>(null);
   const {
     data: authUser, 
     isLoading, 
@@ -152,14 +152,14 @@ const Page = () => {
             <Text style={{ color: 'white' }}>Authorize</Text>
           </PrimaryButton>
         </View>
-        <SlidedModal ref={modalRef} title="Personal Access Tokens" contentContainerStyle={{ paddingBottom: 16 }}>
+        <Dialog ref={modalRef} title="Personal Access Tokens">
           <>
             {resolveModalTemplate()}
             <PrimaryButton style={{ alignSelf: "center" }} onPress={onGoButtonPressed}>
               <Text style={{ color: "white" }}>Go to {accountType}</Text>
             </PrimaryButton>
           </>
-        </SlidedModal>
+        </Dialog>
         {isLoading ? (
           <ActivityIndicator size={42} color="#2563eb" style={styles.loadingIndicator} />
         ) : ''}

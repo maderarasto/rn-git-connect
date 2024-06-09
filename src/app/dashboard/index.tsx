@@ -1,7 +1,6 @@
-import { View, Text } from "react-native";
+import { View, Text, Modal } from "react-native";
 import React, { useContext } from "react";
 import { AuthUserContext } from "@src/context/AuthUserContext";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const Page = () => {
   const authUserContext = useContext(AuthUserContext);
@@ -13,9 +12,9 @@ const Page = () => {
   console.log(`UserId: ${authUserContext.user?.id}`);
 
   return (
-    <SafeAreaView>
-      
-    </SafeAreaView>
+    <View>
+      <Text>Dashboard</Text>
+    </View>
   );
 };
 
