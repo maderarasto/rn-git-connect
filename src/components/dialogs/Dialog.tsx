@@ -11,8 +11,10 @@ export type DialogMethods = {
 
 export type DialogProps = ModalProps & {
   title?: string
-  backdropStyle?: StyleProp<ViewStyle>
+  backdropStyle?: ViewStyle
+  animationDuration?: number
   shown?: boolean
+  onHide?: () => void
   children?: ReactNode
 }
 
@@ -22,7 +24,9 @@ const screenDimensions = Dimensions.get('screen');
 const Dialog = forwardRef<DialogMethods, DialogProps>(({
   title = 'Dialog',
   backdropStyle = {},
+  animationDuration = 500,
   shown = false,
+  onHide = () => {},
   children,
   ...modalProps
 }, ref) => {
@@ -36,22 +40,36 @@ const Dialog = forwardRef<DialogMethods, DialogProps>(({
     new Animated.Value(screenDimensions.height)
   ).current;
 
+  useEffect(() => {
+    if (visible) {
+      animateValue(animatedOpacity, 1, animationDuration);
+      animateValue(animatedTranslate, 0, animationDuration);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (visible) {
+      animateValue(animatedOpacity, 1, animationDuration);
+      animateValue(animatedTranslate, 0, animationDuration);
+    }
+  }, [visible])
+
   useImperativeHandle(ref, () => ({
     isShown: function () {
       return visible;
     },
 
     show: function () {
-      showModal();
+      showDialog();
     },
 
     hide: function () {
-      closeModal();
+      hideDialog();
     }
   }));
 
   function resolveBackdropStyle() {
-    let style: StyleProp<ViewStyle> = {
+    let style: ViewStyle = {
       ...styles.backdropContainer,
       ...backdropStyle as object,
       opacity: animatedOpacity,
@@ -61,7 +79,7 @@ const Dialog = forwardRef<DialogMethods, DialogProps>(({
   }
 
   function resolveDialogBodyStyle() {
-    let style: StyleProp<ViewStyle> = {
+    let style: ViewStyle = {
       ...styles.dialogBody,
       transform: [
         { translateY: animatedTranslate }
@@ -71,42 +89,31 @@ const Dialog = forwardRef<DialogMethods, DialogProps>(({
     return style;
   }
 
-  function showModal() {
-    setVisible(true);
-    
-    Animated.timing(animatedOpacity, {
+  function animateValue(value: Animated.Value, toValue: number, duration: number) {
+    Animated.timing(value, {
       useNativeDriver: true,
-      toValue: 1,
-      duration: 500,
-    }).start();
-
-    Animated.timing(animatedTranslate, {
-      useNativeDriver: true,
-      toValue: 0,
-      duration: 500,
+      toValue,
+      duration,
     }).start();
   }
 
-  function closeModal() {
+  function showDialog() {
+    setVisible(true);
+  }
+
+  function hideDialog() {
     setTimeout(() => {
       setVisible(false);
-    }, 500)
+    }, animationDuration)
 
-    Animated.timing(animatedOpacity, {
-      useNativeDriver: true,
-      toValue: 0,
-      duration: 500,
-    }).start();
+    animateValue(animatedOpacity, 0, animationDuration);
+    animateValue(animatedTranslate, screenDimensions.height, animationDuration);
 
-    Animated.timing(animatedTranslate, {
-      useNativeDriver: true,
-      toValue: screenDimensions.height,
-      duration: 500,
-    }).start();
+    onHide();
   }
 
   function onBackdropPress() {
-    closeModal();
+    hideDialog();
   }
 
   return (
@@ -116,7 +123,7 @@ const Dialog = forwardRef<DialogMethods, DialogProps>(({
       transparent={true} 
       visible={visible} 
       statusBarTranslucent={true}
-      onRequestClose={() => closeModal()}
+      onRequestClose={() => hideDialog()}
     >
       <Pressable style={styles.pressableBackdrop} onPress={onBackdropPress}>
         <Animated.View style={resolveBackdropStyle()}>
@@ -126,7 +133,7 @@ const Dialog = forwardRef<DialogMethods, DialogProps>(({
               <View style={styles.dialogHeader}>
                 <View></View>
                 <Text style={styles.dialogTitle}>{title}</Text>
-                <TouchableOpacity onPress={() => closeModal()}>
+                <TouchableOpacity onPress={() => hideDialog()}>
                   <FontAwesome6 name="xmark" size={24} color="black" />
                 </TouchableOpacity>
               </View>
