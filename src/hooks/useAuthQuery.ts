@@ -40,7 +40,10 @@ export default function useAuthQuery(api: ApiType, token = '', enabled = false) 
     }
 
     return {
-        data,
+        data: {
+            accountType: api,
+            ...data,
+        },
         isLoading,
         error,
         authToken,

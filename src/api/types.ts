@@ -10,13 +10,13 @@ export type AuthUser = {
     followers: number
     following: number
 } & ({
-    type: 'GitHub'
+    accountType: 'GitHub'
     login: string
     url: string
     twitter_username: string
     company: string
 } | {
-    type: 'GitLab',
+    accountType: 'GitLab',
     username: string
     web_url: string
     organization: string

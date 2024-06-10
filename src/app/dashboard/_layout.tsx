@@ -2,8 +2,9 @@ import React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
 import {MaterialIcons, Ionicons, Octicons} from '@expo/vector-icons';
-import { View, Text, Image, StyleSheet } from "react-native";
-import { DrawerContentScrollView, DrawerItem, DrawerItemList } from "@react-navigation/drawer";
+import { View, Text, Image, StyleSheet, SafeAreaView } from "react-native";
+import { DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
+import DrawerHeader from "@src/components/DrawerHeader";
 
 const DrawerContent = (props: any) => {
   return (
@@ -27,9 +28,14 @@ const Layout = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer 
-        initialRouteName="repositories/index"
         drawerContent={DrawerContent}
         screenOptions={{
+          // headerShown: false,
+          header: ({ navigation, route, options }) => (
+            <DrawerHeader 
+              navigation={navigation}
+              title={options.title} />
+          ),
           drawerLabelStyle: styles.drawerLabel,
       }}>
         <Drawer.Screen
