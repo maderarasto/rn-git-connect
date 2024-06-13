@@ -13,6 +13,7 @@ export type AccountType = (
 );
 
 export type User = Partial<{
+    accountType: AccountType
     id: number
     username: string
     fullname: string

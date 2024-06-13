@@ -37,8 +37,10 @@ const auth = {
             return Promise.reject(error)
         }
     },
+}
 
-    repos: async function (username: string, query: QueryParams.UserRepositories): Promise<Repository> {
+const users = {
+    repos: async function (username: string, query: QueryParams.UserRepositories): Promise<Repository[]> {
         const config: AxiosRequestConfig = {
             headers: {
                 Authorization: `token ${await getActiveAccountToken()}`
@@ -47,26 +49,26 @@ const auth = {
         };
 
         try {
-            const response = await GitHubClient.get<Response.Repository>(`users/${username}/repos`, config);
-
-            return {
-                id: response.id,
-                name: response.name,
-                path: response.name,
-                fullpath: response.full_name,
-                owner: response.owner,
-                description: response.description,
-                createdAt: response.created_at,
-                gitUrl: response.git_url,
-                sshUrl: response.ssh_url,
-                cloneUrl: response.clone_url,
-                hasIssues: response.has_issues,
-                hasWiki: response.has_wiki,
-                hasPages: response.has_pages,
-                hasDiscussions: response.has_discussions,
-                topics: response.topics,
-                visibility: response.visibility,
-            }
+            const response = await GitHubClient.get<Response.Repository[]>(`users/${username}/repos`, config);
+            
+            return response.map((responseItem) => ({
+                id: responseItem.id,
+                name: responseItem.name,
+                path: responseItem.name,
+                fullpath: responseItem.full_name,
+                owner: responseItem.owner,
+                description: responseItem.description,
+                createdAt: responseItem.created_at,
+                gitUrl: responseItem.git_url,
+                sshUrl: responseItem.ssh_url,
+                cloneUrl: responseItem.clone_url,
+                hasIssues: responseItem.has_issues,
+                hasWiki: responseItem.has_wiki,
+                hasPages: responseItem.has_pages,
+                hasDiscussions: responseItem.has_discussions,
+                topics: responseItem.topics,
+                visibility: responseItem.visibility,
+            }));
         } catch (error) {
             return Promise.reject(error)
         }
@@ -75,6 +77,7 @@ const auth = {
 
 const GitHubAPI = {
     auth,
+    users,
 };
 
 export default GitHubAPI;

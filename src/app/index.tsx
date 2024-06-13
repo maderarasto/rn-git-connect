@@ -9,12 +9,11 @@ import {
   Inter_700Bold 
 } from "@expo-google-fonts/inter";
 
-import { AccountType } from "@src/types";
+import { AccountType, ApiType } from "@src/types";
 import { useRouter } from "expo-router";
 import { convertToSlug } from "@src/utils";
 import useActiveAccount from "@src/hooks/useActiveAccount";
 import useAuthQuery from "@src/hooks/useAuthQuery";
-import { ApiType } from "@src/api/types";
 import { AuthUserContext} from "@src/context/AuthUserContext";
 import AccountTypeDialog from "@src/components/dialogs/AccountTypeDialog";
 import { DialogMethods } from "@src/components/dialogs/Dialog";

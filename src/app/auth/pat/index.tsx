@@ -5,7 +5,7 @@ import {AntDesign} from '@expo/vector-icons';
 
 import AuthHeader from '@src/components/AuthHeader';
 import { convertFromSlug, saveAccount } from '@src/utils';
-import { AccountType } from '@src/types';
+import { AccountType, User } from '@src/types';
 import LabeledTextInput from '@src/components/LabeledTextInput';
 import TextButton from '@src/components/buttons/TextButton';
 import Dialog, { DialogMethods } from '@src/components/dialogs/Dialog';
@@ -13,7 +13,6 @@ import PrimaryButton from '@src/components/buttons/PrimaryButton';
 import AuthPATGitHubTemplate from '@src/templates/help/AuthPATGitHubTemplate';
 import AuthPATGitLabTemplate from '@src/templates/help/AuthPATGitLabTemplate';
 import useAuthQuery from '@src/hooks/useAuthQuery';
-import { AuthUser } from '@src/api/types';
 import { AuthUserContext, AuthUserContextType } from '@src/context/AuthUserContext';
 
 const UNAUTHORIZED_MESSAGES = [
@@ -88,21 +87,8 @@ const Page = () => {
     return error.message;
   }
 
-  function resolveUsername() {
-    if (!authUser) {
-      return '';
-    }
-
-    const user: AuthUser = {
-      ...authUser,
-    };
-
-    user.type = accountType === 'GitHub' ? 'GitHub' : 'GitLab';
-    return user.type === 'GitHub' ? user.login : user.username;
-  }
-
-  function signUserIn(context: AuthUserContextType, user: AuthUser) {
-    saveAccount(accountType, resolveUsername(), authToken);
+  function signUserIn(context: AuthUserContextType, user: User) {
+    saveAccount(accountType, user.username ?? '', authToken);
     context.setUser(user);
 
     ToastAndroid.show('Authenticated', ToastAndroid.SHORT);

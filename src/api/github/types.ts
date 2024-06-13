@@ -124,11 +124,11 @@ export namespace Response {
 }
 
 export namespace QueryParams {
-    export type UserRepositories = {
+    export type UserRepositories = Partial<{
         type: 'all' | 'owner' | 'member'
         sort: 'created' | 'updated' | 'pushed' | 'full_name'
         direction: 'asc' | 'desc'
         per_page: number
         page: number
-    }
+    }>
 }
