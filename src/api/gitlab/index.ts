@@ -25,13 +25,13 @@ const auth = {
                 fullname: response.name,
                 avatarUrl: response.avatar_url,
                 webUrl: response.web_url,
-                company: response.organization ?? '',
-                location: response.location ?? '',
-                email: response.email ?? '',
-                bio: response.bio ?? '',
-                followers: response.followers ?? 0,
-                following: response.following ?? 0,
-                createdAt: response.created_at ?? ''
+                company: response.organization,
+                location: response.location,
+                email: response.email,
+                bio: response.bio,
+                followers: response.followers,
+                following: response.following,
+                createdAt: response.created_at,
             }
         } catch (error) {
             return Promise.reject(error);

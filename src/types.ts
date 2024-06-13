@@ -12,7 +12,7 @@ export type AccountType = (
     | 'Git'
 );
 
-export type User = {
+export type User = Partial<{
     id: number
     username: string
     fullname: string
@@ -25,7 +25,31 @@ export type User = {
     followers: number
     following: number
     createdAt: string
-}
+}>
+
+export type Repository = Partial<{
+    id: number
+    name: string
+    path: string
+    fullpath: string
+    owner: User
+    description: string
+    createdAt: string
+    updatedAt: string
+    gitUrl: string
+    sshUrl: string
+    cloneUrl: string
+    hasIssues: boolean
+    hasWiki: boolean
+    hasPages: boolean
+    hasDiscussions: boolean
+    topics: string[]
+    visibility: string
+    forks: number
+    openIssues: number
+    watchers: number
+    defaultBranch: string
+}>
 
 export type FilterTag = {
     key: string
