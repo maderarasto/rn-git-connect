@@ -68,6 +68,7 @@ const users = {
                 hasDiscussions: responseItem.has_discussions,
                 topics: responseItem.topics,
                 visibility: responseItem.visibility,
+                updatedAt: responseItem.updated_at
             }));
         } catch (error) {
             return Promise.reject(error)
