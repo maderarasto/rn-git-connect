@@ -35,6 +35,7 @@ export type Repository = Partial<{
     fullpath: string
     owner: User
     description: string
+    language: string
     createdAt: string
     updatedAt: string
     gitUrl: string

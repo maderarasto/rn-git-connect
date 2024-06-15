@@ -1,7 +1,8 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
+import {MaterialCommunityIcons} from '@expo/vector-icons';
 import { Repository } from '@src/types'
-import { convertToSlug } from '@src/utils'
+import { convertToSlug, getRelativeTime } from '@src/utils'
 
 export type RepositoryListItemProps = {
   repository: Repository
@@ -10,34 +11,36 @@ export type RepositoryListItemProps = {
 const RepositoryListItem = ({
   repository
 }: RepositoryListItemProps) => {
-  function resolveDate(dateString?: string) {
-    if (!dateString) {
-      return '';
-    }
-
-    return dateString;
-  }
-
   return (
     <View style={styles.container}>
       <View style={{ width: 48, height: 48, borderRadius: 5, backgroundColor: '#ccc'}}></View>
       <View style={{ flex: 1, gap: 4 }}>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, gap: 2 }}>
           <Text style={styles.repositoryTitle}>{repository.name}</Text>
-          <Text style={styles.repositoryDescription}>{repository.description}</Text>
+          {repository.description ? (
+            <Text style={styles.repositoryDescription}>{repository.description}</Text>
+          ) : ''}
         </View>
-        <View style={styles.repositoryTagContainer}>
-          {repository.topics?.map((repo, index) => (
-            <Text 
-              key={`tag[${index}]:${convertToSlug(repo)}`}
-              style={styles.repositoryTag}>
+        {repository.topics?.length ? (
+          <View style={styles.repositoryTagContainer}>
+            {repository.topics?.map((repo, index) => (
+              <Text 
+                key={`tag[${index}]:${convertToSlug(repo)}`}
+                style={styles.repositoryTag}
+              >
                 {repo}
               </Text>
-          ))}
-        </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-          <Text style={styles.repositoryTag}></Text>
-          <Relativ style={{fontSize: 12, color: '#808080'}}>{resolveDate(repository.updatedAt)}</Relativ>
+            ))}
+          </View>
+        ) : ''}
+        <View style={{ ...styles.centerInRow, justifyContent: 'space-between'}}>
+          <View style={styles.centerInRow}>
+            <MaterialCommunityIcons name="circle-medium" size={24} color="#2563eb" style={{marginHorizontal: -4}} />
+            <Text style={styles.secondaryText}>{repository.language}</Text>
+          </View>
+          {repository.updatedAt ? (
+            <Text style={styles.secondaryText}>{getRelativeTime(repository.updatedAt)}</Text>
+          ) : ''}
         </View>
       </View>
     </View>
@@ -61,6 +64,7 @@ const styles = StyleSheet.create({
 
   repositoryDescription: {
     flexWrap: 'wrap',
+    marginBottom: 8, 
     fontSize: 12,
     color: '#666'
   },
@@ -79,7 +83,16 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     fontSize: 12,
     backgroundColor: 'lightgray',
+  },
 
+  secondaryText: {
+    fontSize: 12,
+    color: '#666',
+  },
+
+  centerInRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   }
 })
 

@@ -58,6 +58,7 @@ const users = {
                 fullpath: responseItem.full_name,
                 owner: responseItem.owner,
                 description: responseItem.description,
+                language: responseItem.language,
                 createdAt: responseItem.created_at,
                 gitUrl: responseItem.git_url,
                 sshUrl: responseItem.ssh_url,
