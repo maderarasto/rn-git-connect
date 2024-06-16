@@ -56,6 +56,7 @@ const auth = {
             return response.map((responseItem) => ({
                 id: responseItem.id,
                 name: responseItem.name,
+                fullname: responseItem.full_name,
                 path: responseItem.name,
                 fullpath: responseItem.full_name,
                 owner: responseItem.owner,

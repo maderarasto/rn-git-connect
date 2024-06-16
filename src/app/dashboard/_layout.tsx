@@ -8,7 +8,7 @@ import DrawerHeader from "@src/components/DrawerHeader";
 
 const DrawerContent = (props: any) => {
   return (
-    <DrawerContentScrollView {...props}>
+    <DrawerContentScrollView {...props} style={{ backgroundColor: '#dedede'}}>
       <View style={styles.drawerHeader}>
         <Image source={require('@assets/img/icon.png')} style={styles.drawerHeaderLogo} />
         <Text style={styles.drawerHeaderTitle}>Git Connect</Text>

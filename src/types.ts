@@ -31,6 +31,7 @@ export type User = Partial<{
 export type Repository = Partial<{
     id: number
     name: string
+    fullname: string,
     path: string
     fullpath: string
     owner: User

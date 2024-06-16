@@ -24,7 +24,7 @@ const RepositoryListItem = ({
       )}
       <View style={{ flex: 1, gap: 4 }}>
         <View style={{ flex: 1, gap: 2 }}>
-          <Text style={styles.repositoryTitle}>{repository.name}</Text>
+          <Text style={styles.repositoryTitle}>{repository.fullname}</Text>
           {repository.description ? (
             <Text style={styles.repositoryDescription}>{repository.description}</Text>
           ) : ''}
@@ -47,7 +47,7 @@ const RepositoryListItem = ({
               <MaterialCommunityIcons name="circle-medium" size={24} color="#2563eb" style={{marginHorizontal: -4}} />
               <Text style={styles.secondaryText}>{repository.language}</Text>
             </View>
-            ) : ''}
+            ) : <View></View>}
           {repository.updatedAt ? (
             <Text style={styles.secondaryText}>{getRelativeTime(repository.updatedAt)}</Text>
           ) : ''}

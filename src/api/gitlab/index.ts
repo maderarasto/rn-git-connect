@@ -57,6 +57,7 @@ const projects = {
         return response.map((responseItem) => ({
             id: responseItem.id,
             name: responseItem.name,
+            fullname: responseItem.name_with_namespace,
             path: responseItem.path,
             fullpath: responseItem.path_with_namespace,
             avatarUrl: responseItem.avatar_url,
