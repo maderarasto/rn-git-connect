@@ -26,7 +26,7 @@ export function useUserReposQuery(
 
 			return GitHubAPI.users.repos(username, {
 				...query,
-				per_page: 8,
+				per_page: 10,
 				page: pageParam as number
 			});
 		},

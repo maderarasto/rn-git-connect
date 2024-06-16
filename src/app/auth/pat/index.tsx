@@ -49,7 +49,7 @@ const Page = () => {
 
   useEffect(() => {
     if (!authUser) return;
-
+    console.log('auth');
     signUserIn(authUserContext, authUser);
     router.replace('dashboard');
   }, [authUser]);

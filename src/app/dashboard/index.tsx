@@ -1,4 +1,4 @@
-import { View, Text, Modal } from "react-native";
+import { View, Text } from "react-native";
 import React, { useContext } from "react";
 import { AuthUserContext } from "@src/context/AuthUserContext";
 
@@ -8,8 +8,6 @@ const Page = () => {
   if (!authUserContext) {
     throw new Error('AuthUserContext must be used withing AUthUserProvider!');
   }
-  
-  console.log(`UserId: ${authUserContext.user?.id}`);
 
   return (
     <View>

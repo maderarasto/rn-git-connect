@@ -46,7 +46,7 @@ export default function Page() {
     Inter_700Bold
   });
 
-  useEffect(() => {    
+  useEffect(() => {  
     if (hasAnyAccount()) {
       refetch(); 
     }
@@ -70,7 +70,7 @@ export default function Page() {
   }
 
   function isAuthorized() {
-    return !isLoading && !isAuthLoading && !authError;
+    return !isLoading && !isAuthLoading && authUser;
   }
 
   function onConnectButtonPress() {

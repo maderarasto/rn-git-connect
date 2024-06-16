@@ -36,15 +36,23 @@ export default function useAuthQuery(api: ApiType, token = '', enabled = false) 
     const error = api === 'GitHub' ? githubError : gitlabError;
     const refetch = api === 'GitHub' ? githubRefetch : gitlabRefetch;
 
+    function resolveData() {
+        if (!data) {
+            return data;
+        }
+
+        return {
+            accountType: api,
+            ...data
+        };
+    }
+
     if (enabled) {
         refetch();
     }
 
     return {
-        data: {
-            accountType: api,
-            ...data,
-        },
+        data: resolveData(),
         isLoading,
         error,
         authToken,
