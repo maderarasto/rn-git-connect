@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Image } from 'react-native'
 import React from 'react'
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import { Repository } from '@src/types'
@@ -14,7 +14,14 @@ const RepositoryListItem = ({
 }: RepositoryListItemProps) => {
   return (
     <TouchableOpacity style={styles.container}>
-      <View style={{ width: 48, height: 48, borderRadius: 5, backgroundColor: '#ccc'}}></View>
+      {repository.avatarUrl ? (
+        <Image src={repository.avatarUrl} style={styles.repositoryAvatar} />
+      ) : (
+        <View style={{ 
+          ...styles.repositoryAvatar, 
+          backgroundColor: '#ccc'
+        }}></View>
+      )}
       <View style={{ flex: 1, gap: 4 }}>
         <View style={{ flex: 1, gap: 2 }}>
           <Text style={styles.repositoryTitle}>{repository.name}</Text>
@@ -35,10 +42,12 @@ const RepositoryListItem = ({
           </View>
         ) : ''}
         <View style={{ ...styles.centerInRow, justifyContent: 'space-between'}}>
-          <View style={styles.centerInRow}>
-            <MaterialCommunityIcons name="circle-medium" size={24} color="#2563eb" style={{marginHorizontal: -4}} />
-            <Text style={styles.secondaryText}>{repository.language}</Text>
-          </View>
+          {repository.language ? (
+            <View style={styles.centerInRow}>
+              <MaterialCommunityIcons name="circle-medium" size={24} color="#2563eb" style={{marginHorizontal: -4}} />
+              <Text style={styles.secondaryText}>{repository.language}</Text>
+            </View>
+            ) : ''}
           {repository.updatedAt ? (
             <Text style={styles.secondaryText}>{getRelativeTime(repository.updatedAt)}</Text>
           ) : ''}
@@ -55,6 +64,12 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderBottomWidth: 0.5,
     borderBottomColor: '#ccc'
+  },
+
+  repositoryAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 5,
   },
 
   repositoryTitle: {

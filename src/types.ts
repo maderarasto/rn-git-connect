@@ -38,6 +38,7 @@ export type Repository = Partial<{
     language: string
     createdAt: string
     updatedAt: string
+    avatarUrl: string
     gitUrl: string
     sshUrl: string
     cloneUrl: string

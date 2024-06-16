@@ -103,3 +103,30 @@ export namespace Response {
         updated_at: string
     }>
 }
+
+export namespace QueryParams {
+    export type OrderBy = (
+        | 'id'
+        | 'name'
+        | 'path'
+        | 'created_at'
+        | 'updated_at'
+        | 'last_activity_at'
+        | 'similarity'
+    );
+
+    export type SortDirection = (
+        | 'asc'
+        | 'desc'
+    )
+
+    export type Projects = Partial<{
+        search: string
+        membership: boolean
+        owned: boolean
+        order_by: OrderBy
+        sort: SortDirection
+        per_page: number
+        page: number
+    }>
+}

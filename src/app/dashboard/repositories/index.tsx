@@ -1,10 +1,9 @@
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
-import React, { useContext, useState } from 'react'
-import RepositoryFilter, { RepositoryFilterData } from '@src/components/RepositoryFilter'
-import { AccountType, SortBy } from '@src/types';
+import React, { useContext } from 'react'
+import { AccountType } from '@src/types';
 import { AuthUserContext } from '@src/context/AuthUserContext';
 import { FlatList } from 'react-native-gesture-handler';
-import { useUserReposQuery } from '@src/hooks/useUserReposQuery';
+import { useAuthReposQuery } from '@src/hooks/useAuthReposQuery';
 import RepositoryListItem from '@src/components/RepositoryListItem';
 import { Drawer } from 'expo-router/drawer';
 import DrawerHeader from '@src/components/DrawerHeader';
@@ -22,9 +21,8 @@ const Page = () => {
     isFetching,
     error,
     fetchNextPage
-  } = useUserReposQuery(
+  } = useAuthReposQuery(
     authUserContext.user?.accountType as AccountType, 
-    authUserContext.user?.username ?? '',
   );
   
   // function filteredByLanguage() {
