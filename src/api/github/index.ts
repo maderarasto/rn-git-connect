@@ -40,12 +40,17 @@ const auth = {
 }
 
 const users = {
-    repos: async function (username: string, query: QueryParams.UserRepositories): Promise<Repository[]> {
+    repos: async function (
+        username: string, 
+        query: QueryParams.UserRepositories,
+        signal: AbortSignal|undefined = undefined
+    ): Promise<Repository[]> {
         const config: AxiosRequestConfig = {
             headers: {
                 Authorization: `token ${await getActiveAccountToken()}`
             },
-            params: query
+            params: query,
+            signal,
         };
 
         try {

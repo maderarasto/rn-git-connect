@@ -1,16 +1,16 @@
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import React, { useContext, useState } from 'react'
 import RepositoryFilter, { RepositoryFilterData } from '@src/components/RepositoryFilter'
 import { AccountType, SortBy } from '@src/types';
 import { AuthUserContext } from '@src/context/AuthUserContext';
-import { ScrollView } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
 import { useUserReposQuery } from '@src/hooks/useUserReposQuery';
 import RepositoryListItem from '@src/components/RepositoryListItem';
+import { Drawer } from 'expo-router/drawer';
+import DrawerHeader from '@src/components/DrawerHeader';
+import {AntDesign} from '@expo/vector-icons';
 
 const Page = () => {
-  const [language, setLanguage] = useState('');
-  const [sortBy, setSortBy] = useState<SortBy>('Last updated');
-  
   const authUserContext = useContext(AuthUserContext);
 
   if (!authUserContext) {
@@ -19,32 +19,58 @@ const Page = () => {
 
   const {
     data: repositories,
-    isLoading,
-    error
+    isFetching,
+    error,
+    fetchNextPage
   } = useUserReposQuery(
     authUserContext.user?.accountType as AccountType, 
     authUserContext.user?.username ?? '',
-    {}
   );
   
-  function filteredByLanguage() {
-    return repositories;
-  }
+  // function filteredByLanguage() {
+  //   return repositories;
+  // }
 
-  function onFilterChanged({languages, sortBy}: RepositoryFilterData) {
-    setLanguage(languages[0]);
-    setSortBy(sortBy);
+  // function onFilterChanged({languages, sortBy}: RepositoryFilterData) {
+  //   setLanguage(languages[0]);
+  //   setSortBy(sortBy);
+  // }
+
+  function onRepoListReachedEnd() {
+    if (!isFetching && fetchNextPage) {
+      fetchNextPage();
+    }
   }
 
   return (
-    <ScrollView style={styles.contentContainer}>
-      <RepositoryFilter onChange={onFilterChanged} />
-      <View style={{paddingVertical: 20}}>
-        {filteredByLanguage()?.map((repo) => (
+    <View style={styles.contentContainer}>
+      <Drawer.Screen options={{
+        header: ({ navigation, route, options }) => (
+          <DrawerHeader 
+            navigation={navigation}
+            title={options.title}
+            titleStyle={{ flex: 1 }}
+            headerRight={() => (
+              <>
+                <TouchableOpacity>
+                  <AntDesign name="search1" size={24} color="black" />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <AntDesign name="plus" size={24} color="black" />
+                </TouchableOpacity>
+              </>
+            )} />
+        ),
+      }} />
+
+      <FlatList 
+        data={repositories?.pages.flat()} 
+        renderItem={(({item: repo}) => (
           <RepositoryListItem key={repo.path} repository={repo} />
         ))}
-      </View>
-    </ScrollView>
+        onEndReachedThreshold={0.5}
+        onEndReached={onRepoListReachedEnd} />
+    </View>
   )
 }
 

@@ -30,7 +30,6 @@ const Layout = () => {
       <Drawer 
         drawerContent={DrawerContent}
         screenOptions={{
-          // headerShown: false,
           header: ({ navigation, route, options }) => (
             <DrawerHeader 
               navigation={navigation}

@@ -3,6 +3,7 @@ import React from 'react'
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import { Repository } from '@src/types'
 import { convertToSlug, getRelativeTime } from '@src/utils'
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export type RepositoryListItemProps = {
   repository: Repository
@@ -12,7 +13,7 @@ const RepositoryListItem = ({
   repository
 }: RepositoryListItemProps) => {
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container}>
       <View style={{ width: 48, height: 48, borderRadius: 5, backgroundColor: '#ccc'}}></View>
       <View style={{ flex: 1, gap: 4 }}>
         <View style={{ flex: 1, gap: 2 }}>
@@ -43,7 +44,7 @@ const RepositoryListItem = ({
           ) : ''}
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   )
 }
 
@@ -51,8 +52,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     gap: 16,
-    marginBottom: 20,
-    paddingBottom: 20,
+    paddingVertical: 20,
     borderBottomWidth: 0.5,
     borderBottomColor: '#ccc'
   },

@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: DEFAULT_BORDER_COLOR,
         borderRadius: 5,
+        backgroundColor: '#eee',
     },
 
     errorText: {
