@@ -23,7 +23,8 @@ export default class ApiClient {
         }
         
         const requestConfig: AxiosRequestConfig = {
-            ...config
+            ...config,
+            
         };
 
         try {

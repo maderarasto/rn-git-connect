@@ -81,11 +81,17 @@ const RepositoryFilter = ({
 const styles = StyleSheet.create({
   filterRow: {
     flexDirection: "row",
-    gap: 8
+    gap: 8,
+    marginHorizontal: -16,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#666',
+    backgroundColor: '#dedede'
   },
 
   searchInput: {
-    flex: 1
+    flex: 1,
   },
 
    tagPicker: {

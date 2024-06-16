@@ -1,9 +1,9 @@
+import { User } from "@src/types";
 import { createContext, useState } from "react";
-import { AuthUser } from "../api/types";
 
 export type AuthUserContextType = {
-    user: AuthUser | null
-    setUser: (user: AuthUser|null) => void
+    user: User | null
+    setUser: (user: User|null) => void
 }
 
 export type AuthUserProviderProps = {
@@ -15,9 +15,9 @@ export const AuthUserContext = createContext<AuthUserContextType|undefined>(unde
 export const AuthUserProvider = ({
     children
 }: AuthUserProviderProps) => {
-    const [authUser, setAuthUser] = useState<AuthUser|null>(null);
+    const [authUser, setAuthUser] = useState<User|null>(null);
 
-    function setUser(user: AuthUser|null) {
+    function setUser(user: User|null) {
         setAuthUser(user);
     }
 

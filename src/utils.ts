@@ -2,6 +2,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import { AccountType } from './types';
 
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
+
 export function capitalize(text: string) {
     if (!text) {
         return '';
@@ -47,4 +54,8 @@ export async function getActiveAccountToken(): Promise<string|null> {
     }
 
     return SecureStore.getItemAsync(activeAccountId);
+}
+
+export function getRelativeTime(until: Date | number | string) {
+    return dayjs().to(until);
 }

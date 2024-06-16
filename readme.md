@@ -29,5 +29,5 @@ An idea for this project was to easily maintain project repositories and also us
     <img src="readme/screenshot_4.png" width="128" />
     <img src="readme/screenshot_5.png" width="128" />
     <img src="readme/screenshot_6.png" width="128" />
-    <img src="readme/screenshot_7.png" width="128" />
+    <img src="readme/screenshot_8.png" width="128" />
 </div>
