@@ -6,6 +6,11 @@ Tags: [React](https://react.dev/), [React Native](https://reactnative.dev/), [Ty
 ## Motivation
 An idea for this project was to easily maintain project repositories and also used react (native) and typescript skills on a real project.
 
+## What I have learned
+- Context API
+- useQuery and useInfiniteQuery hooks
+- React Native animations
+
 ## What is finished
 :white_check_mark:&nbsp;&nbsp;Base version of wireframe design.<br />
 :white_check_mark:&nbsp;&nbsp;Initialized a react native project with expo router.<br />

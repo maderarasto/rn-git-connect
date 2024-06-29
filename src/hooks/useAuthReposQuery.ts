@@ -1,17 +1,42 @@
 import { ErrorData } from "@src/api/ApiClient";
 import GitHubAPI from "@src/api/github";
-import { QueryParams } from "@src/api/github/types";
+import { QueryParams as GitHubQueryParams } from "@src/api/github/types";
 import GitLabAPI from "@src/api/gitlab";
+import { QueryParams as GitLabQueryParams } from "@src/api/gitlab/types";
 import { AccountType, Repository } from "@src/types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useRef } from "react";
 
+export type AuthRepoQueryProps = {
+  page: number
+  perPage: number
+}
+
 export function useAuthReposQuery(
   api: AccountType,
-  query: QueryParams.UserRepositories = {},
+  query: AuthRepoQueryProps = {
+    page: 1,
+    perPage: 10
+  },
   enabled: boolean = true
 ) {
   const abortRef = useRef<AbortController | null>(null);
+
+  function getGitHubQueryParams() : GitHubQueryParams.UserRepositories {
+    return {
+      page: query.page,
+      per_page: query.perPage,
+      type: 'owner'
+    };
+  }
+
+  function getGitLabQueryParams() : GitLabQueryParams.Projects {
+    return {
+      page: query.page,
+      per_page: query.perPage,
+      owned: true,
+    }
+  }
 
   const {
     data: githubData,
@@ -25,8 +50,7 @@ export function useAuthReposQuery(
       abortRef.current = new AbortController();
 
       return GitHubAPI.auth.repos({
-        ...query,
-        per_page: 10,
+        ...getGitHubQueryParams(),
         page: pageParam as number
       });
     },
@@ -53,8 +77,7 @@ export function useAuthReposQuery(
       abortRef.current = new AbortController();
 
       return GitLabAPI.projects.getAll({
-				membership: true,
-        per_page: 10,
+				...getGitLabQueryParams(),
         page: pageParam as number
       });
     },
