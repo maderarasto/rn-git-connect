@@ -8,9 +8,11 @@ import RepositoryListItem from '@src/components/RepositoryListItem';
 import { Drawer } from 'expo-router/drawer';
 import DrawerHeader from '@src/components/DrawerHeader';
 import {AntDesign} from '@expo/vector-icons';
+import { useNavigation, useRouter } from 'expo-router';
 
 const Page = () => {
   const authUserContext = useContext(AuthUserContext);
+  const router = useRouter();
 
   if (!authUserContext) {
     throw new Error('AuthUserContext must be used withing AUthUserProvider!');
@@ -34,6 +36,10 @@ const Page = () => {
   //   setSortBy(sortBy);
   // }
 
+  function onSearchIconPress() {
+    router.navigate('search/repositories');
+  }
+
   function onRepoListReachedEnd() {
     if (!isFetching && fetchNextPage) {
       fetchNextPage();
@@ -50,7 +56,7 @@ const Page = () => {
             titleStyle={{ flex: 1 }}
             headerRight={() => (
               <>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={onSearchIconPress}>
                   <AntDesign name="search1" size={24} color="black" />
                 </TouchableOpacity>
                 <TouchableOpacity>

@@ -1,21 +1,27 @@
-import { View, Text, TextInput, StyleSheet, NativeSyntheticEvent, TextInputFocusEventData, TextInputProps } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, TextInput, StyleSheet, NativeSyntheticEvent, TextInputFocusEventData, TextInputProps, ViewStyle } from 'react-native'
+import React, { ReactNode, useState } from 'react'
 import { PropViewStyle } from '@src/types'
 
 type LabeledTextInputParams = TextInputProps & {
   label?: string
+  icon?: ReactNode,
+  iconSide?: 'left' | 'right',
   errorText?: string
   accentColor?: string
   style?: PropViewStyle
+  highlight?: boolean
 }
 
 const DEFAULT_BORDER_COLOR = '#a3a3a3';
 
 const LabeledTextInput = ({
   label,
+  icon,
+  iconSide = 'left',
   errorText = '',
   accentColor = '#2563eb',
   style = {},
+  highlight = true,
   ...inputProps
 }: LabeledTextInputParams) => {
   const [focused, setFocused] = useState(false);
@@ -29,12 +35,24 @@ const LabeledTextInput = ({
     return containerStyle;
   }
 
-  function resolveInputStyle() {
+  function resolveInputWrapperStyle() {
     let style: PropViewStyle = {
+      ...styles.inputWrapper
+    };
+
+    if (highlight) {
+      style.borderColor = focused ? accentColor : DEFAULT_BORDER_COLOR;
+    }
+
+    return style;
+  }
+
+  function resolveInputStyle() {
+    let style: ViewStyle = {
       ...styles.input
     };
 
-    style.borderColor = focused ? accentColor : DEFAULT_BORDER_COLOR;
+    style.paddingLeft = icon && iconSide === 'left' ? 0 : style.paddingLeft;
 
     return style;
   }
@@ -48,6 +66,7 @@ const LabeledTextInput = ({
   }
 
   function onInputBlur() {
+    console.log('sadas');
     setFocused(false);
   }
 
@@ -56,7 +75,11 @@ const LabeledTextInput = ({
       {label ? (
         <Text style={styles.label}>{label}</Text>
       ) : ''}
-      <TextInput style={resolveInputStyle()} onFocus={onInputFocus} onBlur={onInputBlur} {...inputProps} />
+      <View style={resolveInputWrapperStyle()}>
+        {icon && iconSide === 'left' ? icon : ''}
+        <TextInput style={resolveInputStyle()} onFocus={onInputFocus} onBlur={onInputBlur} {...inputProps} />
+        {icon && iconSide === 'right' ? icon : ''}
+      </View>
       {errorText ? <Text style={styles.errorText}>{resolveErrorText()}</Text> : ''}
     </View>
   )
@@ -65,6 +88,7 @@ const LabeledTextInput = ({
 const styles = StyleSheet.create({
     container: {
       gap: 5,
+      flex: 1,
     },
 
     label: {
@@ -72,13 +96,21 @@ const styles = StyleSheet.create({
       fontFamily: 'Inter_600SemiBold'
     },
 
+    inputWrapper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      paddingHorizontal: 12,
+      borderWidth: 1,
+      borderColor: DEFAULT_BORDER_COLOR,
+      borderRadius: 5,
+      backgroundColor: '#eee',
+    },
+
     input: {
-        height: 40,
-        paddingHorizontal: 16,
-        borderWidth: 1,
-        borderColor: DEFAULT_BORDER_COLOR,
-        borderRadius: 5,
-        backgroundColor: '#eee',
+      flex: 1,
+      height: 40,
+      paddingLeft: 8,
     },
 
     errorText: {

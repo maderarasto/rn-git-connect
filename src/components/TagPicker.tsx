@@ -13,6 +13,7 @@ export type TagPickerProps = {
   items?: (string|Tag)[]
   tagIcon?: React.JSX.Element,
   multiple?: boolean
+  preselected?: boolean
   onPick?: (tag: Tag) => void
   onChange?: (tags: Tag[]) => void
 }
@@ -20,6 +21,7 @@ export type TagPickerProps = {
 const TagPicker = ({
   items = [],
   multiple = false,
+  preselected = true,
   onPick = () => {},
   onChange = () => {},
 }: TagPickerProps) => {
@@ -46,11 +48,11 @@ const TagPicker = ({
       if (typeof item === 'string') {
         tag.label = item;
         tag.key = `tag[${index}]:${item}`;
-        tag.selected = !multiple ? index === 0 : false
+        tag.selected = !multiple ? preselected && index === 0 : false
       } else {
         tag.label = item.label;
         tag.key = item.key ? item.key : `tag[${index}]:${item}`;
-        tag.selected = selectable ? !!item.selected : false;
+        tag.selected = selectable ? preselected && !!item.selected : false;
       }
 
       if (tag.selected && !multiple) {
