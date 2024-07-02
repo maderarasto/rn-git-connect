@@ -123,9 +123,53 @@ const users = {
     }
 }
 
+const search = {
+    repositories: async function (
+        username: string,
+        signal: AbortSignal|undefined = undefined
+    ): Promise<Repository[]> {
+        const q = `user:${username}`;
+        const config: AxiosRequestConfig = {
+            headers: {
+                Authorization: `token ${await getActiveAccountToken()}`
+            },
+            params: `q=${q}`,
+            signal,
+        };
+
+        try {
+            const response = await GitHubClient.get<Response.Repository[]>(`search/repositories`, config);
+            
+            return response.map((responseItem) => ({
+                id: responseItem.id,
+                name: responseItem.name,
+                path: responseItem.name,
+                fullpath: responseItem.full_name,
+                owner: responseItem.owner,
+                description: responseItem.description,
+                language: responseItem.language,
+                createdAt: responseItem.created_at,
+                gitUrl: responseItem.git_url,
+                sshUrl: responseItem.ssh_url,
+                cloneUrl: responseItem.clone_url,
+                hasIssues: responseItem.has_issues,
+                hasWiki: responseItem.has_wiki,
+                hasPages: responseItem.has_pages,
+                hasDiscussions: responseItem.has_discussions,
+                topics: responseItem.topics,
+                visibility: responseItem.visibility,
+                updatedAt: responseItem.updated_at
+            }));
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
+}
+
 const GitHubAPI = {
     auth,
     users,
+    search,
 };
 
 export default GitHubAPI;
