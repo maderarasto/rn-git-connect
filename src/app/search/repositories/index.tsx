@@ -29,7 +29,7 @@ const Page = () => {
 } = useSearchReposQuery(
     authUserContext.user?.accountType as AccountType,
     authUserContext.user?.username as string,
-    {},
+    { searchText },
     searchText !== ''
   );
 
@@ -125,7 +125,8 @@ const Page = () => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
+    // paddingVertical: 8,
   },
 
   categoryLabel: {

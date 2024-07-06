@@ -127,11 +127,12 @@ const users = {
 const search = {
     repositories: async function (
         username: string,
+        searchText: string,
         query: QueryParams.SearchRepositories,
         signal: AbortSignal|undefined = undefined
     ): Promise<Repository[]> {
         
-        const q = `user:${username}`;
+        const q = `user:${username} ${searchText}`;
         const config: AxiosRequestConfig = {
             headers: {
                 Authorization: `token ${await getActiveAccountToken()}`
@@ -142,6 +143,8 @@ const search = {
             },
             signal,
         };
+
+        console.log(config.params);
 
         try {
             const response = await GitHubClient.get<Response.SearchRepositories>(`search/repositories`, config);
@@ -172,7 +175,6 @@ const search = {
                 updatedAt: responseItem.updated_at
             }));
         } catch (error) {
-            console.log(error);
             return Promise.reject(error)
         }
     }

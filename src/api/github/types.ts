@@ -141,5 +141,7 @@ export namespace QueryParams {
     export type SearchRepositories = Partial<{
         per_page: number
         page: number
+        sort: 'best-match' | 'stars' | 'forks' | 'help-wanted-issues' | 'updated'
+        order: 'asc' | 'desc'
     }>
 }

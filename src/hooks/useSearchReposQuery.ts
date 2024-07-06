@@ -7,8 +7,11 @@ import { useInfiniteQuery } from "@tanstack/react-query"
 import { useRef } from "react"
 
 export type SearchReposQueryProps = {
+    searchText?: string
     page? : number
     perPage?: number
+    sort?: 'best-match' | 'stars' | 'forks' | 'help-wanted-issues' | 'updated'
+    order?: 'asc' | 'desc'
 }
 
 export function useSearchReposQuery(
@@ -19,11 +22,11 @@ export function useSearchReposQuery(
 ) {
     const abortRef = useRef<AbortController | null>(null);
 
-
-    if (!query.perPage) {
-        query.perPage = 10;
-    }
-
+    query.searchText = query.searchText ? query.searchText : '';
+    query.perPage = query.perPage ? query.perPage : 10;
+    query.sort = query.sort ? query.sort : 'best-match';
+    query.order = query.order ? query.order : 'desc';
+    
     const {
         data: githubData,
         isFetching: isGithubFetching,
@@ -43,6 +46,7 @@ export function useSearchReposQuery(
 
             return GitHubAPI.search.repositories(
                 username, 
+                query.searchText as string,
                 getGitHubQueryParams(),
                 abortRef.current.signal
             );
@@ -89,10 +93,12 @@ export function useSearchReposQuery(
     const refetch = api === 'GitHub' ? githubRefetch : gitlabRefetch;
     const fetchNextPage = api === "GitHub" ? fetchGithubNextPage : fetchGitlabNextPage;
 
-    function getGitHubQueryParams() : GitHubQueryParams.UserRepositories {
+    function getGitHubQueryParams() : GitHubQueryParams.SearchRepositories {
         return {
             page: query.page,
             per_page: query.perPage,
+            sort: query.sort,
+            order: query.order
         };
     }
     

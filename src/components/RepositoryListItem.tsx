@@ -11,7 +11,6 @@ export type RepositoryListItemProps = {
 const RepositoryListItem = ({
   repository
 }: RepositoryListItemProps) => {
-  console.log(repository.fullname);
   return (
     <TouchableOpacity style={styles.container}>
       {repository.avatarUrl ? (
