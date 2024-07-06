@@ -1,18 +1,15 @@
-import { View, Text, TextInput, StyleSheet, NativeSyntheticEvent, TextInputFocusEventData, TextInputProps, ViewStyle } from 'react-native'
+import { View, Text, TextInput, TextInputProps, StyleSheet, ViewStyle } from 'react-native'
 import React, { ReactNode, useState } from 'react'
-import { PropViewStyle } from '@src/types'
 
-type LabeledTextInputParams = TextInputProps & {
+type LabeledTextInputProps = TextInputProps & {
   label?: string
   icon?: ReactNode,
-  iconSide?: 'left' | 'right',
+  iconSide?: 'left' | 'right'
   errorText?: string
   accentColor?: string
-  style?: PropViewStyle
+  style?: ViewStyle
   highlight?: boolean
 }
-
-const DEFAULT_BORDER_COLOR = '#a3a3a3';
 
 const LabeledTextInput = ({
   label,
@@ -23,11 +20,11 @@ const LabeledTextInput = ({
   style = {},
   highlight = true,
   ...inputProps
-}: LabeledTextInputParams) => {
+}: LabeledTextInputProps) => {
   const [focused, setFocused] = useState(false);
-
+  
   function resolveContainerStyle() {
-    let containerStyle: PropViewStyle = {
+    let containerStyle: ViewStyle = {
       ...styles.container,
       ...(style as object)
     };
@@ -36,25 +33,25 @@ const LabeledTextInput = ({
   }
 
   function resolveInputWrapperStyle() {
-    let style: PropViewStyle = {
+    let wrapperStyle: ViewStyle = {
       ...styles.inputWrapper
     };
 
     if (highlight) {
-      style.borderColor = focused ? accentColor : DEFAULT_BORDER_COLOR;
+      wrapperStyle.borderColor = focused ? accentColor : '#a3a3a3';
     }
 
-    return style;
+    return wrapperStyle;
   }
 
   function resolveInputStyle() {
-    let style: ViewStyle = {
+    let inputStyle: ViewStyle = {
       ...styles.input
     };
 
-    style.paddingLeft = icon && iconSide === 'left' ? 0 : style.paddingLeft;
+    inputStyle.paddingLeft = icon && iconSide === 'left' ? 0 : style.paddingLeft;
 
-    return style;
+    return inputStyle;
   }
 
   function resolveErrorText() {
@@ -66,7 +63,6 @@ const LabeledTextInput = ({
   }
 
   function onInputBlur() {
-    console.log('sadas');
     setFocused(false);
   }
 
@@ -86,37 +82,36 @@ const LabeledTextInput = ({
 }
 
 const styles = StyleSheet.create({
-    container: {
-      gap: 5,
-      flex: 1,
-    },
+  container: {
+    gap: 5,
+  },
 
-    label: {
-      fontSize: 16,
-      fontFamily: 'Inter_600SemiBold'
-    },
+  label: {
+    fontSize: 16,
+    fontFamily: 'Inter_600SemiBold',
+  },
 
-    inputWrapper: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
-      paddingHorizontal: 12,
-      borderWidth: 1,
-      borderColor: DEFAULT_BORDER_COLOR,
-      borderRadius: 5,
-      backgroundColor: '#eee',
-    },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    height: 40,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: '#a3a3a3',
+    borderRadius: 5,
+    backgroundColor: '#eee',
+  },
 
-    input: {
-      flex: 1,
-      height: 40,
-      paddingLeft: 8,
-    },
+  input: {
+    flex: 1,
+    paddingLeft: 8,
+  },
 
-    errorText: {
-      fontSize: 14,
-      color: '#dc2626'
-    }
+  errorText: {
+    fontSize: 14,
+    color: '#dc2626',
+  }
 })
 
 export default LabeledTextInput

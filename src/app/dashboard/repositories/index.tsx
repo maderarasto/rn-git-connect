@@ -1,8 +1,7 @@
-import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, FlatList } from 'react-native'
 import React, { useContext } from 'react'
 import { AccountType } from '@src/types';
 import { AuthUserContext } from '@src/context/AuthUserContext';
-import { FlatList } from 'react-native-gesture-handler';
 import { useAuthReposQuery } from '@src/hooks/useAuthReposQuery';
 import RepositoryListItem from '@src/components/RepositoryListItem';
 import { Drawer } from 'expo-router/drawer';

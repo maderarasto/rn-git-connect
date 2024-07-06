@@ -1,15 +1,41 @@
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ViewStyle } from 'react-native'
-import React, { useState } from 'react'
+import { View, TouchableOpacity, ScrollView, Text, StyleSheet, ViewStyle, FlatList } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
 import BaseHeader from '@src/components/BaseHeader'
 import {AntDesign} from '@expo/vector-icons';
 import LabeledTextInput from '@src/components/LabeledTextInput';
 import { useRouter } from 'expo-router';
 import { ProgrammingLanguages } from '@src/structures';
 import TagItem from '@src/components/TagItem';
+import { useSearchReposQuery } from '@src/hooks/useSearchReposQuery';
+import { AuthUserContext } from '@src/context/AuthUserContext';
+import { AccountType } from '@src/types';
+import RepositoryListItem from '@src/components/RepositoryListItem';
 
 const Page = () => {
   const [searchText, setSearchText] = useState('');
+  const authUserContext = useContext(AuthUserContext);
   const router = useRouter();
+
+  if (!authUserContext) {
+    throw new Error('AuthUserContext must be used withing AUthUserProvider!');
+  }
+
+  const {
+    data: repositories,
+    isFetching,
+    error,
+    refetch,
+    fetchNextPage
+} = useSearchReposQuery(
+    authUserContext.user?.accountType as AccountType,
+    authUserContext.user?.username as string,
+    {},
+    searchText !== ''
+  );
+
+  useEffect(() => {
+    refetch();
+  }, [searchText]);
 
   function resolveFiltersContainerStyle() {
     const style: ViewStyle = {
@@ -35,6 +61,12 @@ const Page = () => {
     router.back();
   }
 
+  function onRepoListReachedEnd() {
+    if (!isFetching && fetchNextPage) {
+      fetchNextPage();
+    }
+  }
+
   return (
     <View>
       <BaseHeader options={{
@@ -55,6 +87,7 @@ const Page = () => {
             icon={<AntDesign name="search1" size={20} color="gray" />} 
             iconSide="right" 
             value={searchText}
+            style={{ flex: 1, }}
             onChangeText={onSearchTextChange}
             highlight={false} />
         )
@@ -73,13 +106,26 @@ const Page = () => {
           </View>
         </View>
       </ScrollView>
+      {searchText !== '' ? (
+        <View style={{ paddingVertical: 8 }}>
+          <Text style={styles.searchTextLabel}>Search results</Text>
+          <FlatList 
+            data={repositories?.pages.flat()} 
+            renderItem={(({item: repo}) => (
+              <RepositoryListItem key={repo.path} repository={repo} />
+            ))}
+            contentContainerStyle={{ paddingHorizontal: 16 }}
+            onEndReachedThreshold={0.5}
+            onEndReached={onRepoListReachedEnd} />
+        </View>
+      ) : ''}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16
+    paddingHorizontal: 16
   },
 
   categoryLabel: {
@@ -91,6 +137,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8
+  },
+
+  searchTextLabel: {
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+    fontSize: 12, 
+    fontWeight: 'bold', 
+    textTransform: 'uppercase', 
+    color: '#6b7280',
   }
 })
 

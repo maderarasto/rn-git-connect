@@ -10,6 +10,7 @@ const _layout = () => {
     <QueryClientProvider client={queryClient}>
       <AuthUserProvider>
         <Stack
+          initialRouteName="auth/pat"
           screenOptions={{
             headerShown: false
           }}
