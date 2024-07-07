@@ -26,8 +26,6 @@ export default class ApiClient {
             ...config,
         };
 
-        console.log(this.client.getUri(requestConfig),);
-
         try {
             const response = await this.client.get<T>(url, requestConfig);
             return response.data;

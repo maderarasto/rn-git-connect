@@ -50,7 +50,9 @@ const Page = () => {
   }
 
   function pickLanguageTag(tagLabel: string) {
-    router.navigate(`search/repositories/list?language=${tagLabel}`);
+    router.navigate(
+      encodeURI(`search/repositories/list?language=${encodeURIComponent(tagLabel)}`)
+    );
   }
 
   function onSearchTextChange(text: string) {
@@ -68,7 +70,7 @@ const Page = () => {
   }
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <BaseHeader options={{
         headerLeft: () => (
           <TouchableOpacity onPress={onBackPress}>
@@ -126,7 +128,7 @@ const Page = () => {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
-    // paddingVertical: 8,
+    paddingVertical: 8,
   },
 
   categoryLabel: {

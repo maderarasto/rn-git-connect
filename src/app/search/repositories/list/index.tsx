@@ -1,19 +1,46 @@
-import { View, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { View, Text, TouchableOpacity, FlatList } from 'react-native'
+import React, { useContext } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import {AntDesign} from '@expo/vector-icons';
 import BaseHeader from '@src/components/BaseHeader';
+import { AuthUserContext } from '@src/context/AuthUserContext';
+import { AccountType } from '@src/types';
+import { useSearchReposQuery } from '@src/hooks/useSearchReposQuery';
+import RepositoryListItem from '@src/components/RepositoryListItem';
 
 const Page = () => {
+  const authUserContext = useContext(AuthUserContext);
   const {language} = useLocalSearchParams();
   const router = useRouter();
+
+  if (!authUserContext) {
+    throw new Error('AuthUserContext must be used withing AUthUserProvider!');
+  }
+
+  const {
+    data: repositories,
+    isFetching,
+    error,
+    refetch,
+    fetchNextPage
+} = useSearchReposQuery(
+    authUserContext.user?.accountType as AccountType,
+    authUserContext.user?.username as string,
+    { language: language as string },
+  );
 
   function onBackPress() {
     router.back();
   }
 
+  function onRepoListReachedEnd() {
+    if (!isFetching && fetchNextPage) {
+      fetchNextPage();
+    }
+  }
+
   return (
-    <View>
+    <View style={{flex: 1,}}>
       <BaseHeader options={{
         headerLeft: () => (
           <TouchableOpacity onPress={onBackPress}>
@@ -25,7 +52,16 @@ const Page = () => {
         }, 
         title: `Repositories with ${language}`
       }} />
-      <Text>Page: {language}</Text>
+      {!isFetching ? (
+        <FlatList 
+          data={repositories?.pages.flat()} 
+          renderItem={(({item: repo}) => (
+            <RepositoryListItem key={repo.path} repository={repo} />
+          ))}
+          contentContainerStyle={{ paddingHorizontal: 16 }}
+          // onEndReachedThreshold={0.5}
+          onEndReached={onRepoListReachedEnd} />
+      ) : ''}
     </View>
   )
 }

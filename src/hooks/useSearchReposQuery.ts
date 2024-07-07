@@ -8,6 +8,7 @@ import { useRef } from "react"
 
 export type SearchReposQueryProps = {
     searchText?: string
+    language?: string
     page? : number
     perPage?: number
     sort?: 'best-match' | 'stars' | 'forks' | 'help-wanted-issues' | 'updated'
@@ -17,12 +18,12 @@ export type SearchReposQueryProps = {
 export function useSearchReposQuery(
     api: AccountType,
     username: string,
-    query: SearchReposQueryProps = {},
+    { searchText = '', language, ...query}: SearchReposQueryProps = {},
     enabled: boolean = true
 ) {
     const abortRef = useRef<AbortController | null>(null);
 
-    query.searchText = query.searchText ? query.searchText : '';
+    searchText = searchText ? searchText : '';
     query.perPage = query.perPage ? query.perPage : 10;
     query.sort = query.sort ? query.sort : 'best-match';
     query.order = query.order ? query.order : 'desc';
@@ -35,7 +36,7 @@ export function useSearchReposQuery(
         fetchNextPage: fetchGithubNextPage,
     } = useInfiniteQuery<Repository[], ErrorData>({
         queryKey: ['githubSearchRepos'],
-        queryFn: ({ pageParam }) => {
+        queryFn: async({ pageParam }) => {
             abortRef.current?.abort();
             abortRef.current = new AbortController();
             query.page = pageParam as number;
@@ -46,14 +47,15 @@ export function useSearchReposQuery(
 
             return GitHubAPI.search.repositories(
                 username, 
-                query.searchText as string,
+                searchText,
+                language,
                 getGitHubQueryParams(),
                 abortRef.current.signal
             );
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, _, lastPageParam) => {
-            if (!enabled || !lastPage.length) {
+            if (!lastPage.length || lastPage.length < (query.perPage as number)) {
                 return undefined;
             }
         
