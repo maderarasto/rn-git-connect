@@ -7,6 +7,8 @@ import { AuthUserContext } from '@src/context/AuthUserContext';
 import { AccountType } from '@src/types';
 import { useSearchReposQuery } from '@src/hooks/useSearchReposQuery';
 import RepositoryListItem from '@src/components/RepositoryListItem';
+import NotFoundRecord from '@src/components/NotFoundRecord';
+import Loading from '@src/components/Loading';
 
 const Page = () => {
   const authUserContext = useContext(AuthUserContext);
@@ -29,6 +31,14 @@ const Page = () => {
     { language: language as string },
   );
 
+  function foundAnyRepositories() {
+    if (!repositories) {
+      return false;
+    }
+
+    return repositories.pages.flat().length > 0;
+  }
+
   function onBackPress() {
     router.back();
   }
@@ -40,7 +50,7 @@ const Page = () => {
   }
 
   return (
-    <View style={{flex: 1,}}>
+    <View style={{ flex: 1,}}>
       <BaseHeader options={{
         headerLeft: () => (
           <TouchableOpacity onPress={onBackPress}>
@@ -52,16 +62,20 @@ const Page = () => {
         }, 
         title: `Repositories with ${language}`
       }} />
-      {!isFetching ? (
-        <FlatList 
-          data={repositories?.pages.flat()} 
-          renderItem={(({item: repo}) => (
-            <RepositoryListItem key={repo.path} repository={repo} />
-          ))}
-          contentContainerStyle={{ paddingHorizontal: 16 }}
-          // onEndReachedThreshold={0.5}
-          onEndReached={onRepoListReachedEnd} />
-      ) : ''}
+      <View style={{ position: 'relative', flex: 1, }}>
+        {isFetching ? <Loading /> : ''}
+        {!isFetching && !foundAnyRepositories() ? <NotFoundRecord message="No repositories found." /> : ''}
+        {!isFetching ? (
+          <FlatList 
+            data={repositories?.pages.flat()} 
+            renderItem={(({item: repo}) => (
+              <RepositoryListItem key={repo.path} repository={repo} />
+            ))}
+            contentContainerStyle={{ paddingHorizontal: 16 }}
+            // onEndReachedThreshold={0.5}
+            onEndReached={onRepoListReachedEnd} />
+        ) : ''}
+      </View>
     </View>
   )
 }

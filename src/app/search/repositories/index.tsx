@@ -10,6 +10,8 @@ import { useSearchReposQuery } from '@src/hooks/useSearchReposQuery';
 import { AuthUserContext } from '@src/context/AuthUserContext';
 import { AccountType } from '@src/types';
 import RepositoryListItem from '@src/components/RepositoryListItem';
+import Loading from '@src/components/Loading';
+import NotFoundRecord from '@src/components/NotFoundRecord';
 
 const Page = () => {
   const [searchText, setSearchText] = useState('');
@@ -37,9 +39,16 @@ const Page = () => {
     refetch();
   }, [searchText]);
 
+  function foundAnyRepositories() {
+    if (!repositories) {
+      return false;
+    }
+
+    return repositories.pages.flat().length > 0;
+  }
+
   function resolveFiltersContainerStyle() {
     const style: ViewStyle = {
-
     };
 
     if (searchText) {
@@ -94,8 +103,8 @@ const Page = () => {
             highlight={false} />
         )
       }} />
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={resolveFiltersContainerStyle()}>
+      <ScrollView style={resolveFiltersContainerStyle()} contentContainerStyle={styles.container}>
+        <View>
           <Text style={styles.categoryLabel}>List your repositories by language</Text>
           <View style={styles.tagsContainer}>
             {ProgrammingLanguages.map((langItem, index) => (
@@ -109,7 +118,9 @@ const Page = () => {
         </View>
       </ScrollView>
       {searchText !== '' ? (
-        <View style={{ paddingVertical: 8 }}>
+        <View style={{ position: 'relative', flex: 1, paddingVertical: 8 }}>
+          {isFetching ? <Loading /> : ''}
+          {!isFetching && !foundAnyRepositories() ? <NotFoundRecord message="No repositories found." /> : ''}
           <Text style={styles.searchTextLabel}>Search results</Text>
           <FlatList 
             data={repositories?.pages.flat()} 
