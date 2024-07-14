@@ -122,6 +122,7 @@ export namespace QueryParams {
 
     export type Projects = Partial<{
         search: string
+        with_programming_language: string
         membership: boolean
         owned: boolean
         order_by: OrderBy

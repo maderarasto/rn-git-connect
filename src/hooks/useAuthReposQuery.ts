@@ -3,9 +3,10 @@ import GitHubAPI from "@src/api/github";
 import { QueryParams as GitHubQueryParams } from "@src/api/github/types";
 import GitLabAPI from "@src/api/gitlab";
 import { QueryParams as GitLabQueryParams } from "@src/api/gitlab/types";
+import { AuthUserContext } from "@src/context/AuthUserContext";
 import { AccountType, Repository } from "@src/types";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 
 export type AuthRepoQueryProps = {
   page: number
@@ -13,14 +14,24 @@ export type AuthRepoQueryProps = {
 }
 
 export function useAuthReposQuery(
-  api: AccountType,
   query: AuthRepoQueryProps = {
     page: 1,
     perPage: 10
   },
   enabled: boolean = true
 ) {
+  const authUserContext = useContext(AuthUserContext);
   const abortRef = useRef<AbortController | null>(null);
+
+  if (!authUserContext) {
+    throw new Error('AuthUserContext must be used withing AuthUserProvider!');
+  }
+
+  if(!authUserContext.user) {
+    throw new Error('User not found in AuthUserContext!');
+  }
+
+  const authUser = authUserContext.user;
 
   function getGitHubQueryParams() : GitHubQueryParams.UserRepositories {
     return {
@@ -62,7 +73,7 @@ export function useAuthReposQuery(
 
       return (lastPageParam as number) + 1;
     },
-    enabled: api === 'GitHub' && enabled
+    enabled: authUser.accountType === 'GitHub' && enabled
   });
 
 	const {
@@ -89,13 +100,13 @@ export function useAuthReposQuery(
 
       return (lastPageParam as number) + 1;
     },
-    enabled: api === 'GitLab' && enabled
+    enabled: authUser.accountType === 'GitLab' && enabled
   });
 
-  const data = api === "GitHub" ? githubData : gitlabData;
-  const isFetching = api === "GitHub" ? isGithubFetching : isGitlabFetching;
-  const error = api === "GitHub" ? githubError : gitlabError;
-  const fetchNextPage = api === "GitHub" ? fetchGithubNextPage : fetchGitlabNextPage;
+  const data = authUser.accountType === "GitHub" ? githubData : gitlabData;
+  const isFetching = authUser.accountType === "GitHub" ? isGithubFetching : isGitlabFetching;
+  const error = authUser.accountType === "GitHub" ? githubError : gitlabError;
+  const fetchNextPage = authUser.accountType === "GitHub" ? fetchGithubNextPage : fetchGitlabNextPage;
 
   return {
     data,

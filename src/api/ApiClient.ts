@@ -24,7 +24,6 @@ export default class ApiClient {
         
         const requestConfig: AxiosRequestConfig = {
             ...config,
-            
         };
 
         try {

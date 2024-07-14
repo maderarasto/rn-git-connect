@@ -121,6 +121,12 @@ export namespace Response {
             pull: boolean
         }
     }>;
+
+    export type SearchRepositories = Partial<{
+        incomplete_results: boolean
+        total_count: number
+        items: Repository[]
+    }>;
 }
 
 export namespace QueryParams {
@@ -130,5 +136,13 @@ export namespace QueryParams {
         direction: 'asc' | 'desc'
         per_page: number
         page: number
+    }>
+
+    export type SearchRepositories = Partial<{
+        q: string
+        per_page: number
+        page: number
+        sort: 'best-match' | 'stars' | 'forks' | 'help-wanted-issues' | 'updated'
+        order: 'asc' | 'desc'
     }>
 }

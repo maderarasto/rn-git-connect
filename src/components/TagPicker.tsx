@@ -2,12 +2,8 @@ import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { TouchableOpacity } from 'react-native';
 import { convertToSlug } from '@src/utils'
-
-export type Tag = {
-  label: string
-  key?: string
-  selected?: boolean
-}
+import { Tag } from '@src/types';
+import TagItem from './TagItem';
 
 export type TagPickerProps = {
   items?: (string|Tag)[]
@@ -108,14 +104,13 @@ const TagPicker = ({
   return (
     <View style={styles.container}>
       {tags.map((tag) => (
-        <TouchableOpacity 
-          key={tag.key} 
-          onPress={() => pickTag(tag)}
-        >
-          <View style={resolveTagStyle(tag)}>
-            <Text style={resolveTagTextStyle(tag)}>{tag.label}</Text>
-          </View>
-        </TouchableOpacity>
+        <TagItem 
+          key={tag.key}
+          tag={tag}
+          tagStyle={resolveTagStyle(tag)}
+          tagTextStyle={resolveTagTextStyle(tag)}
+          onPress={() => pickTag(tag)} 
+          interactive />
       ))}
     </View>
   )

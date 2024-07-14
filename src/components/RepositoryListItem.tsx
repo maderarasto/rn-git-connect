@@ -1,9 +1,8 @@
-import { View, Text, StyleSheet, Image } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import { Repository } from '@src/types'
 import { convertToSlug, getRelativeTime } from '@src/utils'
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export type RepositoryListItemProps = {
   repository: Repository

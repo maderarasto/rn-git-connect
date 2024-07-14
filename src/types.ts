@@ -63,5 +63,11 @@ export type FilterTag = {
 
 export type SortBy = typeof SortByItems[number];
 
+export type Tag = {
+    label: string
+    key?: string
+    selected?: boolean
+};
+
 // Deprecated
 export type PropViewStyle = StyleProp<ViewStyle>;

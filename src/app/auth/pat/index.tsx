@@ -6,7 +6,6 @@ import {AntDesign} from '@expo/vector-icons';
 import AuthHeader from '@src/components/AuthHeader';
 import { convertFromSlug, saveAccount } from '@src/utils';
 import { AccountType, User } from '@src/types';
-import LabeledTextInput from '@src/components/LabeledTextInput';
 import TextButton from '@src/components/buttons/TextButton';
 import Dialog, { DialogMethods } from '@src/components/dialogs/Dialog';
 import PrimaryButton from '@src/components/buttons/PrimaryButton';
@@ -14,6 +13,7 @@ import AuthPATGitHubTemplate from '@src/templates/help/AuthPATGitHubTemplate';
 import AuthPATGitLabTemplate from '@src/templates/help/AuthPATGitLabTemplate';
 import useAuthQuery from '@src/hooks/useAuthQuery';
 import { AuthUserContext, AuthUserContextType } from '@src/context/AuthUserContext';
+import LabeledTextInput from '@src/components/LabeledTextInput';
 
 const UNAUTHORIZED_MESSAGES = [
   'Bad credentials',
@@ -49,7 +49,7 @@ const Page = () => {
 
   useEffect(() => {
     if (!authUser) return;
-    console.log('auth');
+    
     signUserIn(authUserContext, authUser);
     router.replace('dashboard');
   }, [authUser]);
@@ -123,12 +123,12 @@ const Page = () => {
       <View style={styles.container}>
         <AuthHeader title={resolveHeaderTitle()} icon={resolveHeaderIcon()} />
         <View style={styles.form}>
-          <LabeledTextInput 
-            errorText={resolveError()}
-            label="Personal Access Token"
-            style={styles.inputPAT}
-            value={authToken} 
-            onChangeText={onTokenChangeText} />
+            <LabeledTextInput
+              label="Personal Access Token"
+              value={authToken} 
+              errorText={resolveError()}
+              style={{ marginBottom: 8, }}
+              onChangeText={onTokenChangeText} />
           <TextButton 
             style={styles.infoButton} 
             text="How to get personal access token?" 
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   },
 
   form: {
-    gap: 16,
+    // gap: 16,
     width: '70%',
   },
 
