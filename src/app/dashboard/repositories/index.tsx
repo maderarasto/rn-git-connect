@@ -1,39 +1,21 @@
 import { View, StyleSheet, TouchableOpacity, FlatList } from 'react-native'
-import React, { useContext } from 'react'
-import { AccountType } from '@src/types';
-import { AuthUserContext } from '@src/context/AuthUserContext';
+import React from 'react'
 import { useAuthReposQuery } from '@src/hooks/useAuthReposQuery';
 import RepositoryListItem from '@src/components/RepositoryListItem';
 import { Drawer } from 'expo-router/drawer';
 import DrawerHeader from '@src/components/DrawerHeader';
 import {AntDesign} from '@expo/vector-icons';
-import { useNavigation, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 const Page = () => {
-  const authUserContext = useContext(AuthUserContext);
   const router = useRouter();
-
-  if (!authUserContext) {
-    throw new Error('AuthUserContext must be used withing AUthUserProvider!');
-  }
 
   const {
     data: repositories,
     isFetching,
     error,
     fetchNextPage
-  } = useAuthReposQuery(
-    authUserContext.user?.accountType as AccountType, 
-  );
-  
-  // function filteredByLanguage() {
-  //   return repositories;
-  // }
-
-  // function onFilterChanged({languages, sortBy}: RepositoryFilterData) {
-  //   setLanguage(languages[0]);
-  //   setSortBy(sortBy);
-  // }
+  } = useAuthReposQuery();
 
   function onSearchIconPress() {
     router.navigate('search/repositories');

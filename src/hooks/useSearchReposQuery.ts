@@ -1,10 +1,12 @@
 import { ErrorData } from "@src/api/ApiClient"
 import GitHubAPI from "@src/api/github"
 import { QueryParams as GitHubQueryParams } from "@src/api/github/types";
+import GitLabAPI from "@src/api/gitlab";
 import { QueryParams as GitLabQueryParams } from "@src/api/gitlab/types";
+import { AuthUserContext } from "@src/context/AuthUserContext";
 import { AccountType, Repository } from "@src/types"
 import { useInfiniteQuery } from "@tanstack/react-query"
-import { useRef } from "react"
+import { useContext, useRef } from "react"
 
 export type SearchReposQueryProps = {
     searchText?: string
@@ -16,12 +18,25 @@ export type SearchReposQueryProps = {
 }
 
 export function useSearchReposQuery(
-    api: AccountType,
-    username: string,
-    { searchText = '', language, ...query}: SearchReposQueryProps = {},
+    { 
+        searchText = '', 
+        language, 
+        ...query
+    }: SearchReposQueryProps = {},
     enabled: boolean = true
 ) {
+    const authUserContext = useContext(AuthUserContext);
     const abortRef = useRef<AbortController | null>(null);
+
+    if (!authUserContext) {
+        throw new Error('AuthUserContext must be used withing AuthUserProvider!');
+    }
+
+    if(!authUserContext.user) {
+        throw new Error('User not found in AuthUserContext!');
+    }
+
+    const authUser = authUserContext.user;
 
     searchText = searchText ? searchText : '';
     query.perPage = query.perPage ? query.perPage : 10;
@@ -46,7 +61,7 @@ export function useSearchReposQuery(
             }
 
             return GitHubAPI.search.repositories(
-                username, 
+                authUser.username as string,
                 searchText,
                 language,
                 getGitHubQueryParams(),
@@ -61,7 +76,7 @@ export function useSearchReposQuery(
         
             return (lastPageParam as number) + 1;
         },
-        enabled: api === 'GitHub' && enabled
+        enabled: authUser.accountType === 'GitHub' && enabled
     });
 
     const {
@@ -75,8 +90,13 @@ export function useSearchReposQuery(
         queryFn: ({ pageParam }) => {
             abortRef.current?.abort();
             abortRef.current = new AbortController();
+            query.page = pageParam as number;
 
-            return new Promise((resolve) => resolve([]));
+            if (!enabled) {
+                return [];
+            }
+
+            return [];
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, _, lastPageParam) => {
@@ -86,14 +106,14 @@ export function useSearchReposQuery(
         
             return (lastPageParam as number) + 1;
         },
-        enabled: api === 'GitLab' && enabled
+        enabled: authUser.accountType === 'GitLab' && enabled
     });
 
-    const data = api === "GitHub" ? githubData : gitlabData;
-    const isFetching = api === "GitHub" ? isGithubFetching : isGitlabFetching;
-    const error = api === "GitHub" ? githubError : gitlabError;
-    const refetch = api === 'GitHub' ? githubRefetch : gitlabRefetch;
-    const fetchNextPage = api === "GitHub" ? fetchGithubNextPage : fetchGitlabNextPage;
+    const data = authUser.accountType === "GitHub" ? githubData : gitlabData;
+    const isFetching = authUser.accountType === "GitHub" ? isGithubFetching : isGitlabFetching;
+    const error = authUser.accountType === "GitHub" ? githubError : gitlabError;
+    const refetch = authUser.accountType === 'GitHub' ? githubRefetch : gitlabRefetch;
+    const fetchNextPage = authUser.accountType === "GitHub" ? fetchGithubNextPage : fetchGitlabNextPage;
 
     function getGitHubQueryParams() : GitHubQueryParams.SearchRepositories {
         return {

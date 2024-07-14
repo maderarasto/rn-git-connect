@@ -18,22 +18,13 @@ const Page = () => {
   const authUserContext = useContext(AuthUserContext);
   const router = useRouter();
 
-  if (!authUserContext) {
-    throw new Error('AuthUserContext must be used withing AUthUserProvider!');
-  }
-
   const {
     data: repositories,
     isFetching,
     error,
     refetch,
     fetchNextPage
-} = useSearchReposQuery(
-    authUserContext.user?.accountType as AccountType,
-    authUserContext.user?.username as string,
-    { searchText },
-    searchText !== ''
-  );
+} = useSearchReposQuery({searchText}, searchText !== '');
 
   useEffect(() => {
     refetch();

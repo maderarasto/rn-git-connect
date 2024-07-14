@@ -26,8 +26,6 @@ const Page = () => {
     refetch,
     fetchNextPage
 } = useSearchReposQuery(
-    authUserContext.user?.accountType as AccountType,
-    authUserContext.user?.username as string,
     { language: language as string },
   );
 
