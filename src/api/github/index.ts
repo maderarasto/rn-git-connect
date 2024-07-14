@@ -126,29 +126,15 @@ const users = {
 
 const search = {
     repositories: async function (
-        username: string,
-        searchText: string,
-        language: string|undefined,
         query: QueryParams.SearchRepositories,
         signal: AbortSignal|undefined = undefined
     ): Promise<Repository[]> {
         
-        let q = `user:${username}`;
-        
-        if (language) {
-            q += ' language:' + language;
-        }
-
-        if (searchText) {
-            q += ' ' + searchText;
-        }
-
         const config: AxiosRequestConfig = {
             headers: {
                 Authorization: `token ${await getActiveAccountToken()}`
             },
             params: {
-                q: q,
                 ...query,
             },
             signal,

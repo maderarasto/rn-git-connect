@@ -61,9 +61,6 @@ export function useSearchReposQuery(
             }
 
             return GitHubAPI.search.repositories(
-                authUser.username as string,
-                searchText,
-                language,
                 getGitHubQueryParams(),
                 abortRef.current.signal
             );
@@ -96,7 +93,7 @@ export function useSearchReposQuery(
                 return [];
             }
 
-            return [];
+            return GitLabAPI.projects.getAll(getGitLabQueryParams(), abortRef.current.signal);
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, _, lastPageParam) => {
@@ -116,7 +113,18 @@ export function useSearchReposQuery(
     const fetchNextPage = authUser.accountType === "GitHub" ? fetchGithubNextPage : fetchGitlabNextPage;
 
     function getGitHubQueryParams() : GitHubQueryParams.SearchRepositories {
+        let searchQuery = `user:${authUser.username}`;
+
+        if (language) {
+            searchQuery += ' language:' + language;
+        }
+
+        if (searchText) {
+            searchQuery += ' ' + searchText;
+        }
+
         return {
+            q: searchQuery,
             page: query.page,
             per_page: query.perPage,
             sort: query.sort,
@@ -125,10 +133,21 @@ export function useSearchReposQuery(
     }
     
     function getGitLabQueryParams() : GitLabQueryParams.Projects {
-        return {
+        let queryParams: GitLabQueryParams.Projects = {
+            owned: true,
             page: query.page,
             per_page: query.perPage,
+        };
+
+        if (searchText) {
+            queryParams.search = searchText;
         }
+
+        if (language) {
+            queryParams.with_programming_language = language;
+        }
+
+        return queryParams;
     }
 
     return {
