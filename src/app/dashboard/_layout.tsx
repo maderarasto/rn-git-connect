@@ -1,12 +1,33 @@
-import React from "react";
+import React, { useRef } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
-import {MaterialIcons, Ionicons, Octicons} from '@expo/vector-icons';
+import {MaterialIcons, Ionicons, Octicons, AntDesign} from '@expo/vector-icons';
 import { View, Text, Image, StyleSheet, SafeAreaView } from "react-native";
-import { DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
+import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import DrawerHeader from "@src/components/DrawerHeader";
+import ConnectionItem from "@src/components/ConnectionItem";
+import ConnectionButton from "@src/components/buttons/ConnectionButton";
+import AccountTypeDialog from "@src/components/dialogs/AccountTypeDialog";
+import { DialogMethods } from "@src/components/dialogs/Dialog";
+import { AccountType } from "@src/types";
+import { useRouter } from "expo-router";
+import { convertToSlug } from "@src/utils";
 
-const DrawerContent = (props: any) => {
+type DrawerContentProps = DrawerContentComponentProps & {
+  dialogRef?:  React.RefObject<DialogMethods>
+}
+
+const DrawerContent = ({
+  dialogRef,
+  ...props
+}: DrawerContentProps) => {
+  const {navigation} = props;
+
+  function onAddConnectionPress() {
+    navigation.closeDrawer();
+    dialogRef?.current?.show();
+  }
+
   return (
     <DrawerContentScrollView {...props} style={{ backgroundColor: '#dedede'}}>
       <View style={styles.drawerHeader}>
@@ -21,17 +42,34 @@ const DrawerContent = (props: any) => {
           <Text style={styles.drawerSectionLabel}>Connections</Text>
           <Text style={styles.drawerSectionLabel}>0/5</Text>
         </View>
-        <Text style={styles.drawerSectionDefaultMessage}>Currently no connections supported.</Text>
+        <View>
+          <ConnectionItem type="GitHub" username="maderarasto" displayName="Rastislav Madera" />
+          <ConnectionButton onPress={onAddConnectionPress} />
+        </View>
       </View>
     </DrawerContentScrollView>
   );
 }
 
 const Layout = () => {
+  const router = useRouter();
+  const dialogRef = useRef<DialogMethods>(null);
+
+  function onAccountTypeChoose(accountType: AccountType) {
+    if (!dialogRef.current) {
+      return;
+    }
+
+    dialogRef.current.hide();
+    setTimeout(() => {
+      router.navigate(`auth/pat?type=${convertToSlug(accountType)}`);
+    }, 150);
+  }
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer 
-        drawerContent={DrawerContent}
+        drawerContent={(props) => <DrawerContent {...{ ...props, dialogRef }} />}
         screenOptions={{
           header: ({ navigation, route, options }) => (
             <DrawerHeader 
@@ -69,6 +107,10 @@ const Layout = () => {
           }}
         />
       </Drawer>
+      <AccountTypeDialog 
+        ref={dialogRef} 
+        title="Select account type" 
+        onTypeChoose={onAccountTypeChoose} />
     </GestureHandlerRootView>
   );
 };
