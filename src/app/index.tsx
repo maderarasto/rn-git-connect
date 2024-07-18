@@ -46,6 +46,8 @@ export default function Page() {
     Inter_700Bold
   });
 
+  console.log(hasAnyAccount());
+
   useEffect(() => {  
     if (hasAnyAccount()) {
       refetch(); 

@@ -17,7 +17,10 @@ const DrawerContent = (props: any) => {
         <DrawerItemList {...props} />
       </View>
       <View style={styles.drawerSection}>
-        <Text style={styles.drawerSectionLabel}>Connections</Text>
+        <View style={styles.drawerSectionHeader}>
+          <Text style={styles.drawerSectionLabel}>Connections</Text>
+          <Text style={styles.drawerSectionLabel}>0/5</Text>
+        </View>
         <Text style={styles.drawerSectionDefaultMessage}>Currently no connections supported.</Text>
       </View>
     </DrawerContentScrollView>
@@ -101,6 +104,12 @@ const styles = StyleSheet.create({
 
   drawerSection: {
     padding: 10,
+  },
+
+  drawerSectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 
   drawerSectionLabel: { 

@@ -18,7 +18,7 @@ const auth = {
 
         try {
             const response = await GitHubClient.get<Response.User>('/user', config);
-
+            
             return {
                 id: response.id,
                 username: response.login,
