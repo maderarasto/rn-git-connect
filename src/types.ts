@@ -12,6 +12,12 @@ export type AccountType = (
     | 'Git'
 );
 
+export type Connection = {
+    type: AccountType,
+    username: string
+    email: string
+};
+
 export type User = Partial<{
     accountType: AccountType
     id: number

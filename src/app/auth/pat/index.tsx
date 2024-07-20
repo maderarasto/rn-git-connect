@@ -51,7 +51,6 @@ const Page = () => {
     if (!authUser) return;
     
     signUserIn(authUserContext, authUser);
-    router.replace('dashboard');
   }, [authUser]);
 
   function resolveHeaderTitle() {
@@ -87,11 +86,12 @@ const Page = () => {
     return error.message;
   }
 
-  function signUserIn(context: AuthUserContextType, user: User) {
-    saveAccount(accountType, user.username ?? '', authToken);
+  async function signUserIn(context: AuthUserContextType, user: User) {
+    await saveAccount(user, authToken);
     context.setUser(user);
 
     ToastAndroid.show('Authenticated', ToastAndroid.SHORT);
+    router.replace('dashboard');
   }
 
   function onTokenChangeText(token: string) {

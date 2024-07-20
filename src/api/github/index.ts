@@ -169,7 +169,6 @@ const search = {
                 updatedAt: responseItem.updated_at
             }));
         } catch (error) {
-            console.log(error);
             return Promise.reject(error)
         }
     }

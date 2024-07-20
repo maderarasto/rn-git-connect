@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
 import {MaterialIcons, Ionicons, Octicons, AntDesign} from '@expo/vector-icons';
@@ -9,9 +9,10 @@ import ConnectionItem from "@src/components/ConnectionItem";
 import ConnectionButton from "@src/components/buttons/ConnectionButton";
 import AccountTypeDialog from "@src/components/dialogs/AccountTypeDialog";
 import { DialogMethods } from "@src/components/dialogs/Dialog";
-import { AccountType } from "@src/types";
+import { AccountType, Connection } from "@src/types";
 import { useRouter } from "expo-router";
 import { convertToSlug } from "@src/utils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type DrawerContentProps = DrawerContentComponentProps & {
   dialogRef?:  React.RefObject<DialogMethods>
@@ -22,6 +23,19 @@ const DrawerContent = ({
   ...props
 }: DrawerContentProps) => {
   const {navigation} = props;
+  const [connections, setConnections] = useState<Record<string, Connection>|null>(null);
+
+  useEffect(() => {
+    (async function () {
+      let loadedConnections: unknown = await AsyncStorage.getItem('connections');
+      
+      if (typeof loadedConnections === 'string') {
+        loadedConnections = JSON.parse(loadedConnections);
+      }
+      
+      setConnections(loadedConnections as Record<string, Connection>);
+    })();
+  }, []);
 
   function onAddConnectionPress() {
     navigation.closeDrawer();
@@ -40,10 +54,12 @@ const DrawerContent = ({
       <View style={styles.drawerSection}>
         <View style={styles.drawerSectionHeader}>
           <Text style={styles.drawerSectionLabel}>Connections</Text>
-          <Text style={styles.drawerSectionLabel}>0/5</Text>
+          <Text style={styles.drawerSectionLabel}>{connections ? Object.keys(connections).length : 0}/5</Text>
         </View>
         <View>
-          <ConnectionItem type="GitHub" username="maderarasto" displayName="Rastislav Madera" />
+          {connections ? Object.entries(connections).map(([connectionId, connection]) => (
+            <ConnectionItem key={connectionId} connection={connection} />
+          )) : ''}
           <ConnectionButton onPress={onAddConnectionPress} />
         </View>
       </View>

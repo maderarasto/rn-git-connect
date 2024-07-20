@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
-import { AccountType } from './types';
+import { AccountType, User } from './types';
 
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
@@ -39,11 +39,26 @@ export function convertFromSlug(text: string) {
     }, '');
 }
 
-export async function saveAccount(accountType: AccountType, accountUsername: string, accountToken: string) {
-    const accountId = `${convertToSlug(accountType)}-token.${accountUsername}`;
+export async function saveAccount(authUser: User, authToken: string) {
+    let connections = await AsyncStorage.getItem('connections') ?? {};
+    const accountId = `${convertToSlug(authUser.accountType as string)}-token.${authUser.username}`;
+
+    if (typeof connections === 'string') {
+        connections = JSON.parse(connections);
+    }
+
+    connections = {
+        ...connections,
+        [accountId]: {
+            type: authUser.accountType as AccountType,
+            username: authUser.username as string,
+            email: authUser.email as string
+        }
+    };
     
+    await AsyncStorage.setItem('connections', JSON.stringify(connections));
     await AsyncStorage.setItem('active_account_id', accountId);
-    await SecureStore.setItemAsync(accountId, accountToken);
+    await SecureStore.setItemAsync(accountId, authToken);
 }
 
 export async function getActiveAccountToken(): Promise<string|null> {
