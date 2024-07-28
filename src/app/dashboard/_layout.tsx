@@ -10,7 +10,7 @@ import ConnectionButton from "@src/components/buttons/ConnectionButton";
 import AccountTypeDialog from "@src/components/dialogs/AccountTypeDialog";
 import { DialogMethods } from "@src/components/dialogs/Dialog";
 import { AccountType, Connection } from "@src/types";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { convertToSlug } from "@src/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -23,19 +23,25 @@ const DrawerContent = ({
   ...props
 }: DrawerContentProps) => {
   const {navigation} = props;
-  const [connections, setConnections] = useState<Record<string, Connection>|null>(null);
+  const [connections, setConnections] = useState<Record<string, Connection>|null>(null); 
+  const rootNav = useNavigation();
 
   useEffect(() => {
-    (async function () {
-      let loadedConnections: unknown = await AsyncStorage.getItem('connections');
-      
-      if (typeof loadedConnections === 'string') {
-        loadedConnections = JSON.parse(loadedConnections);
-      }
-      
-      setConnections(loadedConnections as Record<string, Connection>);
-    })();
+    loadConnections();
   }, []);
+
+  async function loadConnections() {
+    console.log(rootNav.getState());
+    console.log('loading');
+    let loadedConnections: unknown = await AsyncStorage.getItem('connections');
+    console.log(loadedConnections);
+      
+    if (typeof loadedConnections === 'string') {
+      loadedConnections = JSON.parse(loadedConnections);
+    }
+    
+    setConnections(loadedConnections as Record<string, Connection>);
+  }
 
   function onAddConnectionPress() {
     navigation.closeDrawer();

@@ -1,7 +1,7 @@
 import { ErrorData } from "@src/api/ApiClient";
 import GitHubAPI from "@src/api/github";
 import GitLabAPI from "@src/api/gitlab";
-import { ApiType, User } from "@src/types";
+import { AccountType, ApiType, User } from "@src/types";
 // import GitLabAPI from "@src/api/gitlab";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -16,7 +16,7 @@ export default function useAuthQuery(api: ApiType, token = '', enabled = false) 
         refetch: githubRefetch
     } = useQuery<User, ErrorData>({
         queryKey: ['githubAuthUser'],
-        queryFn: () => GitHubAPI.auth.user(authToken),
+        queryFn: () => resolveData(GitHubAPI.auth.user, 'GitHub'),
         enabled: false,
     });
 
@@ -27,7 +27,7 @@ export default function useAuthQuery(api: ApiType, token = '', enabled = false) 
         refetch: gitlabRefetch
     } = useQuery<User, ErrorData>({
         queryKey: ['gitlabAuthUser'],
-        queryFn: () => GitLabAPI.auth.user(authToken),
+        queryFn: () => resolveData(GitLabAPI.auth.user, 'GitLab'),
         enabled: false,
     });
 
@@ -36,15 +36,21 @@ export default function useAuthQuery(api: ApiType, token = '', enabled = false) 
     const error = api === 'GitHub' ? githubError : gitlabError;
     const refetch = api === 'GitHub' ? githubRefetch : gitlabRefetch;
 
-    function resolveData() {
-        if (!data) {
-            return data;
-        }
+    async function resolveData(callback: (token?: string) => Promise<User>, accountType: AccountType) {
+        try {
+            const userData = await callback(authToken);
 
-        return {
-            accountType: api,
-            ...data
-        };
+            if (!userData) {
+                return userData;
+            }
+
+            return {
+                ...userData,
+                accountType,
+            };
+        } catch (err) {
+            return Promise.reject(err);
+        }
     }
 
     if (enabled) {
@@ -52,7 +58,7 @@ export default function useAuthQuery(api: ApiType, token = '', enabled = false) 
     }
 
     return {
-        data: resolveData(),
+        data,
         isLoading,
         error,
         authToken,

@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableWithoutFeedback, Keyboard, ActivityIndicator, ToastAndroid } from 'react-native'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { useLocalSearchParams, useRouter } from 'expo-router'
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import {AntDesign} from '@expo/vector-icons';
 
 import AuthHeader from '@src/components/AuthHeader';
@@ -14,6 +14,7 @@ import AuthPATGitLabTemplate from '@src/templates/help/AuthPATGitLabTemplate';
 import useAuthQuery from '@src/hooks/useAuthQuery';
 import { AuthUserContext, AuthUserContextType } from '@src/context/AuthUserContext';
 import LabeledTextInput from '@src/components/LabeledTextInput';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const UNAUTHORIZED_MESSAGES = [
   'Bad credentials',
@@ -28,6 +29,7 @@ const Page = () => {
   }
 
   const router = useRouter();
+  const navigation = useNavigation();
   const {type} = useLocalSearchParams();
   const accountType: AccountType 
     = convertFromSlug(type as string) as AccountType;
@@ -48,6 +50,7 @@ const Page = () => {
   } = useAuthQuery(accountType);
 
   useEffect(() => {
+    console.log(authUser);
     if (!authUser) return;
     
     signUserIn(authUserContext, authUser);
@@ -88,10 +91,15 @@ const Page = () => {
 
   async function signUserIn(context: AuthUserContextType, user: User) {
     await saveAccount(user, authToken);
+    console.log('signin');
     context.setUser(user);
 
     ToastAndroid.show('Authenticated', ToastAndroid.SHORT);
-    router.replace('dashboard');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'dashboard'} as never]
+    })
+    //router.replace('dashboard');
   }
 
   function onTokenChangeText(token: string) {

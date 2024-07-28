@@ -59,6 +59,7 @@ export async function saveAccount(authUser: User, authToken: string) {
     await AsyncStorage.setItem('connections', JSON.stringify(connections));
     await AsyncStorage.setItem('active_account_id', accountId);
     await SecureStore.setItemAsync(accountId, authToken);
+    console.log('data stored');
 }
 
 export async function getActiveAccountToken(): Promise<string|null> {
