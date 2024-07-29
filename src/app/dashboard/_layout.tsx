@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
 import {MaterialIcons, Ionicons, Octicons, AntDesign} from '@expo/vector-icons';
-import { View, Text, Image, StyleSheet, SafeAreaView } from "react-native";
+import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity } from "react-native";
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import DrawerHeader from "@src/components/DrawerHeader";
 import ConnectionItem from "@src/components/ConnectionItem";
@@ -10,9 +10,10 @@ import ConnectionButton from "@src/components/buttons/ConnectionButton";
 import AccountTypeDialog from "@src/components/dialogs/AccountTypeDialog";
 import { DialogMethods } from "@src/components/dialogs/Dialog";
 import { AccountType, Connection } from "@src/types";
-import { useNavigation, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { convertToSlug } from "@src/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import useActiveAccount from "@src/hooks/useActiveAccount";
 
 type DrawerContentProps = DrawerContentComponentProps & {
   dialogRef?:  React.RefObject<DialogMethods>
@@ -23,18 +24,16 @@ const DrawerContent = ({
   ...props
 }: DrawerContentProps) => {
   const {navigation} = props;
+
   const [connections, setConnections] = useState<Record<string, Connection>|null>(null); 
-  const rootNav = useNavigation();
+  const {accountId} = useActiveAccount();
 
   useEffect(() => {
     loadConnections();
   }, []);
 
   async function loadConnections() {
-    console.log(rootNav.getState());
-    console.log('loading');
     let loadedConnections: unknown = await AsyncStorage.getItem('connections');
-    console.log(loadedConnections);
       
     if (typeof loadedConnections === 'string') {
       loadedConnections = JSON.parse(loadedConnections);
@@ -59,12 +58,16 @@ const DrawerContent = ({
       </View>
       <View style={styles.drawerSection}>
         <View style={styles.drawerSectionHeader}>
-          <Text style={styles.drawerSectionLabel}>Connections</Text>
-          <Text style={styles.drawerSectionLabel}>{connections ? Object.keys(connections).length : 0}/5</Text>
+          <Text style={styles.drawerSectionLabel}>Connections {connections ? Object.keys(connections).length : 0}/5</Text>
+          <View style={styles.drawerSectionActions}>
+            <TouchableOpacity>
+              <MaterialIcons name="settings" size={16} color="#6b7280" />
+            </TouchableOpacity>
+          </View>
         </View>
         <View>
           {connections ? Object.entries(connections).map(([connectionId, connection]) => (
-            <ConnectionItem key={connectionId} connection={connection} />
+            <ConnectionItem key={connectionId} connection={connection} active={connectionId === accountId} />
           )) : ''}
           <ConnectionButton onPress={onAddConnectionPress} />
         </View>
@@ -174,6 +177,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+
+  drawerSectionActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
 
   drawerSectionLabel: { 

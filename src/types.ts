@@ -13,9 +13,10 @@ export type AccountType = (
 );
 
 export type Connection = {
-    type: AccountType,
+    type: AccountType
     username: string
     email: string
+    expired?: boolean
 };
 
 export type User = Partial<{

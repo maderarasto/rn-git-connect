@@ -1,15 +1,19 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
-import {AntDesign} from '@expo/vector-icons';
+import {AntDesign, FontAwesome6} from '@expo/vector-icons';
 
 import { AccountType, Connection } from '@src/types'
 
 type ConnectionItemProps = {
-  connection: Connection
+  connection: Connection,
+  active?: boolean
+  expired?: boolean
 }
 
 const ConnectionItem = ({
-  connection
+  connection,
+  active = false,
+  expired = false,
 }: ConnectionItemProps) => {
   function resolveIcon() {
     let iconEl = <AntDesign name="question" size={24} color="black" />
@@ -23,14 +27,30 @@ const ConnectionItem = ({
     return iconEl;
   }
 
-  return (
-    <View style={styles.container}>
-      {resolveIcon()}
-      <View>
-        <Text style={styles.textUsername}>{connection.username}</Text>
-        <Text style={styles.textDisplayName}>{connection.email}</Text>
+  function resolveConnectionDetails() {
+    return (
+      <View style={{ flex: 1, }}>
+          <Text style={styles.textUsername}>{connection.username}</Text>
+          <Text style={styles.textDisplayName}>{connection.email}</Text>
+        </View>
+    );
+  }
+
+  if (active) 
+    return (
+      <View style={styles.container}>
+        {resolveIcon()}
+        {resolveConnectionDetails()}
+        {active ? <FontAwesome6 name="plug-circle-check" size={16} color="#16a34a" /> : ''}
       </View>
-    </View>
+    )
+
+  return (
+    <TouchableOpacity style={styles.container}>
+      {resolveIcon()}
+      {resolveConnectionDetails()}
+      {expired ? <FontAwesome6 name="plug-circle-exclamation" size={16} color="#ef4444" /> : ''}
+    </TouchableOpacity>
   )
 }
 
