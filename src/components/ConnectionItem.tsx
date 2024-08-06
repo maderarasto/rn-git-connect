@@ -3,18 +3,23 @@ import React from 'react'
 import {AntDesign, FontAwesome6} from '@expo/vector-icons';
 
 import { AccountType, Connection } from '@src/types'
+import { useRouter } from 'expo-router';
 
 type ConnectionItemProps = {
   connection: Connection,
+  interactable?: boolean
   active?: boolean
-  expired?: boolean
+  expired?: boolean,
 }
 
 const ConnectionItem = ({
   connection,
+  interactable = true,
   active = false,
   expired = false,
 }: ConnectionItemProps) => {
+  const router = useRouter();
+
   function resolveIcon() {
     let iconEl = <AntDesign name="question" size={24} color="black" />
 
@@ -25,18 +30,22 @@ const ConnectionItem = ({
     }
 
     return iconEl;
-  }
+  } 
 
   function resolveConnectionDetails() {
     return (
       <View style={{ flex: 1, }}>
-          <Text style={styles.textUsername}>{connection.username}</Text>
-          <Text style={styles.textDisplayName}>{connection.email}</Text>
-        </View>
+        <Text style={styles.textUsername}>{connection.username}</Text>
+        <Text style={styles.textDisplayName}>{connection.email}</Text>
+      </View>
     );
   }
 
-  if (active) 
+  function onPress() {
+    router.navigate(`auth/switch?accountId=${connection.accountId}`);
+  }
+
+  if (active || !interactable)
     return (
       <View style={styles.container}>
         {resolveIcon()}
@@ -46,7 +55,7 @@ const ConnectionItem = ({
     )
 
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
       {resolveIcon()}
       {resolveConnectionDetails()}
       {expired ? <FontAwesome6 name="plug-circle-exclamation" size={16} color="#ef4444" /> : ''}
@@ -60,7 +69,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     gap: 8, 
     paddingHorizontal: 8, 
-    paddingVertical: 8
+    paddingVertical: 8,
   },
 
   textUsername: {

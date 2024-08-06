@@ -22,7 +22,7 @@ export function useAuthReposQuery(
 ) {
   const authUserContext = useContext(AuthUserContext);
   const abortRef = useRef<AbortController | null>(null);
-
+  
   if (!authUserContext) {
     throw new Error('AuthUserContext must be used withing AuthUserProvider!');
   }
@@ -32,7 +32,7 @@ export function useAuthReposQuery(
   }
 
   const authUser = authUserContext.user;
-
+  
   function getGitHubQueryParams() : GitHubQueryParams.UserRepositories {
     return {
       page: query.page,
@@ -86,7 +86,7 @@ export function useAuthReposQuery(
     queryFn: ({ pageParam }) => {
       abortRef.current?.abort();
       abortRef.current = new AbortController();
-
+      
       return GitLabAPI.projects.getAll({
 				...getGitLabQueryParams(),
         page: pageParam as number

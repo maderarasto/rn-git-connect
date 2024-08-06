@@ -50,7 +50,6 @@ const Page = () => {
   } = useAuthQuery(accountType);
 
   useEffect(() => {
-    console.log(authUser);
     if (!authUser) return;
     
     signUserIn(authUserContext, authUser);
@@ -91,7 +90,6 @@ const Page = () => {
 
   async function signUserIn(context: AuthUserContextType, user: User) {
     await saveAccount(user, authToken);
-    console.log('signin');
     context.setUser(user);
 
     ToastAndroid.show('Authenticated', ToastAndroid.SHORT);

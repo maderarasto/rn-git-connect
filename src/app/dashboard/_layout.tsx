@@ -10,7 +10,7 @@ import ConnectionButton from "@src/components/buttons/ConnectionButton";
 import AccountTypeDialog from "@src/components/dialogs/AccountTypeDialog";
 import { DialogMethods } from "@src/components/dialogs/Dialog";
 import { AccountType, Connection } from "@src/types";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useNavigation, useRouter } from "expo-router";
 import { convertToSlug } from "@src/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useActiveAccount from "@src/hooks/useActiveAccount";
@@ -27,7 +27,7 @@ const DrawerContent = ({
 
   const [connections, setConnections] = useState<Record<string, Connection>|null>(null); 
   const {accountId} = useActiveAccount();
-
+  
   useEffect(() => {
     loadConnections();
   }, []);
@@ -38,7 +38,7 @@ const DrawerContent = ({
     if (typeof loadedConnections === 'string') {
       loadedConnections = JSON.parse(loadedConnections);
     }
-    
+
     setConnections(loadedConnections as Record<string, Connection>);
   }
 

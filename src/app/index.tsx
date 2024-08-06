@@ -18,6 +18,7 @@ import { AuthUserContext} from "@src/context/AuthUserContext";
 import AccountTypeDialog from "@src/components/dialogs/AccountTypeDialog";
 import { DialogMethods } from "@src/components/dialogs/Dialog";
 import PrimaryButton from "@src/components/buttons/PrimaryButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Page() {
   const [canRedirect, setCanRedirect] = useState(false);

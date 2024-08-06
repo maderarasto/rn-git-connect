@@ -39,10 +39,10 @@ export function convertFromSlug(text: string) {
     }, '');
 }
 
-export async function saveAccount(authUser: User, authToken: string) {
+export async function saveAccount(authUser: User, authToken: string, expired: boolean = false) {
     let connections = await AsyncStorage.getItem('connections') ?? {};
     const accountId = `${convertToSlug(authUser.accountType as string)}-token.${authUser.username}`;
-
+    
     if (typeof connections === 'string') {
         connections = JSON.parse(connections);
     }
@@ -50,16 +50,17 @@ export async function saveAccount(authUser: User, authToken: string) {
     connections = {
         ...connections,
         [accountId]: {
+            accountId,
             type: authUser.accountType as AccountType,
             username: authUser.username as string,
-            email: authUser.email as string
+            email: authUser.email as string,
+            expired,
         }
     };
     
     await AsyncStorage.setItem('connections', JSON.stringify(connections));
     await AsyncStorage.setItem('active_account_id', accountId);
     await SecureStore.setItemAsync(accountId, authToken);
-    console.log('data stored');
 }
 
 export async function getActiveAccountToken(): Promise<string|null> {
