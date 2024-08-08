@@ -55,12 +55,13 @@ export default function useAuthQuery(accountType: AccountType, token: string = '
         refetch,
     } = buildQuery(accountType, authToken, enabled);
 
-    const invalidateQuery = (all: boolean = false) => {
+    const invalidateQuery = async (all: boolean = false) => {
         if (all) {
-            return queryClient.invalidateQueries();
+            await queryClient.invalidateQueries();
         }
 
-        return queryClient.invalidateQueries({
+        queryClient.setQueryData([queriesProps[accountType].queryKey], null);
+        await queryClient.invalidateQueries({
             queryKey: [queriesProps[accountType].queryKey]
         });
     };

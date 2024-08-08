@@ -22,6 +22,7 @@ const UNAUTHORIZED_MESSAGES = [
 ];
 
 const Page = () => {
+  const [queryEnabled, setQueryEnabled] = useState(false);
   const authUserContext = useContext(AuthUserContext);
 
   if (!authUserContext) {
@@ -33,7 +34,7 @@ const Page = () => {
   const {type} = useLocalSearchParams();
   const accountType: AccountType 
     = convertFromSlug(type as string) as AccountType;
-
+  
   if (!accountType) {
     router.replace('/');
     return;
@@ -46,8 +47,8 @@ const Page = () => {
     error,
     authToken,
     setAuthToken, 
-    refetch
-  } = useAuthQuery(accountType);
+    invalidateQuery,
+  } = useAuthQuery(accountType, '', queryEnabled);
 
   useEffect(() => {
     if (!authUser) return;
@@ -90,6 +91,8 @@ const Page = () => {
 
   async function signUserIn(context: AuthUserContextType, user: User) {
     await saveAccount(user, authToken);
+    console.log(queryEnabled)
+    await invalidateQuery(true);
     context.setUser(user);
 
     ToastAndroid.show('Authenticated', ToastAndroid.SHORT);
@@ -115,7 +118,7 @@ const Page = () => {
 
   async function onSubmitButtonPress() {
     Keyboard.dismiss();
-    refetch();
+    setQueryEnabled(true);
   }
 
   function onGoButtonPressed() {
