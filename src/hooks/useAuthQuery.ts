@@ -39,6 +39,7 @@ function buildQuery(accountType: AccountType, accountToken: string, enabled?: bo
     return useQuery<User, ErrorData>({
         queryKey: [queryProps?.queryKey],
         queryFn: () => resolveData(accountType, accountToken, queryProps.callback),
+        retry: 3,
         enabled
     })
 }

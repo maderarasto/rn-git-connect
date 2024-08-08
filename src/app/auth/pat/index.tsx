@@ -34,7 +34,7 @@ const Page = () => {
   const accountType: AccountType 
     = convertFromSlug(type as string) as AccountType;
 
-  if (!accountType || accountType === 'Git') {
+  if (!accountType) {
     router.replace('/');
     return;
   }
@@ -96,8 +96,7 @@ const Page = () => {
     navigation.reset({
       index: 0,
       routes: [{ name: 'dashboard'} as never]
-    })
-    //router.replace('dashboard');
+    });
   }
 
   function onTokenChangeText(token: string) {

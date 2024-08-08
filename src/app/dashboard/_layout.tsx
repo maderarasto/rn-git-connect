@@ -38,7 +38,7 @@ const DrawerContent = ({
     if (typeof loadedConnections === 'string') {
       loadedConnections = JSON.parse(loadedConnections);
     }
-
+    
     setConnections(loadedConnections as Record<string, Connection>);
   }
 
@@ -46,7 +46,7 @@ const DrawerContent = ({
     navigation.closeDrawer();
     dialogRef?.current?.show();
   }
-
+  
   return (
     <DrawerContentScrollView {...props} style={{ backgroundColor: '#dedede'}}>
       <View style={styles.drawerHeader}>

@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
-import { AccountType, User } from './types';
+import { AccountType, Connection, User } from './types';
 
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
@@ -39,28 +39,35 @@ export function convertFromSlug(text: string) {
     }, '');
 }
 
-export async function saveAccount(authUser: User, authToken: string, expired: boolean = false) {
+export async function updateConnection(connection: Connection, expired: boolean = false) {
     let connections = await AsyncStorage.getItem('connections') ?? {};
-    const accountId = `${convertToSlug(authUser.accountType as string)}-token.${authUser.username}`;
-    
+
     if (typeof connections === 'string') {
         connections = JSON.parse(connections);
     }
 
     connections = {
         ...connections,
-        [accountId]: {
-            accountId,
-            type: authUser.accountType as AccountType,
-            username: authUser.username as string,
-            email: authUser.email as string,
+        [connection.accountId]: {
+            ...connection,
             expired,
         }
     };
-    
+
     await AsyncStorage.setItem('connections', JSON.stringify(connections));
-    await AsyncStorage.setItem('active_account_id', accountId);
-    await SecureStore.setItemAsync(accountId, authToken);
+}
+
+export async function saveAccount(authUser: User, authToken: string, expired: boolean = false) {
+    const connection: Connection = {
+        accountId: `${convertToSlug(authUser.accountType as string)}-token.${authUser.username}`,
+        type: authUser.accountType as AccountType,
+        username: authUser.username as string,
+        email: authUser.email as string,
+    }
+
+    await updateConnection(connection);
+    await AsyncStorage.setItem('active_account_id', connection.accountId);
+    await SecureStore.setItemAsync(connection.accountId, authToken);
 }
 
 export async function getActiveAccountToken(): Promise<string|null> {

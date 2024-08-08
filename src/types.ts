@@ -25,7 +25,15 @@ export type QueryProps = {
     callback: (accountToken?: string) => Promise<any>
 };
 
+export type InfiniteQueryProps = {
+    queryKey: string,
+    callback: (props: Record<string, any> ) => Promise<any>
+}
+
 export type AccountQueryProps = Record<AccountType, QueryProps>;
+export type AccountInfiniteQueryProps = Record<AccountType, InfiniteQueryProps>;
+
+export type AbortControllerRef = React.MutableRefObject<AbortController | null>;
 
 export type User = Partial<{
     accountType: AccountType

@@ -16,7 +16,6 @@ const ConnectionItem = ({
   connection,
   interactable = true,
   active = false,
-  expired = false,
 }: ConnectionItemProps) => {
   const router = useRouter();
 
@@ -53,12 +52,12 @@ const ConnectionItem = ({
         {active ? <FontAwesome6 name="plug-circle-check" size={16} color="#16a34a" /> : ''}
       </View>
     )
-
+  
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       {resolveIcon()}
       {resolveConnectionDetails()}
-      {expired ? <FontAwesome6 name="plug-circle-exclamation" size={16} color="#ef4444" /> : ''}
+      {connection.expired ? <FontAwesome6 name="plug-circle-exclamation" size={16} color="#ef4444" /> : ''}
     </TouchableOpacity>
   )
 }
