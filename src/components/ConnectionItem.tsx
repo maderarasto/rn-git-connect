@@ -9,6 +9,7 @@ type ConnectionItemProps = {
   connection: Connection,
   interactable?: boolean
   active?: boolean
+  size?: 'small'|'large'
   expired?: boolean,
 }
 
@@ -16,16 +17,21 @@ const ConnectionItem = ({
   connection,
   interactable = true,
   active = false,
+  size = 'small',
 }: ConnectionItemProps) => {
   const router = useRouter();
 
+  function resolveIconSize() {
+    return size === 'large' ? 36 : 24;
+  }
+
   function resolveIcon() {
-    let iconEl = <AntDesign name="question" size={24} color="black" />
+    let iconEl = <AntDesign name="question" size={resolveIconSize()} color="black" />
 
     if (connection.type === 'GitHub') {
-      iconEl = <AntDesign name="github" size={24} color="#1e293b" />
+      iconEl = <AntDesign name="github" size={resolveIconSize()} color="#1e293b" />
     } else if (connection.type === 'GitLab') {
-      iconEl = <AntDesign name="gitlab" size={24} color="#ea580c" />
+      iconEl = <AntDesign name="gitlab" size={resolveIconSize()} color="#ea580c" />
     }
 
     return iconEl;
@@ -49,7 +55,12 @@ const ConnectionItem = ({
       <View style={styles.container}>
         {resolveIcon()}
         {resolveConnectionDetails()}
-        {active ? <FontAwesome6 name="plug-circle-check" size={16} color="#16a34a" /> : ''}
+        {active ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <FontAwesome6 name="plug-circle-check" size={16} color="#16a34a" />
+            {size === 'large' ? <Text style={{ fontWeight: 'bold', color: '#16a34a'}}>Connected</Text> : ''}
+          </View>
+        ) : ''}
       </View>
     )
   
@@ -57,7 +68,12 @@ const ConnectionItem = ({
     <TouchableOpacity style={styles.container} onPress={onPress}>
       {resolveIcon()}
       {resolveConnectionDetails()}
-      {connection.expired ? <FontAwesome6 name="plug-circle-exclamation" size={16} color="#ef4444" /> : ''}
+      {connection.expired ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+          <FontAwesome6 name="plug-circle-exclamation" size={16} color="#ef4444" />
+          {size === 'large' ? <Text style={{ fontWeight: 'bold', color: '#ef4444'}}>Expired</Text> : ''}
+        </View>
+      ) : ''}
     </TouchableOpacity>
   )
 }

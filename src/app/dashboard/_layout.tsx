@@ -10,7 +10,7 @@ import ConnectionButton from "@src/components/buttons/ConnectionButton";
 import AccountTypeDialog from "@src/components/dialogs/AccountTypeDialog";
 import { DialogMethods } from "@src/components/dialogs/Dialog";
 import { AccountType, Connection } from "@src/types";
-import { useFocusEffect, useNavigation, useRouter } from "expo-router";
+import { router, useFocusEffect, useNavigation, useRouter } from "expo-router";
 import { convertToSlug } from "@src/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useActiveAccount from "@src/hooks/useActiveAccount";
@@ -42,6 +42,11 @@ const DrawerContent = ({
     setConnections(loadedConnections as Record<string, Connection>);
   }
 
+  function onManageConnectionsPress() {
+    navigation.closeDrawer();
+    router.navigate('manage/connections');
+  }
+
   function onAddConnectionPress() {
     navigation.closeDrawer();
     dialogRef?.current?.show();
@@ -60,7 +65,7 @@ const DrawerContent = ({
         <View style={styles.drawerSectionHeader}>
           <Text style={styles.drawerSectionLabel}>Connections {connections ? Object.keys(connections).length : 0}/5</Text>
           <View style={styles.drawerSectionActions}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={onManageConnectionsPress}>
               <MaterialIcons name="settings" size={16} color="#6b7280" />
             </TouchableOpacity>
           </View>
