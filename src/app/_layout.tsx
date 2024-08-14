@@ -14,7 +14,9 @@ const _layout = () => {
           screenOptions={{
             headerShown: false
           }}
-        />
+        >
+          {/* <Stack.Screen name="manage/connections/index" /> */}
+        </Stack>
       </AuthUserProvider>
     </QueryClientProvider>
   );

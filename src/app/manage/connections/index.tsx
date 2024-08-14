@@ -4,14 +4,19 @@ import {AntDesign} from '@expo/vector-icons';
 import BaseHeader from '@src/components/BaseHeader'
 import { useRouter } from 'expo-router';
 import useActiveAccount from '@src/hooks/useActiveAccount';
-import { useEffect, useState } from 'react';
-import { Connection } from '@src/types';
+import { useEffect, useRef, useState } from 'react';
+import { AccountType, Connection } from '@src/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ConnectionItem from '@src/components/ConnectionItem';
+import AccountTypeDialog from '@src/components/dialogs/AccountTypeDialog';
+import { DialogMethods } from '@src/components/dialogs/Dialog';
+import { convertToSlug } from '@src/utils';
 
 const Page = () => {
   const [connections, setConnections] = useState<Record<string, Connection>|null>(null); 
   const {accountId} = useActiveAccount();
+
+  const dialogRef = useRef<DialogMethods>(null);
   const router = useRouter();
   
   useEffect(() => {
@@ -26,6 +31,21 @@ const Page = () => {
     }
     
     setConnections(loadedConnections as Record<string, Connection>);
+  }
+
+  function onAddConnectionPress() {
+    dialogRef.current?.show();
+  }
+
+  function onAccountTypeChoose(accountType: AccountType) {
+    if (!dialogRef.current) {
+      return;
+    }
+
+    dialogRef.current.hide();
+    setTimeout(() => {
+      router.navigate(`auth/pat?type=${convertToSlug(accountType)}&redirect=manage/connections/index`);
+    }, 150);
   }
 
   function onBackPress() {
@@ -43,7 +63,7 @@ const Page = () => {
         headerRight: () => (
           <>
             {connections && Object.keys(connections).length < 5 ? (
-              <TouchableOpacity>
+              <TouchableOpacity onPress={onAddConnectionPress}>
               <AntDesign name="plus" size={24} color="black" />
             </TouchableOpacity>
             ) : ''} 
@@ -59,6 +79,10 @@ const Page = () => {
           )) : ''}
         </View>
       </View>
+      <AccountTypeDialog 
+        ref={dialogRef} 
+        title="Select account type" 
+        onTypeChoose={onAccountTypeChoose} />
     </View>
   )
 }

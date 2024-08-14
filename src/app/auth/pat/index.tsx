@@ -31,7 +31,7 @@ const Page = () => {
 
   const router = useRouter();
   const navigation = useNavigation();
-  const {type} = useLocalSearchParams();
+  const {type, redirect} = useLocalSearchParams();
   const accountType: AccountType 
     = convertFromSlug(type as string) as AccountType;
   
@@ -91,14 +91,24 @@ const Page = () => {
 
   async function signUserIn(context: AuthUserContextType, user: User) {
     await saveAccount(user, authToken);
-    console.log(queryEnabled)
     await invalidateQuery(true);
     context.setUser(user);
-
+    
     ToastAndroid.show('Authenticated', ToastAndroid.SHORT);
+    
+    const navigationRoutes = [
+      { name: 'dashboard'} as never,
+    ];
+
+    if (redirect) {
+      navigationRoutes.push({
+        name: redirect as string
+      } as never);
+    }
+
     navigation.reset({
-      index: 0,
-      routes: [{ name: 'dashboard'} as never]
+      index: redirect ? 1 : 0,
+      routes: navigationRoutes
     });
   }
 

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native'
 import React from 'react'
 import {AntDesign, FontAwesome6} from '@expo/vector-icons';
 
@@ -46,6 +46,18 @@ const ConnectionItem = ({
     );
   }
 
+  function resolveTouchableStyle() {
+    let style: ViewStyle = {
+      ...styles.container,
+    }
+
+    if (connection.expired) {
+      style.opacity = 0.6;
+    }
+
+    return style;
+  }
+
   function onPress() {
     router.navigate(`auth/switch?accountId=${connection.accountId}`);
   }
@@ -65,7 +77,7 @@ const ConnectionItem = ({
     )
   
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity style={resolveTouchableStyle()} onPress={onPress}>
       {resolveIcon()}
       {resolveConnectionDetails()}
       {connection.expired ? (

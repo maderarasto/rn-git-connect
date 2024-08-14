@@ -19,7 +19,7 @@ const queriesProps: AccountQueryProps = {
 async function resolveData(accountType: AccountType, accountToken: string, callback: (token?: string) => Promise<User>) {
     try {
         const userData = await callback(accountToken);
-
+        console.log(userData);
         if (!userData) {
             return userData;
         }
@@ -29,6 +29,7 @@ async function resolveData(accountType: AccountType, accountToken: string, callb
             accountType,
         };
     } catch (err) {
+        console.log(err);
         return Promise.reject(err);
     }
 }
@@ -38,8 +39,10 @@ function buildQuery(accountType: AccountType, accountToken: string, enabled?: bo
 
     return useQuery<User, ErrorData>({
         queryKey: [queryProps?.queryKey],
-        queryFn: () => resolveData(accountType, accountToken, queryProps.callback),
-        retry: 3,
+        queryFn: () => {
+            return resolveData(accountType, accountToken, queryProps.callback);
+        },
+        retry: 1,
         enabled
     })
 }

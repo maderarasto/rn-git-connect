@@ -61,6 +61,7 @@ export default function Page() {
   }, [isAuthLoading]);
 
   useEffect(() => {
+    console.log('here');
     if (canRedirect) {
       router.replace('dashboard');
     }
