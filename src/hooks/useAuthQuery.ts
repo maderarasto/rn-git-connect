@@ -1,11 +1,11 @@
 import { ErrorData } from "@src/api/ApiClient";
 import GitHubAPI from "@src/api/github";
 import GitLabAPI from "@src/api/gitlab";
-import { AccountType, AccountQueryProps, ApiType, User } from "@src/types";
+import { AccountType, AccountQueryProps, ApiType, User, QueryProps } from "@src/types";
 import { useQuery, useQueryClient, UseQueryResult } from "@tanstack/react-query";
 import { useState } from "react";
 
-const queriesProps: AccountQueryProps = {
+const queriesProps: AccountQueryProps = ({
     'GitHub': {
         queryKey: 'githubAuthUser',
         callback: GitHubAPI.auth.user
@@ -14,7 +14,7 @@ const queriesProps: AccountQueryProps = {
         queryKey: 'gitlabAuthUser',
         callback: GitLabAPI.auth.user
     },
-};
+});
 
 async function resolveData(accountType: AccountType, accountToken: string, callback: (token?: string) => Promise<User>) {
     try {
@@ -29,43 +29,30 @@ async function resolveData(accountType: AccountType, accountToken: string, callb
             accountType,
         };
     } catch (err) {
-        console.log(err);
         return Promise.reject(err);
     }
-}
-
-function buildQuery(accountType: AccountType, accountToken: string, enabled?: boolean) {
-    const queryProps = queriesProps[accountType];
-
-    return useQuery<User, ErrorData>({
-        queryKey: [queryProps?.queryKey],
-        queryFn: () => {
-            return resolveData(accountType, accountToken, queryProps.callback);
-        },
-        retry: 1,
-        enabled
-    })
 }
 
 export default function useAuthQuery(accountType: AccountType, token: string = '', enabled: boolean = false) {
     const [authToken, setAuthToken] = useState(token);
     const queryClient = useQueryClient();
-
+    
     const {
         data,
         isLoading,
         error,
         refetch,
-    } = buildQuery(accountType, authToken, enabled);
+    } = useQuery<User, ErrorData>({
+        queryKey: ['authUser'],
+        queryFn: () => resolveData(accountType, authToken, queriesProps[accountType].callback),
+        retry: 3,
+        enabled
+    })
 
-    const invalidateQuery = async (all: boolean = false) => {
-        if (all) {
-            await queryClient.invalidateQueries();
-        }
-
-        queryClient.setQueryData([queriesProps[accountType].queryKey], null);
+    const invalidateQuery = async () => {
+        queryClient.setQueryData(['authUser'], null);
         await queryClient.invalidateQueries({
-            queryKey: [queriesProps[accountType].queryKey]
+            queryKey: ['authUser']
         });
     };
 

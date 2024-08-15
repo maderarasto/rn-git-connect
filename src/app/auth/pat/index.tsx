@@ -91,7 +91,7 @@ const Page = () => {
 
   async function signUserIn(context: AuthUserContextType, user: User) {
     await saveAccount(user, authToken);
-    await invalidateQuery(true);
+    await invalidateQuery();
     context.setUser(user);
     
     ToastAndroid.show('Authenticated', ToastAndroid.SHORT);
