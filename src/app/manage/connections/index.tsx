@@ -33,6 +33,10 @@ const Page = () => {
     setConnections(loadedConnections as Record<string, Connection>);
   }
 
+  function editConnection(connection: Connection) {
+    router.navigate(`manage/connections/${connection.accountId}`);
+  }
+
   function onAddConnectionPress() {
     dialogRef.current?.show();
   }
@@ -75,7 +79,12 @@ const Page = () => {
         <Text style={styles.subtitle}>Connections {connections ? Object.keys(connections).length : 0}/5</Text>
         <View>
           {connections ? Object.entries(connections).map(([connectionId, connection]) => (
-            <ConnectionItem key={connectionId} connection={connection} active={connectionId === accountId} size="large" />
+            <ConnectionItem 
+              key={connectionId} 
+              connection={connection}
+              onPress={() => editConnection(connection)} 
+              active={connectionId === accountId} 
+              size="large" />
           )) : ''}
         </View>
       </View>

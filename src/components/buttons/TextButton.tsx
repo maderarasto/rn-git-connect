@@ -1,28 +1,32 @@
-import { View, Text, Pressable, PressableProps, StyleProp, ViewStyle, TextStyle } from 'react-native'
+import { View, Text, Pressable, PressableProps, StyleProp, ViewStyle, TextStyle, TouchableOpacityProps, TouchableOpacity } from 'react-native'
 import React from 'react'
 
-export type TextButtonProps = PressableProps & {
-    text: string,
-    underlined?: boolean,
+export type TextButtonProps = TouchableOpacityProps & {
+    text: string
+    textStyle?: TextStyle
+    underlined?: boolean
 }
 
 const TextButton = ({
     text,
+    textStyle = {},
     underlined = false,
-    ...pressableProps
+    ...touchableProps
 }: TextButtonProps) => {
   function resolveTextStyle() {
-    let textStyle: StyleProp<TextStyle> = {};
+    let style: TextStyle = {
+      ...textStyle,
+    };
 
-    textStyle.textDecorationLine = underlined ? 'underline' : 'none';
+    style.textDecorationLine = underlined ? 'underline' : 'none';
 
-    return textStyle;
+    return style;
   }
 
   return (
-    <Pressable {...pressableProps}>
+    <TouchableOpacity {...touchableProps}>
       <Text style={resolveTextStyle()}>{text}</Text>
-    </Pressable>
+    </TouchableOpacity>
   )
 }
 

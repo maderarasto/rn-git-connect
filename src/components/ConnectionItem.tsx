@@ -7,6 +7,7 @@ import { useRouter } from 'expo-router';
 
 type ConnectionItemProps = {
   connection: Connection,
+  onPress?: () => void,
   interactable?: boolean
   active?: boolean
   size?: 'small'|'large'
@@ -15,6 +16,7 @@ type ConnectionItemProps = {
 
 const ConnectionItem = ({
   connection,
+  onPress,
   interactable = true,
   active = false,
   size = 'small',
@@ -58,11 +60,15 @@ const ConnectionItem = ({
     return style;
   }
 
-  function onPress() {
-    router.navigate(`auth/switch?accountId=${connection.accountId}`);
+  function onConnectionPress() {
+    if (!onPress) {
+      router.navigate(`auth/switch?accountId=${connection.accountId}`);
+    } else {
+      onPress();
+    }
   }
 
-  if (active || !interactable)
+  if (!interactable)
     return (
       <View style={styles.container}>
         {resolveIcon()}
@@ -77,15 +83,23 @@ const ConnectionItem = ({
     )
   
   return (
-    <TouchableOpacity style={resolveTouchableStyle()} onPress={onPress}>
+    <TouchableOpacity style={resolveTouchableStyle()} onPress={onConnectionPress}>
       {resolveIcon()}
       {resolveConnectionDetails()}
-      {connection.expired ? (
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-          <FontAwesome6 name="plug-circle-exclamation" size={16} color="#ef4444" />
-          {size === 'large' ? <Text style={{ fontWeight: 'bold', color: '#ef4444'}}>Expired</Text> : ''}
-        </View>
-      ) : ''}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+        {connection.expired ? (
+          <>
+            <FontAwesome6 name="plug-circle-exclamation" size={16} color="#ef4444" />
+            {size === 'large' ? <Text style={{ fontWeight: 'bold', color: '#ef4444'}}>Expired</Text> : ''}
+          </>
+        ) : ''}
+        {active ? (
+          <>
+            <FontAwesome6 name="plug-circle-check" size={16} color="#16a34a" />
+            {size === 'large' ? <Text style={{ fontWeight: 'bold', color: '#16a34a'}}>Connected</Text> : ''}
+          </>
+        ) : ''}
+      </View>
     </TouchableOpacity>
   )
 }

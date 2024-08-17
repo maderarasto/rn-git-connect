@@ -5,7 +5,7 @@ import { AccountType, AccountQueryProps, ApiType, User, QueryProps } from "@src/
 import { useQuery, useQueryClient, UseQueryResult } from "@tanstack/react-query";
 import { useState } from "react";
 
-const queriesProps: AccountQueryProps = ({
+const queriesProps: () => AccountQueryProps = () => ({
     'GitHub': {
         queryKey: 'githubAuthUser',
         callback: GitHubAPI.auth.user
@@ -44,7 +44,7 @@ export default function useAuthQuery(accountType: AccountType, token: string = '
         refetch,
     } = useQuery<User, ErrorData>({
         queryKey: ['authUser'],
-        queryFn: () => resolveData(accountType, authToken, queriesProps[accountType].callback),
+        queryFn: () => resolveData(accountType, authToken, queriesProps()[accountType].callback),
         retry: 3,
         enabled
     })

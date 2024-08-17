@@ -72,7 +72,11 @@ const DrawerContent = ({
         </View>
         <View>
           {connections ? Object.entries(connections).map(([connectionId, connection]) => (
-            <ConnectionItem key={connectionId} connection={connection} active={connectionId === accountId} />
+            <ConnectionItem 
+              key={connectionId} 
+              connection={connection}
+              interactable={connectionId !== accountId} 
+              active={connectionId === accountId} />
           )) : ''}
           <ConnectionButton onPress={onAddConnectionPress} />
         </View>
