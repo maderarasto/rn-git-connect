@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { AuthUserContext } from "@src/context/AuthUserContext";
 
 const Page = () => {
