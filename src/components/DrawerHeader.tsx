@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     gap: 16,
     height: 90,
     paddingHorizontal: 17,
+    paddingBottom: 10,
     backgroundColor: '#dedede'
   },
 

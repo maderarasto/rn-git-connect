@@ -1,62 +1,72 @@
 import { ErrorData } from "@src/api/ApiClient";
 import GitHubAPI from "@src/api/github";
 import GitLabAPI from "@src/api/gitlab";
-import { ApiType, User } from "@src/types";
-// import GitLabAPI from "@src/api/gitlab";
-import { useQuery } from "@tanstack/react-query";
+import { AccountType, AccountQueryProps, ApiType, User, QueryProps } from "@src/types";
+import { useQuery, useQueryClient, UseQueryResult } from "@tanstack/react-query";
 import { useState } from "react";
 
-export default function useAuthQuery(api: ApiType, token = '', enabled = false) {
-    const [authToken, setAuthToken] = useState(token);
+const queriesProps: () => AccountQueryProps = () => ({
+    'GitHub': {
+        queryKey: 'githubAuthUser',
+        callback: GitHubAPI.auth.user
+    },
+    'GitLab': {
+        queryKey: 'gitlabAuthUser',
+        callback: GitLabAPI.auth.user
+    },
+});
 
-    const {
-        data: githubData, 
-        isLoading: githubIsLoading, 
-        error: githubError,
-        refetch: githubRefetch
-    } = useQuery<User, ErrorData>({
-        queryKey: ['githubAuthUser'],
-        queryFn: () => GitHubAPI.auth.user(authToken),
-        enabled: false,
-    });
-
-    const {
-        data: gitlabData, 
-        isLoading: gitlabIsLoading, 
-        error: gitlabError,
-        refetch: gitlabRefetch
-    } = useQuery<User, ErrorData>({
-        queryKey: ['gitlabAuthUser'],
-        queryFn: () => GitLabAPI.auth.user(authToken),
-        enabled: false,
-    });
-
-    const data = api === 'GitHub' ? githubData : gitlabData;
-    const isLoading = api === 'GitHub' ? githubIsLoading : gitlabIsLoading;
-    const error = api === 'GitHub' ? githubError : gitlabError;
-    const refetch = api === 'GitHub' ? githubRefetch : gitlabRefetch;
-
-    function resolveData() {
-        if (!data) {
-            return data;
+async function resolveData(accountType: AccountType, accountToken: string, callback: (token?: string) => Promise<User>) {
+    try {
+        const userData = await callback(accountToken);
+        
+        if (!userData) {
+            return userData;
         }
-
+        
         return {
-            accountType: api,
-            ...data
+            ...userData,
+            accountType,
         };
+    } catch (err) {
+        return Promise.reject(err);
     }
+}
 
-    if (enabled) {
-        refetch();
-    }
+export default function useAuthQuery(accountType: AccountType, token: string = '', enabled: boolean = false) {
+    const [authToken, setAuthToken] = useState(token);
+    const queryClient = useQueryClient();
+    
+    const {
+        data,
+        isLoading,
+        isFetching,
+        error,
+        refetch,
+    } = useQuery<User, ErrorData>({
+        queryKey: ['authUser'],
+        queryFn: () => {
+            return resolveData(accountType, authToken, queriesProps()[accountType].callback);
+        },
+        retry: 2,
+        enabled
+    })
+
+    const invalidateQuery = async () => {
+        queryClient.setQueryData(['authUser'], null);
+        await queryClient.invalidateQueries({
+            queryKey: ['authUser']
+        });
+    };
 
     return {
-        data: resolveData(),
+        data,
         isLoading,
+        isFetching,
         error,
         authToken,
         setAuthToken,
         refetch,
+        invalidateQuery,
     };
 }

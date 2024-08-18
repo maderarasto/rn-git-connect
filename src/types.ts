@@ -1,5 +1,6 @@
 import { StyleProp, ViewStyle } from "react-native";
 import { SortByItems } from "./structures";
+import { QueryFunction } from "@tanstack/react-query";
 
 export type ApiType = (
     | 'GitHub'
@@ -9,8 +10,30 @@ export type ApiType = (
 export type AccountType = (
     | 'GitHub'
     | 'GitLab'
-    | 'Git'
 );
+
+export type Connection = {
+    accountId: string
+    type: AccountType
+    username: string
+    email: string
+    expired?: boolean
+};
+
+export type QueryProps = {
+    queryKey: string
+    callback: (accountToken?: string) => Promise<any>
+};
+
+export type InfiniteQueryProps = {
+    queryKey: string,
+    callback: (props: Record<string, any> ) => Promise<any>
+}
+
+export type AccountQueryProps = Record<AccountType, QueryProps>;
+export type AccountInfiniteQueryProps = Record<AccountType, InfiniteQueryProps>;
+
+export type AbortControllerRef = React.MutableRefObject<AbortController | null>;
 
 export type User = Partial<{
     accountType: AccountType

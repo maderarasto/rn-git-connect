@@ -18,7 +18,7 @@ const auth = {
 
         try {
             const response = await GitLabClient.get<Response.User>('/user', config);
-
+            
             return {
                 id: response.id,
                 username: response.username,
@@ -53,7 +53,7 @@ const projects = {
         };
 
         const response = await GitLabClient.get<Response.Project[]>('/projects', config);
-
+        
         return response.map((responseItem) => ({
             id: responseItem.id,
             name: responseItem.name,

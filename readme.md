@@ -19,6 +19,7 @@ An idea for this project was to easily maintain project repositories and also us
 :white_check_mark:&nbsp;&nbsp;Entry screen that redirects an user to sing in screen or dashboard<br />
 :white_check_mark:&nbsp;&nbsp;SignIn screen for signing user to github or gitlab<br />
 :white_check_mark:&nbsp;&nbsp;Dashboard drawer for routing to another in-app screens.<br />
+:white_check_mark:&nbsp;&nbsp;Managing your connections and switching between them.<br />
 
 ## Features to implement
 :hourglass:&nbsp;&nbsp;Services for interacting with GitHub and GitLab<br />
@@ -38,4 +39,6 @@ An idea for this project was to easily maintain project repositories and also us
     <img src="readme/screenshot_8.png" width="128" />
     <img src="readme/screenshot_9.png" width="128" />
     <img src="readme/screenshot_10.png" width="128" />
+    <img src="readme/screenshot_11.png" width="128" />
+    <img src="readme/screenshot_12.png" width="128" />
 </div>

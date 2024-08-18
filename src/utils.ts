@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
-import { AccountType } from './types';
+import { AccountType, Connection, User } from './types';
 
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
@@ -39,11 +39,68 @@ export function convertFromSlug(text: string) {
     }, '');
 }
 
-export async function saveAccount(accountType: AccountType, accountUsername: string, accountToken: string) {
-    const accountId = `${convertToSlug(accountType)}-token.${accountUsername}`;
-    
-    await AsyncStorage.setItem('active_account_id', accountId);
-    await SecureStore.setItemAsync(accountId, accountToken);
+export async function saveConnection(connection: Connection, expired: boolean = false) {
+    let connections = await AsyncStorage.getItem('connections') ?? {};
+
+    if (typeof connections === 'string') {
+        connections = JSON.parse(connections);
+    }    
+
+    connections = {
+        ...connections,
+        [connection.accountId]: {
+            ...connection,
+            expired,
+        }
+    };
+
+    await AsyncStorage.setItem('connections', JSON.stringify(connections));
+}
+
+export async function removeConnection(connectionId: string) {
+    let connections = await AsyncStorage.getItem('connections') ?? {};
+
+    if (typeof connections === 'string') {
+        connections = JSON.parse(connections);
+    }
+
+    const splicedConnections = Object.entries(connections)
+        .reduce<Record<string, Connection>>((result, [accountId, connection]) => {
+            if (accountId !== connectionId) {
+                result[accountId] = connection as Connection;
+            }
+
+            return result;
+        }, {});
+
+    await AsyncStorage.setItem("connections", JSON.stringify(splicedConnections));
+}
+
+export async function getAccountToken(accountId: string) {
+    const accountToken = await SecureStore.getItemAsync(accountId);
+
+    if (!accountToken) {
+        return undefined;
+    }
+
+    return accountToken;
+}
+
+export async function saveAccountToken(accountId: string, accountToken: string) {
+    return SecureStore.setItemAsync(accountId, accountToken);
+}
+
+export async function saveAccount(authUser: User, authToken: string, expired: boolean = false) {
+    const connection: Connection = {
+        accountId: `${convertToSlug(authUser.accountType as string)}-token.${authUser.username}`,
+        type: authUser.accountType as AccountType,
+        username: authUser.username as string,
+        email: authUser.email as string,
+    }
+
+    await saveConnection(connection);
+    await AsyncStorage.setItem('active_account_id', connection.accountId);
+    await SecureStore.setItemAsync(connection.accountId, authToken);
 }
 
 export async function getActiveAccountToken(): Promise<string|null> {

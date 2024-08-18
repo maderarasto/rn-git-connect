@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableWithoutFeedback, Keyboard, ActivityIndicator, ToastAndroid } from 'react-native'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { useLocalSearchParams, useRouter } from 'expo-router'
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import {AntDesign} from '@expo/vector-icons';
 
 import AuthHeader from '@src/components/AuthHeader';
@@ -14,6 +14,7 @@ import AuthPATGitLabTemplate from '@src/templates/help/AuthPATGitLabTemplate';
 import useAuthQuery from '@src/hooks/useAuthQuery';
 import { AuthUserContext, AuthUserContextType } from '@src/context/AuthUserContext';
 import LabeledTextInput from '@src/components/LabeledTextInput';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const UNAUTHORIZED_MESSAGES = [
   'Bad credentials',
@@ -21,6 +22,7 @@ const UNAUTHORIZED_MESSAGES = [
 ];
 
 const Page = () => {
+  const [queryEnabled, setQueryEnabled] = useState(false);
   const authUserContext = useContext(AuthUserContext);
 
   if (!authUserContext) {
@@ -28,15 +30,16 @@ const Page = () => {
   }
 
   const router = useRouter();
-  const {type} = useLocalSearchParams();
+  const navigation = useNavigation();
+  const {type, redirect} = useLocalSearchParams();
   const accountType: AccountType 
     = convertFromSlug(type as string) as AccountType;
-
-  if (!accountType || accountType === 'Git') {
+  
+  if (!accountType) {
     router.replace('/');
     return;
   }
-
+  
   const modalRef = useRef<DialogMethods>(null);
   const {
     data: authUser, 
@@ -44,14 +47,13 @@ const Page = () => {
     error,
     authToken,
     setAuthToken, 
-    refetch
-  } = useAuthQuery(accountType);
+    invalidateQuery,
+  } = useAuthQuery(accountType, '', queryEnabled);
 
   useEffect(() => {
     if (!authUser) return;
     
     signUserIn(authUserContext, authUser);
-    router.replace('dashboard');
   }, [authUser]);
 
   function resolveHeaderTitle() {
@@ -87,11 +89,27 @@ const Page = () => {
     return error.message;
   }
 
-  function signUserIn(context: AuthUserContextType, user: User) {
-    saveAccount(accountType, user.username ?? '', authToken);
+  async function signUserIn(context: AuthUserContextType, user: User) {
+    await saveAccount(user, authToken);
+    await invalidateQuery();
     context.setUser(user);
-
+    
     ToastAndroid.show('Authenticated', ToastAndroid.SHORT);
+    
+    const navigationRoutes = [
+      { name: 'dashboard'} as never,
+    ];
+
+    if (redirect) {
+      navigationRoutes.push({
+        name: redirect as string
+      } as never);
+    }
+    
+    navigation.reset({
+      index: redirect ? 1 : 0,
+      routes: navigationRoutes
+    });
   }
 
   function onTokenChangeText(token: string) {
@@ -110,7 +128,7 @@ const Page = () => {
 
   async function onSubmitButtonPress() {
     Keyboard.dismiss();
-    refetch();
+    setQueryEnabled(true);
   }
 
   function onGoButtonPressed() {

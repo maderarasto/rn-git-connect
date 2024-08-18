@@ -1,12 +1,57 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
 import {MaterialIcons, Ionicons, Octicons} from '@expo/vector-icons';
-import { View, Text, Image, StyleSheet, SafeAreaView } from "react-native";
-import { DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import DrawerHeader from "@src/components/DrawerHeader";
+import ConnectionItem from "@src/components/ConnectionItem";
+import ConnectionButton from "@src/components/buttons/ConnectionButton";
+import AccountTypeDialog from "@src/components/dialogs/AccountTypeDialog";
+import { DialogMethods } from "@src/components/dialogs/Dialog";
+import { AccountType, Connection } from "@src/types";
+import { router, useRouter } from "expo-router";
+import { convertToSlug } from "@src/utils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import useActiveAccount from "@src/hooks/useActiveAccount";
 
-const DrawerContent = (props: any) => {
+type DrawerContentProps = DrawerContentComponentProps & {
+  dialogRef?:  React.RefObject<DialogMethods>
+}
+
+const DrawerContent = ({
+  dialogRef,
+  ...props
+}: DrawerContentProps) => {
+  const {navigation} = props;
+
+  const [connections, setConnections] = useState<Record<string, Connection>|null>(null); 
+  const {accountId} = useActiveAccount();
+  
+  useEffect(() => {
+    loadConnections();
+  }, []);
+
+  async function loadConnections() {
+    let loadedConnections: unknown = await AsyncStorage.getItem('connections');
+      
+    if (typeof loadedConnections === 'string') {
+      loadedConnections = JSON.parse(loadedConnections);
+    }
+    
+    setConnections(loadedConnections as Record<string, Connection>);
+  }
+
+  function onManageConnectionsPress() {
+    navigation.closeDrawer();
+    router.navigate('manage/connections');
+  }
+
+  function onAddConnectionPress() {
+    navigation.closeDrawer();
+    dialogRef?.current?.show();
+  }
+  
   return (
     <DrawerContentScrollView {...props} style={{ backgroundColor: '#dedede'}}>
       <View style={styles.drawerHeader}>
@@ -17,18 +62,48 @@ const DrawerContent = (props: any) => {
         <DrawerItemList {...props} />
       </View>
       <View style={styles.drawerSection}>
-        <Text style={styles.drawerSectionLabel}>Connections</Text>
-        <Text style={styles.drawerSectionDefaultMessage}>Currently no connections supported.</Text>
+        <View style={styles.drawerSectionHeader}>
+          <Text style={styles.drawerSectionLabel}>Connections {connections ? Object.keys(connections).length : 0}/5</Text>
+          <View style={styles.drawerSectionActions}>
+            <TouchableOpacity onPress={onManageConnectionsPress}>
+              <MaterialIcons name="settings" size={16} color="#6b7280" />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View>
+          {connections ? Object.entries(connections).map(([connectionId, connection]) => (
+            <ConnectionItem 
+              key={connectionId} 
+              connection={connection}
+              interactable={connectionId !== accountId} 
+              active={connectionId === accountId} />
+          )) : ''}
+          <ConnectionButton onPress={onAddConnectionPress} />
+        </View>
       </View>
     </DrawerContentScrollView>
   );
 }
 
 const Layout = () => {
+  const router = useRouter();
+  const dialogRef = useRef<DialogMethods>(null);
+
+  function onAccountTypeChoose(accountType: AccountType) {
+    if (!dialogRef.current) {
+      return;
+    }
+
+    dialogRef.current.hide();
+    setTimeout(() => {
+      router.navigate(`auth/pat?type=${convertToSlug(accountType)}`);
+    }, 150);
+  }
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer 
-        drawerContent={DrawerContent}
+        drawerContent={(props) => <DrawerContent {...{ ...props, dialogRef }} />}
         screenOptions={{
           header: ({ navigation, route, options }) => (
             <DrawerHeader 
@@ -66,6 +141,10 @@ const Layout = () => {
           }}
         />
       </Drawer>
+      <AccountTypeDialog 
+        ref={dialogRef} 
+        title="Select account type" 
+        onTypeChoose={onAccountTypeChoose} />
     </GestureHandlerRootView>
   );
 };
@@ -101,6 +180,18 @@ const styles = StyleSheet.create({
 
   drawerSection: {
     padding: 10,
+  },
+
+  drawerSectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  drawerSectionActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
 
   drawerSectionLabel: { 

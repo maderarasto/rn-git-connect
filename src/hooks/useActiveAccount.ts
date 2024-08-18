@@ -12,20 +12,32 @@ export default function useActiveAccount() {
 
     useEffect(() => {
         (async function () {
-            const found = await AsyncStorage.getItem('active_account_id')
+            let accountId = await AsyncStorage.getItem('active_account_id')
 
-            if (!found) {
-                setAccountId(null);
-                setAccountToken(null);
-                setIsLoading(false);
+            if (!accountId) {
+                setAccount(null);
                 return;
             }
 
-            setAccountId(found);
-            setAccountToken(await SecureStore.getItemAsync(found));
-            setIsLoading(false);
+            const accountToken = await SecureStore.getItemAsync(accountId);
+
+            if (!accountToken) {
+                accountId = null;
+            }
+
+            await setAccount(accountId, accountToken);
         })();
-    }, [])
+    }, []);
+
+    async function setAccount(accountId: string|null, accountToken: string|null = null) {
+        if (!accountId) {
+            await AsyncStorage.removeItem('active_account_id');
+        }
+
+        setAccountId(accountId);
+        setAccountToken(accountToken);
+        setIsLoading(false);
+    }
 
     function resolveAccountType() {
         if (!accountId) {
