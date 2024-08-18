@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableWithoutFeedback, Keyboard, ActivityIndicator, ToastAndroid } from 'react-native'
+import { View, Text, StyleSheet, TouchableWithoutFeedback, Keyboard, ActivityIndicator, ToastAndroid, TouchableOpacity } from 'react-native'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import {AntDesign} from '@expo/vector-icons';
@@ -13,8 +13,8 @@ import AuthPATGitHubTemplate from '@src/templates/help/AuthPATGitHubTemplate';
 import AuthPATGitLabTemplate from '@src/templates/help/AuthPATGitLabTemplate';
 import useAuthQuery from '@src/hooks/useAuthQuery';
 import { AuthUserContext, AuthUserContextType } from '@src/context/AuthUserContext';
-import LabeledTextInput from '@src/components/LabeledTextInput';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import PastableTextarea from '@src/components/PastableTextarea';
+import BaseHeader from '@src/components/BaseHeader';
 
 const UNAUTHORIZED_MESSAGES = [
   'Bad credentials',
@@ -23,6 +23,7 @@ const UNAUTHORIZED_MESSAGES = [
 
 const Page = () => {
   const [queryEnabled, setQueryEnabled] = useState(false);
+  const [accessToken, setAccessToken] = useState('');
   const authUserContext = useContext(AuthUserContext);
 
   if (!authUserContext) {
@@ -49,6 +50,14 @@ const Page = () => {
     setAuthToken, 
     invalidateQuery,
   } = useAuthQuery(accountType, '', queryEnabled);
+
+  useEffect(() => {
+    if (!authToken) {
+      return;
+    }
+    
+    setQueryEnabled(true);
+  }, [authToken]);
 
   useEffect(() => {
     if (!authUser) return;
@@ -112,8 +121,12 @@ const Page = () => {
     });
   }
 
-  function onTokenChangeText(token: string) {
-    setAuthToken(token);
+  function onAccessTokenTextChanged(text: string) {
+    setAccessToken(text);
+  }
+
+  function onAccessTokenClear() {
+    setAuthToken('');
   }
 
   function onInfoButtonPress() {
@@ -128,7 +141,8 @@ const Page = () => {
 
   async function onSubmitButtonPress() {
     Keyboard.dismiss();
-    setQueryEnabled(true);
+    await invalidateQuery();
+    setAuthToken(accessToken);
   }
 
   function onGoButtonPressed() {
@@ -136,22 +150,40 @@ const Page = () => {
     router.navigate(resolveLinkUrl())
   }
 
+  function onBackPress() {
+    router.back();
+  }
+
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    <View style={{ flex: 1, }}>
+      <BaseHeader
+        options={{
+          headerStyle: { backgroundColor: 'transparent' },
+          headerLeft: () => (
+            <TouchableOpacity onPress={onBackPress}>
+              <AntDesign name="arrowleft" size={24} color="black" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
       <View style={styles.container}>
         <AuthHeader title={resolveHeaderTitle()} icon={resolveHeaderIcon()} />
         <View style={styles.form}>
-            <LabeledTextInput
-              label="Personal Access Token"
-              value={authToken} 
+          <View style={{ gap: 8, marginBottom: 32, }}>
+            <PastableTextarea 
+              label="Personal Access Token" 
+              placeholder="Enter personal access token..."
+              value={accessToken}
               errorText={resolveError()}
-              style={{ marginBottom: 8, }}
-              onChangeText={onTokenChangeText} />
-          <TextButton 
-            style={styles.infoButton} 
-            text="How to get personal access token?" 
-            onPress={onInfoButtonPress} 
-            underlined />
+              lines={4}
+              onChangeText={onAccessTokenTextChanged}
+              onClear={onAccessTokenClear} />
+            <TextButton 
+              style={styles.infoButton} 
+              text="How to get personal access token?" 
+              onPress={onInfoButtonPress} 
+              underlined />
+          </View>
           <PrimaryButton onPress={onSubmitButtonPress}>
             <Text style={{ color: 'white' }}>Authorize</Text>
           </PrimaryButton>
@@ -168,7 +200,7 @@ const Page = () => {
           <ActivityIndicator size={42} color="#2563eb" style={styles.loadingIndicator} />
         ) : ''}
       </View>
-    </TouchableWithoutFeedback>
+    </View>
   )
 }
 
