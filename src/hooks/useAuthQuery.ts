@@ -19,11 +19,11 @@ const queriesProps: () => AccountQueryProps = () => ({
 async function resolveData(accountType: AccountType, accountToken: string, callback: (token?: string) => Promise<User>) {
     try {
         const userData = await callback(accountToken);
-        console.log(userData);
+        
         if (!userData) {
             return userData;
         }
-
+        
         return {
             ...userData,
             accountType,
@@ -40,12 +40,15 @@ export default function useAuthQuery(accountType: AccountType, token: string = '
     const {
         data,
         isLoading,
+        isFetching,
         error,
         refetch,
     } = useQuery<User, ErrorData>({
         queryKey: ['authUser'],
-        queryFn: () => resolveData(accountType, authToken, queriesProps()[accountType].callback),
-        retry: 3,
+        queryFn: () => {
+            return resolveData(accountType, authToken, queriesProps()[accountType].callback);
+        },
+        retry: 2,
         enabled
     })
 
@@ -59,6 +62,7 @@ export default function useAuthQuery(accountType: AccountType, token: string = '
     return {
         data,
         isLoading,
+        isFetching,
         error,
         authToken,
         setAuthToken,

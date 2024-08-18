@@ -21,6 +21,7 @@ import PrimaryButton from "@src/components/buttons/PrimaryButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Page() {
+  const [queryEnabled, setQueryEnabled] = useState(false);
   const [canRedirect, setCanRedirect] = useState(false);
 
   const {
@@ -33,8 +34,8 @@ export default function Page() {
     data: authUser,
     isLoading: isAuthLoading,
     error: authError,
-    refetch
-  } = useAuthQuery(accountType as ApiType);
+    invalidateQuery
+  } = useAuthQuery(accountType as AccountType, '', queryEnabled);
 
   const authUserContext = useContext(AuthUserContext);
   const dialogRef = useRef<DialogMethods>(null);
@@ -49,19 +50,17 @@ export default function Page() {
 
   useEffect(() => {  
     if (hasAnyAccount()) {
-      refetch(); 
+      setQueryEnabled(true); 
     }
   }, [isLoading]);
 
   useEffect(() => {
-    if (isAuthorized() && authUser) {
-      authUserContext?.setUser(authUser);
-      setCanRedirect(true);
+    if (isAuthorized()) {
+      initializeUser();
     }
   }, [isAuthLoading]);
 
   useEffect(() => {
-    console.log('here');
     if (canRedirect) {
       router.replace('dashboard');
     }
@@ -73,6 +72,16 @@ export default function Page() {
 
   function isAuthorized() {
     return !isLoading && !isAuthLoading && authUser;
+  }
+
+  async function initializeUser() {
+    if (!authUser) {
+      return;
+    }
+
+    authUserContext?.setUser(authUser);
+    await invalidateQuery();
+    setCanRedirect(true);
   }
 
   function onConnectButtonPress() {
@@ -89,7 +98,8 @@ export default function Page() {
     }
 
     dialogRef.current.hide();
-    setTimeout(() => {
+    setTimeout(async () => {
+      await invalidateQuery();
       router.navigate(`auth/pat?type=${convertToSlug(accountType)}`);
     }, 150);
   }

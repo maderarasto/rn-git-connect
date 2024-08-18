@@ -8,7 +8,7 @@ import ConnectionItem from '@src/components/ConnectionItem'
 import useAuthQuery from '@src/hooks/useAuthQuery'
 import useConnection from '@src/hooks/useConnection'
 import { AuthUserContext } from '@src/context/AuthUserContext'
-import { saveAccount, updateConnection } from '@src/utils'
+import { saveAccount, saveConnection } from '@src/utils'
 
 const Page = () => {
   let {accountId} = useLocalSearchParams();
@@ -58,7 +58,7 @@ const Page = () => {
     }
 
     if ('error' in error && error.error === 'invalid_token') {
-      updateConnection(connection, true);
+      saveConnection(connection, true);
       ToastAndroid.show(`The token for the account "${connection.type.toLowerCase()}@${connection.username}" has expired`, ToastAndroid.LONG);
       navigation.reset({
         index: 0,
@@ -79,7 +79,7 @@ const Page = () => {
     }
 
     await AsyncStorage.setItem('active_account_id', connection.accountId);
-    await invalidateQuery(true);
+    await invalidateQuery();
     authUserContext?.setUser(authUser);
     ToastAndroid.show(`Signed as ${connection.type.toLowerCase()}@${connection.username}`, ToastAndroid.LONG);
     navigation.reset({

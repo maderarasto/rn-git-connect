@@ -39,12 +39,12 @@ export function convertFromSlug(text: string) {
     }, '');
 }
 
-export async function updateConnection(connection: Connection, expired: boolean = false) {
+export async function saveConnection(connection: Connection, expired: boolean = false) {
     let connections = await AsyncStorage.getItem('connections') ?? {};
 
     if (typeof connections === 'string') {
         connections = JSON.parse(connections);
-    }
+    }    
 
     connections = {
         ...connections,
@@ -57,6 +57,39 @@ export async function updateConnection(connection: Connection, expired: boolean 
     await AsyncStorage.setItem('connections', JSON.stringify(connections));
 }
 
+export async function removeConnection(connectionId: string) {
+    let connections = await AsyncStorage.getItem('connections') ?? {};
+
+    if (typeof connections === 'string') {
+        connections = JSON.parse(connections);
+    }
+
+    const splicedConnections = Object.entries(connections)
+        .reduce<Record<string, Connection>>((result, [accountId, connection]) => {
+            if (accountId !== connectionId) {
+                result[accountId] = connection as Connection;
+            }
+
+            return result;
+        }, {});
+
+    await AsyncStorage.setItem("connections", JSON.stringify(splicedConnections));
+}
+
+export async function getAccountToken(accountId: string) {
+    const accountToken = await SecureStore.getItemAsync(accountId);
+
+    if (!accountToken) {
+        return undefined;
+    }
+
+    return accountToken;
+}
+
+export async function saveAccountToken(accountId: string, accountToken: string) {
+    return SecureStore.setItemAsync(accountId, accountToken);
+}
+
 export async function saveAccount(authUser: User, authToken: string, expired: boolean = false) {
     const connection: Connection = {
         accountId: `${convertToSlug(authUser.accountType as string)}-token.${authUser.username}`,
@@ -65,7 +98,7 @@ export async function saveAccount(authUser: User, authToken: string, expired: bo
         email: authUser.email as string,
     }
 
-    await updateConnection(connection);
+    await saveConnection(connection);
     await AsyncStorage.setItem('active_account_id', connection.accountId);
     await SecureStore.setItemAsync(connection.accountId, authToken);
 }

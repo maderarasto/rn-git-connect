@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Keyboard } from "react-native";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign, FontAwesome6 } from "@expo/vector-icons";
@@ -9,22 +9,70 @@ import ConnectionHeader from "@src/components/ConnectionHeader";
 import useActiveAccount from "@src/hooks/useActiveAccount";
 import PastableTextarea from "@src/components/PastableTextarea";
 import PrimaryButton from "@src/components/buttons/PrimaryButton";
-import { Connection } from "@src/types";
+import { AccountType, Connection } from "@src/types";
+import useAuthQuery from "@src/hooks/useAuthQuery";
+import { getAccountToken, removeConnection, saveAccountToken, saveConnection } from "@src/utils";
 
 const Page = () => {
   const [connection, setConnection] = useState<Connection|null>(null);
+  const [queryEnabled, setQueryEnabled] = useState(false);
   const [accessToken, setAccessToken] = useState('');
+
   const {connectionId} = useLocalSearchParams();
   const {accountId} = useActiveAccount();
-  const router = useRouter();
+  const {
+    data: authUser,  
+    isFetching,
+    error,
+    authToken,
+    setAuthToken, 
+    invalidateQuery,
+  } = useAuthQuery(connection?.type as AccountType, '', queryEnabled);
 
-  useEffect(() => {
-    console.log(accessToken);
-  }, [accessToken]);
+  const router = useRouter();
+  const navigation = useNavigation();
 
   useEffect(() => {
     loadConnection();
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    if (!connection) {
+      return;
+    }
+
+    getAccountToken(connection.accountId).then((accountToken) => {
+      if (!accountToken) {
+        return;
+      }
+
+      setAccessToken(accountToken);
+    });
+  }, [connection]);
+
+  useEffect(() => {
+    if (!authToken) {
+      return;
+    }
+    
+    setQueryEnabled(true);
+  }, [authToken]);
+
+  useEffect(() => {
+    if (!authUser) {
+      return;
+    }
+
+    updateConnection();
+  }, [authUser]);
+
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+
+    setQueryEnabled(false);
+  }, [error]);
 
   async function loadConnection() {
     let loadedConnections: unknown = await AsyncStorage.getItem('connections');
@@ -62,9 +110,71 @@ const Page = () => {
     return '';
   }
 
+  function resolveError() {
+    let errorMessage = '';
+
+    if (!error) {
+      return errorMessage;
+    }
+
+    const isGithubAuthError = 'status' in error && error.status === '401';
+    const isGitlabAuthError = error.message?.includes('401') ?? false;
+
+    if (isGithubAuthError || isGitlabAuthError) {
+      errorMessage = 'Personal Access Token is invalid!';
+    } else if ('error' in error && error.error === 'invalid_token') {
+      errorMessage = 'Token was revoked. You have to re-authorize from the user.';
+    } else {
+      errorMessage = error.message;
+    }
+
+    return errorMessage;
+  }
+
+  async function updateConnection() {
+    if (!connection) {
+      return;
+    }
+
+    await saveAccountToken(connection.accountId, accessToken);
+    await saveConnection(connection, false);
+    navigation.reset({
+      index: 0,
+      routes: [
+        { name: 'dashboard'} as never,
+        { name: 'manage/connections/index' } as never,
+      ]
+    });
+  }
+
   function onAccessTokenTextChanged(text: string) {
     setAccessToken(text);
   }
+
+  function onAccessTokenClear() {
+    setAuthToken('');
+  }
+
+  async function onSavePress() {
+    Keyboard.dismiss();
+    await invalidateQuery();
+    setAuthToken(accessToken);
+  }
+
+  async function onRemovePress() {
+    if (!connection) {
+      return;
+    }
+
+    await removeConnection(connection.accountId);
+    navigation.reset({
+      index: 0,
+      routes: [
+        { name: 'dashboard'} as never,
+        { name: 'manage/connections/index' } as never,
+      ]
+    });
+  } 
 
   function onBackPress() {
     router.back();
@@ -95,16 +205,28 @@ const Page = () => {
               label="Personal Access Token" 
               placeholder="Enter personal access token..."
               value={accessToken}
-              lines={7}
-              onChangeText={onAccessTokenTextChanged} />
+              errorText={resolveError()}
+              lines={4}
+              allowActions={connection.accountId !== accountId}
+              readOnly={connection.accountId === accountId}
+              onChangeText={onAccessTokenTextChanged}
+              onClear={onAccessTokenClear} />
           </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 8}}>
-            <PrimaryButton style={{ minWidth: 100, backgroundColor: '#ef4444' }}>
-              <Text style={{ color: 'white' }}>Remove Connection</Text>
-            </PrimaryButton>
-            <PrimaryButton style={{ width: 100 }}>
-              <Text style={{ color: 'white' }}>Save</Text>
-            </PrimaryButton>          
+          <View style={{ gap: 16 }}>
+            {isFetching ? (
+              <ActivityIndicator size="large" color="#2563eb" />
+            ) : '' }
+            
+              {connection.accountId !== accountId ? (
+                <View style={styles.buttonsRow}>
+                  <PrimaryButton style={{ minWidth: 100, backgroundColor: '#ef4444' }} onPress={onRemovePress}>
+                    <Text style={{ color: 'white' }}>Remove Connection</Text>
+                  </PrimaryButton>
+                  <PrimaryButton style={{ width: 100 }} onPress={onSavePress}>
+                    <Text style={{ color: 'white' }}>Save</Text>
+                  </PrimaryButton>
+                </View>
+              ) : '' }      
           </View>
       </View>
       ) : ''}
@@ -130,7 +252,14 @@ const styles = StyleSheet.create({
 
   pat: {
     flex: 1,
-    paddingVertical: 32
+    gap: 12,
+    paddingVertical: 24
+  },
+
+  buttonsRow: {
+    flexDirection: 'row', 
+    justifyContent: 'flex-end', 
+    gap: 8
   }
 });
 

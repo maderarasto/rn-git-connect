@@ -39,7 +39,7 @@ const Page = () => {
     router.replace('/');
     return;
   }
-
+  
   const modalRef = useRef<DialogMethods>(null);
   const {
     data: authUser, 
@@ -105,7 +105,7 @@ const Page = () => {
         name: redirect as string
       } as never);
     }
-
+    
     navigation.reset({
       index: redirect ? 1 : 0,
       routes: navigationRoutes

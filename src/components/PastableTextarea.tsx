@@ -1,29 +1,54 @@
 import { View, Text, TextInput, StyleSheet, TextStyle, ViewStyle } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import * as Clipboard from 'expo-clipboard';
 
-import PrimaryButton from './buttons/PrimaryButton'
 import TextButton from './buttons/TextButton'
 
 export type PastableTextareaProps = {
   label?: string
   placeholder?: string
   value?: string
+  errorText?: string
   lines?: number
   style?: ViewStyle
+  allowActions?: boolean
+  readOnly?: boolean
   onChangeText?: (value: string) => void
+  onClear?: () => void
 }
 
 const PastableTextarea = ({
   label = '',
   placeholder = '',
   value = '',
+  errorText = '',
   lines = 5,
   style = {},
-  onChangeText
+  allowActions = true,
+  readOnly = false,
+  onChangeText,
+  onClear,
 }: PastableTextareaProps) => {
   const [text, setText] = useState(value);
   const [focused, setFocused] = useState(false);
+  const afterMountRef = useRef(false);
+
+  useEffect(() => {
+    setText(value);
+  }, [value])
+
+  useEffect(() => {
+    if (!afterMountRef.current) {
+      afterMountRef.current = true;
+      return;
+    }
+
+    if (!onChangeText) {
+      return;
+    }
+
+    onChangeText(text);
+  }, [text]);
 
   function resolveContainerStyle() {
     let containerStyle: ViewStyle = {
@@ -60,12 +85,6 @@ const PastableTextarea = ({
 
   function onChangeTextContent(text: string) {
     setText(text);
-
-    if (!onChangeText) {
-      return text;
-    }
-
-    onChangeText(text);
   }
 
   function onTextFieldFocus() {
@@ -78,6 +97,12 @@ const PastableTextarea = ({
 
   function onClearPress() {
     setText('');
+
+    if (!onClear) {
+      return;
+    }
+
+    onClear();
   }
 
   async function onPastePress() {
@@ -94,14 +119,22 @@ const PastableTextarea = ({
         value={text}
         multiline={true} 
         numberOfLines={lines}
+        readOnly={readOnly}
         onChangeText={onChangeTextContent}
         onFocus={onTextFieldFocus}
         onBlur={onTextFieldBlur} />
+      { errorText ? (
+        <Text style={styles.errorText}>Error: {errorText}</Text>
+      ) : '' }
       <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 16 }}>
-        {text.length > 0 ? (
-          <TextButton text="Clear" textStyle={styles.clearButton} onPress={onClearPress} />
+        {allowActions ? (
+          <>
+            {text.length > 0 ? (
+              <TextButton text="Clear" textStyle={styles.clearButton} onPress={onClearPress} />
+            ) : ''}
+            <TextButton text="Paste"  textStyle={styles.saveButton} onPress={onPastePress} />
+          </>
         ) : ''}
-        <TextButton text="Paste"  textStyle={styles.saveButton} onPress={onPastePress} />
       </View>
     </View>
   )
@@ -120,13 +153,17 @@ const styles = StyleSheet.create({
 
   textarea: {
     alignItems: 'flex-start',
-    marginBottom: 8,
+    marginBottom: 4,
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 4,
     borderWidth: 1,
     borderColor: 'gray',
     fontSize: 16
+  },
+
+  errorText: {
+    color: '#ef4444',
   },
 
   clearButton: {
