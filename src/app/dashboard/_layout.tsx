@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
-import {MaterialIcons, Ionicons, Octicons} from '@expo/vector-icons';
+import {MaterialIcons, Ionicons, Octicons, FontAwesome6, FontAwesome5, FontAwesome} from '@expo/vector-icons';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import DrawerHeader from "@src/components/DrawerHeader";
@@ -14,6 +14,8 @@ import { router, useRouter } from "expo-router";
 import { convertToSlug } from "@src/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useActiveAccount from "@src/hooks/useActiveAccount";
+import UserCard from "@src/components/UserCard";
+import { AuthUserContext } from "@src/context/AuthUserContext";
 
 type DrawerContentProps = DrawerContentComponentProps & {
   dialogRef?:  React.RefObject<DialogMethods>
@@ -27,7 +29,18 @@ const DrawerContent = ({
 
   const [connections, setConnections] = useState<Record<string, Connection>|null>(null); 
   const {accountId} = useActiveAccount();
+  const authUserContext = useContext(AuthUserContext);
+
+  if (!authUserContext) {
+    throw new Error('AuthUserContext must be used within AuthUserProvider!');
+  }
   
+  const authUser = authUserContext.user;
+
+  if (!authUser) {
+    throw new Error("Auth user must be initialized after successful login!");
+  }
+
   useEffect(() => {
     loadConnections();
   }, []);
@@ -53,12 +66,12 @@ const DrawerContent = ({
   }
   
   return (
-    <DrawerContentScrollView {...props} style={{ backgroundColor: '#dedede'}}>
+    <DrawerContentScrollView {...props} contentContainerStyle={{ backgroundColor: '#dedede', flex: 1, }}>
       <View style={styles.drawerHeader}>
         <Image source={require('@assets/img/icon.png')} style={styles.drawerHeaderLogo} />
         <Text style={styles.drawerHeaderTitle}>Git Connect</Text>
       </View>
-      <View style={styles.drawerScreensContainer}>
+      <View style={styles.drawerSectionDivider}>
         <DrawerItemList {...props} />
       </View>
       <View style={styles.drawerSection}>
@@ -70,7 +83,7 @@ const DrawerContent = ({
             </TouchableOpacity>
           </View>
         </View>
-        <View>
+        <View style={{ flex: 1,}}>
           {connections ? Object.entries(connections).map(([connectionId, connection]) => (
             <ConnectionItem 
               key={connectionId} 
@@ -80,6 +93,12 @@ const DrawerContent = ({
           )) : ''}
           <ConnectionButton onPress={onAddConnectionPress} />
         </View>
+      </View>
+      <View>
+        <TouchableOpacity style={styles.drawerSectionUser}>
+          <UserCard user={authUser} style={{ flex: 1, }} />
+          <FontAwesome name="angle-right" size={30} color="gray" />
+        </TouchableOpacity>
       </View>
     </DrawerContentScrollView>
   );
@@ -168,7 +187,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  drawerScreensContainer: {
+  drawerSectionDivider: {
     borderBottomWidth: 0.5,
     borderBottomColor: '#6b7280',
   },
@@ -179,7 +198,10 @@ const styles = StyleSheet.create({
   },
 
   drawerSection: {
+    flex: 1,
     padding: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#6b7280',
   },
 
   drawerSectionHeader: {
@@ -205,6 +227,15 @@ const styles = StyleSheet.create({
     padding: 8, 
     textAlign: 'center', 
     color: 'gray'
+  },
+
+  drawerSectionUser: { 
+    flexDirection: 'row', 
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 8,
+    paddingRight: 16,
+    paddingVertical: 6,
   }
 })
 
