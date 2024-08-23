@@ -64,6 +64,11 @@ const DrawerContent = ({
     navigation.closeDrawer();
     dialogRef?.current?.show();
   }
+
+  function onProfilePress() {
+    navigation.closeDrawer();
+    router.navigate('manage/profile');
+  }
   
   return (
     <DrawerContentScrollView {...props} contentContainerStyle={{ backgroundColor: '#dedede', flex: 1, }}>
@@ -95,7 +100,7 @@ const DrawerContent = ({
         </View>
       </View>
       <View>
-        <TouchableOpacity style={styles.drawerSectionUser}>
+        <TouchableOpacity style={styles.drawerSectionUser} onPress={onProfilePress}>
           <UserCard user={authUser} style={{ flex: 1, }} />
           <FontAwesome name="angle-right" size={30} color="gray" />
         </TouchableOpacity>
