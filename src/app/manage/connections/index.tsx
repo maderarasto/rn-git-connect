@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import {AntDesign} from '@expo/vector-icons';
 
-import BaseHeader from '@src/components/BaseHeader'
+import BaseHeader from '@src/components/headers/BaseHeader'
 import { useRouter } from 'expo-router';
 import useActiveAccount from '@src/hooks/useActiveAccount';
 import { useEffect, useRef, useState } from 'react';

@@ -2,13 +2,14 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import { useRouter } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
 
-import BaseHeader from '@src/components/BaseHeader';
+import BaseHeader from '@src/components/headers/BaseHeader';
 import UserCard from '@src/components/UserCard';
 import { useContext } from 'react';
 import { AuthUserContext } from '@src/context/AuthUserContext';
 import UserInfo from '@src/components/UserInfo';
 import UserContact from '@src/components/UserContact';
 import PrimaryButton from '@src/components/buttons/PrimaryButton';
+import ActivityItem from '@src/components/ActivityItem';
 
 const Page = () => {
   const authUserContext = useContext(AuthUserContext);
@@ -40,11 +41,8 @@ const Page = () => {
         title: 'Your Profile'
       }} />
       <ScrollView>
-        <View style={{ alignItems: 'flex-end', marginBottom: 24, paddingHorizontal: 24, }}>
+        <View style={{ marginBottom: 24, paddingHorizontal: 24, }}>
           <UserCard user={authUser} size="large" style={{ width: '100%', paddingHorizontal: 0 }} />
-          <PrimaryButton>
-            <Text style={{ color: 'white' }}>Edit profile</Text>
-          </PrimaryButton>
         </View>
         <View style={{ paddingHorizontal: 24, }}>
           <Text style={{ fontSize: 14, fontWeight: 'bold', textTransform: 'uppercase' }}>About</Text>
@@ -53,9 +51,17 @@ const Page = () => {
         <View style={{ flexDirection: 'column', gap: 12, paddingHorizontal: 24, paddingVertical: 12 }}>
           <UserInfo user={authUser} style={{ flex: 1, }} />
           <UserContact user={authUser} style={{ flex: 1 }} />
+          <PrimaryButton style={{ alignSelf: 'flex-end', marginVertical: 12 }}>
+            <Text style={{ color: 'white' }}>Edit profile</Text>
+          </PrimaryButton>
         </View>
         <View style={{ paddingHorizontal: 24, paddingVertical: 12 }}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Your recent activity</Text>
+          <Text style={{ marginBottom: 12, fontSize: 20, fontWeight: 'bold' }}>Your recent activity</Text>
+
+          <View>
+            <ActivityItem />
+            <ActivityItem last />
+          </View>
         </View>
       </ScrollView>
     </View>

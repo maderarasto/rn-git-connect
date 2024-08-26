@@ -4,7 +4,7 @@ import { Drawer } from "expo-router/drawer";
 import {MaterialIcons, Ionicons, Octicons, FontAwesome6, FontAwesome5, FontAwesome} from '@expo/vector-icons';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
-import DrawerHeader from "@src/components/DrawerHeader";
+import DrawerHeader from "@src/components/headers/DrawerHeader";
 import ConnectionItem from "@src/components/ConnectionItem";
 import ConnectionButton from "@src/components/buttons/ConnectionButton";
 import AccountTypeDialog from "@src/components/dialogs/AccountTypeDialog";

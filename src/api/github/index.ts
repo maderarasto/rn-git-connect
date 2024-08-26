@@ -2,7 +2,8 @@ import { AxiosRequestConfig } from "axios";
 import ApiClient from "../ApiClient";
 import { getActiveAccountToken } from "@src/utils";
 import { QueryParams, Response } from "./types";
-import { Repository, User } from "@src/types";
+import { ActivityEvent, ActivityEventType, Repository, User } from "@src/types";
+import { resolveActivityEventData } from "./utils";
 
 const GitHubClient = new ApiClient(
     'https://api.github.com'
@@ -52,7 +53,6 @@ const auth = {
 
         try {
             const response = await GitHubClient.get<Response.Repository[]>(`user/repos`, config);
-            
             return response.map((responseItem) => ({
                 id: responseItem.id,
                 name: responseItem.name,
@@ -95,8 +95,7 @@ const users = {
         };
 
         try {
-            const response = await GitHubClient.get<Response.Repository[]>(`users/${username}/repos`, config);
-            
+            const response = await GitHubClient.get<Response.Repository[]>(`users/${username}/repos`, config);    
             return response.map((responseItem) => ({
                 id: responseItem.id,
                 name: responseItem.name,
@@ -120,6 +119,26 @@ const users = {
             }));
         } catch (error) {
             return Promise.reject(error)
+        }
+    },
+
+    events: async function (
+        username: string,
+        signal?: AbortSignal
+    ): Promise<ActivityEvent[]> {
+        const config: AxiosRequestConfig = {
+            headers: {
+                Authorization: `token ${await getActiveAccountToken()}`
+            },
+            // params: query,
+            signal,
+        };
+
+        try {
+            const response = await GitHubClient.get<Response.ActivityEvent[]>(`users/${username}/events`, config);
+            return response.map((responseItem) => resolveActivityEventData(responseItem));
+        } catch (error) {
+            return Promise.reject(error);
         }
     }
 }

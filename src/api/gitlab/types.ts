@@ -102,6 +102,34 @@ export namespace Response {
         creator_id: number
         updated_at: string
     }>
+
+    export type PushData = Partial<{
+        commit_count: number
+        action: string
+        ref_type: string
+        commit_from: string
+        commit_to: string
+        ref: string
+        commit_title: string
+        ref_count: number
+    }>
+
+    export type Event = Partial<{
+        id: number
+        project_id: number
+        action_name: string
+        target_id: number
+        target_iid: number
+        target_type: string
+        author_id: number
+        target_title: string
+        created_at: string
+        author: User
+        imported: boolean
+        imported_from: string
+        push_data: PushData
+        author_username: string
+    }>;
 }
 
 export namespace QueryParams {

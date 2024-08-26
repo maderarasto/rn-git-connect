@@ -1,6 +1,5 @@
 import { StyleProp, ViewStyle } from "react-native";
 import { SortByItems } from "./structures";
-import { QueryFunction } from "@tanstack/react-query";
 
 export type ApiType = (
     | 'GitHub'
@@ -91,6 +90,31 @@ export type Tag = {
     key?: string
     selected?: boolean
 };
+
+export type ActivityEventType = (
+    | 'CreateEvent'
+    | 'DeleteEvent'
+    | 'ForkEvent'
+    | 'IssueCommentEvent'
+    | 'IssuesEvent'
+    | 'PullRequestEvent'
+    | 'PushEvent'
+)
+
+export type ActivityEventPayload = Partial<{
+    repoId: number
+    commitCount: number
+    commitTitle: string
+    head: string
+}>;
+
+export type ActivityEvent = {
+    id: number
+    type: ActivityEventType
+    author: User
+    payload: ActivityEventPayload
+    createdAt: string
+}
 
 // Deprecated
 export type PropViewStyle = StyleProp<ViewStyle>;

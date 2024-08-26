@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import {AntDesign} from '@expo/vector-icons';
 
-import AuthHeader from '@src/components/AuthHeader';
+import AuthHeader from '@src/components/headers/AuthHeader';
 import { convertFromSlug, saveAccount } from '@src/utils';
 import { AccountType, User } from '@src/types';
 import TextButton from '@src/components/buttons/TextButton';
@@ -13,8 +13,8 @@ import AuthPATGitHubTemplate from '@src/templates/help/AuthPATGitHubTemplate';
 import AuthPATGitLabTemplate from '@src/templates/help/AuthPATGitLabTemplate';
 import useAuthQuery from '@src/hooks/useAuthQuery';
 import { AuthUserContext, AuthUserContextType } from '@src/context/AuthUserContext';
-import PastableTextarea from '@src/components/PastableTextarea';
-import BaseHeader from '@src/components/BaseHeader';
+import PastableTextarea from '@src/components/input/PastableTextarea';
+import BaseHeader from '@src/components/headers/BaseHeader';
 
 const UNAUTHORIZED_MESSAGES = [
   'Bad credentials',

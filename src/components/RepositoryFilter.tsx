@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle, TextStyle, ToastAndroid } from "react-native";
 import React, { RefObject, useRef, useState } from "react";
-import LabeledTextInput from "./LabeledTextInput";
+import LabeledTextInput from "./input/LabeledTextInput";
 import PrimaryButton from "./buttons/PrimaryButton";
 import { FontAwesome } from "@expo/vector-icons";
 import Dialog, { DialogMethods } from "./dialogs/Dialog";
