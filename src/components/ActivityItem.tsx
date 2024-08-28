@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { FontAwesome5, Octicons } from '@expo/vector-icons';
 import { ActivityEvent } from '@src/types';
+import { getRelativeTime } from '@src/utils';
 
 export type ActivityItemProps = {
   event: ActivityEvent
@@ -13,7 +14,7 @@ const ActivityItem = ({
 }: ActivityItemProps) => {
   function resolveIcon() {
     let icon = <Octicons name="issue-opened" size={18} color="#e5e7eb" />
-    console.log(event.payload.issue?.state);
+    
     if (event.type === 'PushEvent') {
       icon = <Octicons name="git-commit" size={18} color="#e5e7eb" />
     } else if (event.type === 'IssuesEvent' && event.payload.issue?.state === 'closed') {
@@ -33,7 +34,9 @@ const ActivityItem = ({
       title += ` issue #${event.payload.issue.number} "${event.payload.issue.title}"`;
       title += ` at ${event.repo?.name}`
     } else if (event.type === 'IssueCommentEvent' && event.payload.issue) {
-      title += `Commented on issue #${event.payload.issue.number} "${event.payload.issue.title}" at ${event.repo?.name}`
+      title = `Commented on issue #${event.payload.issue.number} "${event.payload.issue.title}" at ${event.repo?.name}`
+    } else if (event.type === 'CreateEvent' && event.repo) {
+      title = `Created repository ${event.repo.name}.`
     } else if (event.type === 'PushEvent') {
       title = `Pushed ${event.payload.commitCount} commits at ${event.repo?.name}`
     }
@@ -59,7 +62,7 @@ const ActivityItem = ({
           {resolveIcon()}
         </View>
       </View>
-      <View style={{ flex: 1, marginBottom: 8 }}>
+      <View style={{ flex: 1, marginBottom: 12 }}>
         <Text style={{ fontSize: 16, }}>{resolveTitle()}</Text>
         {event.type === 'PushEvent' ? (
           <Text style={{ color: '#333' }}>{event.payload.head?.substring(0, 8)} · {event.payload.commitTitle}</Text>
@@ -67,7 +70,7 @@ const ActivityItem = ({
         {resolveBody() ? (
           <Text style={{ color: '#333' }}>{resolveBody()}</Text>
         ) : '' }
-        <Text style={{ alignSelf: 'flex-end', color: '#6b7280'}}>23 hours ago</Text>
+        <Text style={{ alignSelf: 'flex-end', color: '#6b7280'}}>{getRelativeTime(event.createdAt)}</Text>
       </View>
     </View>
   )
