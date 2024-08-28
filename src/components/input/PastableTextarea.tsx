@@ -2,7 +2,7 @@ import { View, Text, TextInput, StyleSheet, TextStyle, ViewStyle } from 'react-n
 import React, { useEffect, useRef, useState } from 'react'
 import * as Clipboard from 'expo-clipboard';
 
-import TextButton from './buttons/TextButton'
+import TextButton from '../buttons/TextButton'
 
 export type PastableTextareaProps = {
   label?: string
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 8,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'Inter_600SemiBold'
   },
 
   textarea: {

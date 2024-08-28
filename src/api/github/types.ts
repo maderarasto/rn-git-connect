@@ -1,6 +1,7 @@
 export namespace Response {
     export type User = Partial<{
         login: string
+        display_login: string
         id: number
         node_id: string
         avatar_url: string
@@ -127,6 +128,102 @@ export namespace Response {
         total_count: number
         items: Repository[]
     }>;
+
+    export type Commit = Partial<{
+        sha: string
+        author: User
+        message: string
+        distinct: boolean
+        url: string
+    }>;
+
+    export type IssueLabel = {
+        color: string
+        default: boolean
+        description: string
+        id: number
+        name: string
+        node_id: string
+        url: string
+    };
+
+    export type IssueReactions = {
+        '+1': number
+        '-1': number
+        confused: number
+        eyes: number
+        heart: number
+        hooray: number
+        laugh: number
+        rocket: number
+        total_count: number
+        url: string
+    }
+
+    export type IssueComment = {
+        id: number
+        node_id: string
+        body?: string
+        reactions: IssueReactions
+        user: User
+        url: string
+        html_url: string
+        issue_url: string
+        created_at: string
+        updated_at: string
+    }
+
+    export type Issue = Partial<{
+        assignee: User
+        assignees: User[]
+        author_association: string
+        body: string
+        closed_at: string
+        comments: number
+        comments_url: string
+        created_at: string
+        events_url: string
+        html_url: string
+        id: number
+        labels: IssueLabel[]
+        labels_url: string
+        locked: boolean
+        milestone: any
+        node_id: string
+        number: number
+        reactions: IssueReactions
+        repository_url: string
+        state: string
+        state_reason: string
+        timeline_url: string
+        title: string
+        updated_at: string
+        url: string
+        user: User
+    }>;
+
+    export type ActivityPayload = Partial<{
+        repository_id: number
+        push_id: number
+        size: number
+        distinct_size: number
+        ref: string
+        head: string
+        before: string
+        commits: Commit[]
+        issue: Issue
+        comment: IssueComment
+    }>;
+
+    export type ActivityEvent = Partial<{
+        id: number
+        type: string
+        actor: User
+        repo: Repository
+        payload: ActivityPayload
+        public: boolean
+        created_at: string
+    }>;
 }
 
 export namespace QueryParams {
@@ -144,5 +241,10 @@ export namespace QueryParams {
         page: number
         sort: 'best-match' | 'stars' | 'forks' | 'help-wanted-issues' | 'updated'
         order: 'asc' | 'desc'
+    }>
+
+    export type ActivityEvents = Partial<{
+        per_page: number
+        page: number
     }>
 }

@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 export type BaseHeaderOptions = {
   title?: string | (() => ReactNode)
   titleStyle?: ViewStyle
+  headerStyle?: ViewStyle
   headerLeft?: () => ReactNode
   headerLeftStyle?: ViewStyle
   headerRight?: () => ReactNode
@@ -39,6 +40,15 @@ const BaseHeader = ({
     return style;
   }
 
+  function resolveHeaderStyle() {    
+    let style = {
+      ...styles.header,
+      ...options.headerStyle
+    }
+
+    return style;
+  }
+
   function resolveHeaderLeftStyle() {
     let style = {
       ...styles.headerSide,
@@ -58,7 +68,7 @@ const BaseHeader = ({
   }
 
   return (
-    <SafeAreaView style={styles.header}>
+    <SafeAreaView style={resolveHeaderStyle()}>
       <View style={resolveHeaderLeftStyle()}>
       {options.headerLeft ? options.headerLeft() : ''}
       </View>

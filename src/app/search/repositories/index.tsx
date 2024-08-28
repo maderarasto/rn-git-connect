@@ -1,12 +1,12 @@
 import { View, TouchableOpacity, ScrollView, Text, StyleSheet, ViewStyle, FlatList } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import BaseHeader from '@src/components/BaseHeader'
+import BaseHeader from '@src/components/headers/BaseHeader'
 import {AntDesign} from '@expo/vector-icons';
-import LabeledTextInput from '@src/components/LabeledTextInput';
+import LabeledTextInput from '@src/components/input/LabeledTextInput';
 import { useRouter } from 'expo-router';
 import { ProgrammingLanguages } from '@src/structures';
 import TagItem from '@src/components/TagItem';
-import { useSearchReposQuery } from '@src/hooks/useSearchReposQuery';
+import { useSearchReposQuery } from '@src/hooks/queries/useSearchReposQuery';
 import { AuthUserContext } from '@src/context/AuthUserContext';
 import { AccountType } from '@src/types';
 import RepositoryListItem from '@src/components/RepositoryListItem';

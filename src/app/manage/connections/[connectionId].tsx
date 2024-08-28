@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign, FontAwesome6 } from "@expo/vector-icons";
 
-import BaseHeader from "@src/components/BaseHeader";
-import ConnectionHeader from "@src/components/ConnectionHeader";
+import BaseHeader from "@src/components/headers/BaseHeader";
+import ConnectionHeader from "@src/components/headers/ConnectionHeader";
 import useActiveAccount from "@src/hooks/useActiveAccount";
-import PastableTextarea from "@src/components/PastableTextarea";
+import PastableTextarea from "@src/components/input/PastableTextarea";
 import PrimaryButton from "@src/components/buttons/PrimaryButton";
 import { AccountType, Connection } from "@src/types";
-import useAuthQuery from "@src/hooks/useAuthQuery";
+import useAuthQuery from "@src/hooks/queries/useAuthQuery";
 import { getAccountToken, removeConnection, saveAccountToken, saveConnection } from "@src/utils";
 
 const Page = () => {

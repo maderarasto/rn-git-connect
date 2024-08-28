@@ -1,9 +1,9 @@
 import { View, StyleSheet, TouchableOpacity, FlatList } from 'react-native'
 import React from 'react'
-import { useAuthReposQuery } from '@src/hooks/useAuthReposQuery';
+import { useAuthReposQuery } from '@src/hooks/queries/useAuthReposQuery';
 import RepositoryListItem from '@src/components/RepositoryListItem';
 import { Drawer } from 'expo-router/drawer';
-import DrawerHeader from '@src/components/DrawerHeader';
+import DrawerHeader from '@src/components/headers/DrawerHeader';
 import {AntDesign} from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 

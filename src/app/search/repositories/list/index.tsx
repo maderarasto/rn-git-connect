@@ -2,10 +2,10 @@ import { View, Text, TouchableOpacity, FlatList } from 'react-native'
 import React, { useContext } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import {AntDesign} from '@expo/vector-icons';
-import BaseHeader from '@src/components/BaseHeader';
+import BaseHeader from '@src/components/headers/BaseHeader';
 import { AuthUserContext } from '@src/context/AuthUserContext';
 import { AccountType } from '@src/types';
-import { useSearchReposQuery } from '@src/hooks/useSearchReposQuery';
+import { useSearchReposQuery } from '@src/hooks/queries/useSearchReposQuery';
 import RepositoryListItem from '@src/components/RepositoryListItem';
 import NotFoundRecord from '@src/components/NotFoundRecord';
 import Loading from '@src/components/Loading';
