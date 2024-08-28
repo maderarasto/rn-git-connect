@@ -1,15 +1,17 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useRouter } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
 
 import BaseHeader from '@src/components/headers/BaseHeader';
 import UserCard from '@src/components/UserCard';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { AuthUserContext } from '@src/context/AuthUserContext';
 import UserInfo from '@src/components/UserInfo';
 import UserContact from '@src/components/UserContact';
 import PrimaryButton from '@src/components/buttons/PrimaryButton';
 import ActivityItem from '@src/components/ActivityItem';
+import { useAuthEventsQuery } from '@src/hooks/queries/useAuthEventsQuery';
+import useBackHandler from '@src/hooks/useBackHandler';
 
 const Page = () => {
   const authUserContext = useContext(AuthUserContext);
@@ -26,7 +28,18 @@ const Page = () => {
 
   const router = useRouter();
 
-  function onBackPress() {
+  useEffect(() => {
+    invalidateQuery();
+  }, []);
+
+  const {
+    data: events,
+    isFetching,
+    error,
+    invalidateQuery
+  } = useAuthEventsQuery();
+
+  async function onBackPress() {
     router.back();
   }
 
@@ -57,10 +70,16 @@ const Page = () => {
         </View>
         <View style={{ paddingHorizontal: 24, paddingVertical: 12 }}>
           <Text style={{ marginBottom: 12, fontSize: 20, fontWeight: 'bold' }}>Your recent activity</Text>
-
           <View>
-            <ActivityItem />
-            <ActivityItem last />
+            {events?.pages.flat().map((activityEvent, index, allEvents) => (
+              <ActivityItem 
+                event={activityEvent}
+                key={activityEvent.id}
+                last={index === (allEvents.length - 1)} />
+            ))}
+            {isFetching ? (
+              <ActivityIndicator size="large" color="#2563eb" style={{ marginTop: 36}} />
+            ) : ''}
           </View>
         </View>
       </ScrollView>

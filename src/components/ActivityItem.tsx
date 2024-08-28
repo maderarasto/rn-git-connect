@@ -1,24 +1,72 @@
 import { StyleSheet, Text, View } from 'react-native'
-import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome5, Octicons } from '@expo/vector-icons';
+import { ActivityEvent } from '@src/types';
 
 export type ActivityItemProps = {
+  event: ActivityEvent
   last?: boolean
 }
 
 const ActivityItem = ({
+  event,
   last = false,
 }: ActivityItemProps) => {
+  function resolveIcon() {
+    let icon = <Octicons name="issue-opened" size={18} color="#e5e7eb" />
+    console.log(event.payload.issue?.state);
+    if (event.type === 'PushEvent') {
+      icon = <Octicons name="git-commit" size={18} color="#e5e7eb" />
+    } else if (event.type === 'IssuesEvent' && event.payload.issue?.state === 'closed') {
+      icon = <Octicons name="issue-closed" size={18} color="#e5e7eb" />
+    } else if (event.type === 'IssueCommentEvent') {
+      icon = <FontAwesome5 name="comment" size={18} color="#e5e7eb" />
+    }
+
+    return icon;
+  }
+
+  function resolveTitle() {
+    let title = '';
+
+    if (event.type === 'IssuesEvent' && event.payload.issue) {
+      title = event.payload.issue.state === 'closed' ? 'Closed' : 'Opened';
+      title += ` issue #${event.payload.issue.number} "${event.payload.issue.title}"`;
+      title += ` at ${event.repo?.name}`
+    } else if (event.type === 'IssueCommentEvent' && event.payload.issue) {
+      title += `Commented on issue #${event.payload.issue.number} "${event.payload.issue.title}" at ${event.repo?.name}`
+    } else if (event.type === 'PushEvent') {
+      title = `Pushed ${event.payload.commitCount} commits at ${event.repo?.name}`
+    }
+
+    return title;
+  }
+
+  function resolveBody() {
+    let body = '';
+
+    if (event.type === 'IssueCommentEvent' && event.payload.comment) {
+      body = event.payload.comment.body ?? '';
+    }
+
+    return body;
+  }
+
   return (
     <View style={styles.container}>
       <View style={{ position: 'relative' }}>
         {!last ? <View style={styles.line}></View> : '' }
-        <View style={{ padding: 2, borderRadius: 50, backgroundColor: '#9ca3af'}}>
-          <Ionicons name="git-commit-outline" size={18} color="#e5e7eb" />
+        <View style={{ padding: 4, borderRadius: 50, backgroundColor: '#9ca3af'}}>
+          {resolveIcon()}
         </View>
       </View>
       <View style={{ flex: 1, marginBottom: 8 }}>
-        <Text style={{ fontSize: 16, }}>Pushed to branch user-profile at Rastislav Madera / Git Connect</Text>
-        <Text style={{ color: '#333' }}>a4eb09b6 · Adds a basic layout for user profile screen. </Text>
+        <Text style={{ fontSize: 16, }}>{resolveTitle()}</Text>
+        {event.type === 'PushEvent' ? (
+          <Text style={{ color: '#333' }}>{event.payload.head?.substring(0, 8)} · {event.payload.commitTitle}</Text>
+        ) : '' }
+        {resolveBody() ? (
+          <Text style={{ color: '#333' }}>{resolveBody()}</Text>
+        ) : '' }
         <Text style={{ alignSelf: 'flex-end', color: '#6b7280'}}>23 hours ago</Text>
       </View>
     </View>

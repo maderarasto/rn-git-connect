@@ -6,7 +6,7 @@ import LabeledTextInput from '@src/components/input/LabeledTextInput';
 import { useRouter } from 'expo-router';
 import { ProgrammingLanguages } from '@src/structures';
 import TagItem from '@src/components/TagItem';
-import { useSearchReposQuery } from '@src/hooks/useSearchReposQuery';
+import { useSearchReposQuery } from '@src/hooks/queries/useSearchReposQuery';
 import { AuthUserContext } from '@src/context/AuthUserContext';
 import { AccountType } from '@src/types';
 import RepositoryListItem from '@src/components/RepositoryListItem';

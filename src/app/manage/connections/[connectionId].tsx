@@ -10,7 +10,7 @@ import useActiveAccount from "@src/hooks/useActiveAccount";
 import PastableTextarea from "@src/components/input/PastableTextarea";
 import PrimaryButton from "@src/components/buttons/PrimaryButton";
 import { AccountType, Connection } from "@src/types";
-import useAuthQuery from "@src/hooks/useAuthQuery";
+import useAuthQuery from "@src/hooks/queries/useAuthQuery";
 import { getAccountToken, removeConnection, saveAccountToken, saveConnection } from "@src/utils";
 
 const Page = () => {

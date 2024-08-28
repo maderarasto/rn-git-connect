@@ -124,18 +124,20 @@ const users = {
 
     events: async function (
         username: string,
+        query: QueryParams.ActivityEvents,
         signal?: AbortSignal
     ): Promise<ActivityEvent[]> {
         const config: AxiosRequestConfig = {
             headers: {
                 Authorization: `token ${await getActiveAccountToken()}`
             },
-            // params: query,
+            params: query,
             signal,
         };
 
         try {
             const response = await GitHubClient.get<Response.ActivityEvent[]>(`users/${username}/events`, config);
+            console.log(response);
             return response.map((responseItem) => resolveActivityEventData(responseItem));
         } catch (error) {
             return Promise.reject(error);

@@ -13,7 +13,7 @@ import { AccountType, ApiType } from "@src/types";
 import { useRouter } from "expo-router";
 import { convertToSlug } from "@src/utils";
 import useActiveAccount from "@src/hooks/useActiveAccount";
-import useAuthQuery from "@src/hooks/useAuthQuery";
+import useAuthQuery from "@src/hooks/queries/useAuthQuery";
 import { AuthUserContext} from "@src/context/AuthUserContext";
 import AccountTypeDialog from "@src/components/dialogs/AccountTypeDialog";
 import { DialogMethods } from "@src/components/dialogs/Dialog";

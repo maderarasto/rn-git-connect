@@ -11,7 +11,7 @@ import Dialog, { DialogMethods } from '@src/components/dialogs/Dialog';
 import PrimaryButton from '@src/components/buttons/PrimaryButton';
 import AuthPATGitHubTemplate from '@src/templates/help/AuthPATGitHubTemplate';
 import AuthPATGitLabTemplate from '@src/templates/help/AuthPATGitLabTemplate';
-import useAuthQuery from '@src/hooks/useAuthQuery';
+import useAuthQuery from '@src/hooks/queries/useAuthQuery';
 import { AuthUserContext, AuthUserContextType } from '@src/context/AuthUserContext';
 import PastableTextarea from '@src/components/input/PastableTextarea';
 import BaseHeader from '@src/components/headers/BaseHeader';
