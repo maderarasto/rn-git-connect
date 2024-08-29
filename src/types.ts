@@ -97,7 +97,7 @@ export type ActivityEventType = (
     | 'ForkEvent'
     | 'IssueCommentEvent'
     | 'IssuesEvent'
-    | 'PullRequestEvent'
+    | 'MergeRequestEvent'
     | 'PushEvent'
 );
 
@@ -134,6 +134,42 @@ export type Issue = {
     closedAt: string
 };
 
+export type MergeRequest = {
+    id: number
+    nodeId: string
+    number: number
+    asignee: User
+    asignees: User[]
+    autoMerge: boolean
+    body?: string
+    changedFiles: number
+    commentCount: number
+    commentsUrl: string
+    commitCount: number
+    commitsUrl: string
+    deletions: number
+    draft: boolean
+    diffUrl: string
+    issueUrl: string
+    labels: IssueLabel[]
+    locked: boolean
+    merged: boolean
+    mergedAt?: string
+    mergedBy?: any
+    rebaseable: boolean
+    requestedReviewers: User[]
+    requestedTeams: any[]
+    reviewCommentUrl: string
+    reviewCommentCount: number
+    reviewCommentsUrl: string
+    state: string
+    title: string
+    user: User
+    createdAt: string
+    updatedAt?: string
+    closedAt?: string    
+}
+
 export type ActivityEventPayload = Partial<{
     repoId: number
     commitCount: number
@@ -141,6 +177,9 @@ export type ActivityEventPayload = Partial<{
     head: string
     issue: Issue
     comment: IssueComment
+    mergeRequest: MergeRequest
+    targetType: string
+    targetName: string
 }>;
 
 export type ActivityEvent = {

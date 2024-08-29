@@ -202,17 +202,64 @@ export namespace Response {
         user: User
     }>;
 
+    export type PullRequest = Partial<{
+        assignee: User
+        assignees: User[]
+        author_association: string
+        auto_merge: boolean
+        body: string
+        changed_files: number
+        closed_at: string
+        comments: number
+        comments_url: string
+        commits: number
+        commits_url: string
+        created_at: string
+        deletions: number
+        draft: boolean
+        diff_url: string
+        html_url: string
+        id: number
+        issue_url: string
+        labels: IssueLabel[]
+        locked: boolean
+        maintainer_can_modify: boolean
+        merge_commit_sha: string
+        mergeable: boolean
+        mergeable_state: string
+        merged: boolean
+        merged_at: string
+        merged_by: any
+        node_id: string
+        number: number
+        patch_url: string
+        rebaseable: boolean
+        requested_reviewers: User[]
+        requested_teams: any[]
+        review_comment_url: string
+        review_comments: number
+        review_comments_url: string
+        state: string
+        statuses_url: string
+        title: string
+        updated_at: string
+        url: string
+        user: User
+    }>;
+
     export type ActivityPayload = Partial<{
         repository_id: number
         push_id: number
         size: number
         distinct_size: number
         ref: string
+        ref_type: string
         head: string
         before: string
         commits: Commit[]
         issue: Issue
         comment: IssueComment
+        pull_request: PullRequest
     }>;
 
     export type ActivityEvent = Partial<{

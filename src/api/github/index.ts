@@ -137,7 +137,6 @@ const users = {
 
         try {
             const response = await GitHubClient.get<Response.ActivityEvent[]>(`users/${username}/events`, config);
-            console.log(response);
             return response.map((responseItem) => resolveActivityEventData(responseItem));
         } catch (error) {
             return Promise.reject(error);
