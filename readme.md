@@ -10,6 +10,7 @@ An idea for this project was to easily maintain project repositories and also us
 - Context API
 - useQuery and useInfiniteQuery hooks
 - React Native animations
+- a
 
 ## What is finished
 :white_check_mark:&nbsp;&nbsp;Base version of wireframe design.<br />
