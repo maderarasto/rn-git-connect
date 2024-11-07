@@ -9,9 +9,14 @@ import {
 } from "@expo-google-fonts/inter";
 
 import { useRouter } from "expo-router";
+import { useEffect } from "react";
 
 export default function Page() {
   const router = useRouter();
+
+  useEffect(() => {
+        
+  }, []);
 
   let [fontsLoaded, fontError] = useFonts({
     Inter_300Light,

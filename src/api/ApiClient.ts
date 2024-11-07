@@ -2,6 +2,8 @@ import axios, {Axios, AxiosRequestConfig} from 'axios';
 
 export type ApiClientOptions = {
   baseUrl: string
+  token?: string
+  tokenPrefix?: string
   timeout?: number
 };
 
@@ -10,6 +12,8 @@ export type ErrorData = {
 };
 
 const DEFAULT_OPTIONS_TIMEOUT = 1000;
+const DEFAULT_OPTIONS_TOKEN = '';
+const DEFAULT_OPTIONS_TOKEN_PREFIX = 'Bearer';
 const DEFAULT_OPTIONS_HEADERS = {
   Accept: 'application/json',
 };
@@ -17,15 +21,21 @@ const DEFAULT_OPTIONS_HEADERS = {
 export default abstract class ApiClient {
   private m_Client: Axios;
 
+  // Public properties
+  public token: string;
+  public tokenPrefix: string;
+
   constructor(options: ApiClientOptions) {
+    this.token = options.token ?? DEFAULT_OPTIONS_TOKEN;
+    this.tokenPrefix = options.tokenPrefix ?? DEFAULT_OPTIONS_TOKEN_PREFIX;
     this.m_Client = axios.create({
       baseURL: options.baseUrl,
       timeout: options.timeout ?? DEFAULT_OPTIONS_TIMEOUT,
       headers: DEFAULT_OPTIONS_HEADERS
-    })
+    });
   }
 
-  async get<T>(url: string, config?: AxiosRequestConfig) {
+  protected async get<T>(url: string, config?: AxiosRequestConfig) {
     if (!this.m_Client) {
         throw new Error('An axios client is missing!');
     }
@@ -33,6 +43,13 @@ export default abstract class ApiClient {
     const requestConfig: AxiosRequestConfig = {
         ...config,
     };
+
+    if (this.token) {
+      requestConfig.headers = {
+        'Authorization': `${this.tokenPrefix} ${this.token}`,
+        ...requestConfig.headers,
+      }
+    }
 
     try {
         const response = await this.m_Client.get<T>(url, requestConfig);
@@ -50,7 +67,7 @@ export default abstract class ApiClient {
     }
   }
 
-   post<T = any>(url: string, config?: AxiosRequestConfig) {
+  protected async post<T = any>(url: string, config?: AxiosRequestConfig) {
     if (!this.m_Client) {
         throw new Error('An axios client is missing!');
     }
@@ -58,11 +75,18 @@ export default abstract class ApiClient {
     const requestConfig: AxiosRequestConfig = {
         ...config
     };
+
+    if (this.token) {
+      requestConfig.headers = {
+        'Authorization': `${this.tokenPrefix} ${this.token}`,
+        ...requestConfig.headers,
+      }
+    }
 
     return this.m_Client.post<T>(url, requestConfig);
   }
 
-  async put<T = any>(url: string, config?: AxiosRequestConfig) {
+  protected async put<T = any>(url: string, config?: AxiosRequestConfig) {
     if (!this.m_Client) {
         throw new Error('An axios client is missing!');
     }
@@ -70,11 +94,18 @@ export default abstract class ApiClient {
     const requestConfig: AxiosRequestConfig = {
         ...config
     };
+
+    if (this.token) {
+      requestConfig.headers = {
+        'Authorization': `${this.tokenPrefix} ${this.token}`,
+        ...requestConfig.headers,
+      }
+    }
 
     return this.m_Client.put<T>(url, requestConfig);
   }
 
-  async patch<T = any>(url: string, config?: AxiosRequestConfig) {
+  protected async patch<T = any>(url: string, config?: AxiosRequestConfig) {
     if (!this.m_Client) {
         throw new Error('An axios client is missing!');
     }
@@ -82,11 +113,18 @@ export default abstract class ApiClient {
     const requestConfig: AxiosRequestConfig = {
         ...config
     };
+
+    if (this.token) {
+      requestConfig.headers = {
+        'Authorization': `${this.tokenPrefix} ${this.token}`,
+        ...requestConfig.headers,
+      }
+    }
 
     return this.m_Client.patch<T>(url, requestConfig);
   }
 
-  async delete<T = any>(url: string, config?: AxiosRequestConfig) {
+  protected async delete<T = any>(url: string, config?: AxiosRequestConfig) {
     if (!this.m_Client) {
         throw new Error('An axios client is missing!');
     }
@@ -95,14 +133,20 @@ export default abstract class ApiClient {
         ...config
     };
 
+    if (this.token) {
+      requestConfig.headers = {
+        'Authorization': `${this.tokenPrefix} ${this.token}`,
+        ...requestConfig.headers,
+      }
+    }
+
     return this.m_Client.delete<T>(url, requestConfig);
   }
 
-  // Necessary to override
   /**
    * Check api connection using personal access token.
    * 
    * @param token represents a personal access token.
    */
-  abstract check<T>(token: string) : Promise<T>;
+  abstract check(token: string) : Promise<unknown>;
 };
