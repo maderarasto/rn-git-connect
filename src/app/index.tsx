@@ -9,14 +9,10 @@ import {
 } from "@expo-google-fonts/inter";
 
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Page() {
   const router = useRouter();
-
-  useEffect(() => {
-        
-  }, []);
 
   let [fontsLoaded, fontError] = useFonts({
     Inter_300Light,
@@ -30,9 +26,9 @@ export default function Page() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text>Hello</Text>
-    </View>
+    </SafeAreaView>
   );
 }
 
