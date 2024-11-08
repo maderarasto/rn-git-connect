@@ -1,10 +1,10 @@
 import ApiResolver from "@src/api/ApiResolver"
-import { ServiceType } from "@src/api/types"
+import { AccountType } from "@src/api/types"
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
 
 export type GitApiContext = {
-  service: ServiceType|null
-  setService?: (service: ServiceType) => void
+  service: AccountType|null
+  setService?: (service: AccountType) => void
   api?: ApiResolver
 };
 
@@ -13,14 +13,14 @@ const GitApiContext = createContext<GitApiContext>({
 });
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
-  const [serviceType, setServiceType] = useState<ServiceType|null>(null);
+  const [serviceType, setServiceType] = useState<AccountType|null>(null);
 
 
   return (
     <GitApiContext.Provider value={{
       api: new ApiResolver(),
       service: serviceType,
-      setService: (service: ServiceType) => {
+      setService: (service: AccountType) => {
         setServiceType(service);
       }
     }}>

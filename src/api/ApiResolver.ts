@@ -1,4 +1,4 @@
-import { ApiAdapter, ServiceType, User } from "./types";
+import { ApiAdapter, AccountType, User } from "./types";
 import GithubClient from "./github/GithubClient";
 import GitlabClient from "./gitlab/GitlabClient";
 import ApiClient from "./ApiClient";
@@ -6,11 +6,11 @@ import GithubAdapter from "./github/GithubAdapter";
 import GitlabAdapter from "./gitlab/GitlabAdapter";
 
 export default class ApiResolver {
-  private m_Services: Record<ServiceType, ApiClient>;
-  private m_Adapters: Record<ServiceType, ApiAdapter>;
+  private m_Services: Record<AccountType, ApiClient>;
+  private m_Adapters: Record<AccountType, ApiAdapter>;
   
   // Public props
-  public activeService?: ServiceType;
+  public activeService?: AccountType;
 
   constructor() {
     this.m_Services = {

@@ -1,4 +1,4 @@
-export type ServiceType = (
+export type AccountType = (
   | 'Github'
   | 'Gitlab'
 );
@@ -10,7 +10,7 @@ export type ApiAdapter = {
 
 export type User = {
   id: number
-  service: ServiceType,
+  service: AccountType,
   username?: string
   fullname: string
   avatarUrl: string

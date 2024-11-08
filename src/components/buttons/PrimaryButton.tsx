@@ -41,13 +41,15 @@ const PrimaryButton = ({
 
 const styles = StyleSheet.create({
   button: {
+    alignItems: 'center',
     paddingHorizontal: 24,
-    paddingVertical: 8,
+    paddingVertical: 12,
     borderRadius: 4,
     backgroundColor: '#000'
   },
 
   buttonText: {
+    fontSize: 14,
     color: '#fff'
   }
 });
