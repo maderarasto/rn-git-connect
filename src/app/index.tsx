@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Image, ActivityIndicator, TouchableOpacity } from "react-native";
 import { useFonts } from "expo-font";
 
 import { 
@@ -9,7 +9,8 @@ import {
 } from "@expo-google-fonts/inter";
 
 import { useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect } from "react";
+import PrimaryButton from "@src/components/PrimaryButton";
 
 export default function Page() {
   const router = useRouter();
@@ -25,15 +26,39 @@ export default function Page() {
     return null;
   }
 
+  useEffect(() => {
+    router
+  }, [])
+
   return (
-    <SafeAreaView style={styles.container}>
-      <Text>Hello</Text>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <Image source={require('@assets/img/icon.png')} style={styles.logo} />
+      <View style={styles.bottom}>
+        <View style={{ gap: 12, display: 'none' }}>
+          <ActivityIndicator size="large" color="black" />
+          <Text style={{ fontSize: 14 }}>Signing in...</Text>
+        </View>
+        <PrimaryButton text="Connect" />
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    position: 'relative',
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  logo: {
+    width: 200,
+    height: 200,
+  },
+
+  bottom: {
+    position: 'absolute',
+    bottom: 100,
   }
 });
