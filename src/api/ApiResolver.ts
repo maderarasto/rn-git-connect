@@ -10,9 +10,10 @@ export default class ApiResolver {
   private m_Adapters: Record<AccountType, ApiAdapter>;
   
   // Public props
-  public activeService?: AccountType;
+  public activeService: AccountType|null;
 
   constructor() {
+    this.activeService = null;
     this.m_Services = {
       Github: new GithubClient(),
       Gitlab: new GitlabClient()
@@ -43,6 +44,7 @@ export default class ApiResolver {
   // API methods
 
   public async check(token: string) : Promise<User> {
+    console.log('c');
     if (!this.activeService) {
       throw new Error('Missing an active service!');
     }

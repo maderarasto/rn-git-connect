@@ -1,11 +1,19 @@
-import GitApiProvider from "@src/providers/GitApiProvider";
+import AuthProvider from "@src/providers/AuthProvider";
+import ApiProvider from "@src/providers/ApiProvider";
 import { Slot, Stack } from "expo-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const client = new QueryClient();
 
 const RootLayout = () => {
   return (
-    <GitApiProvider>
-      <Slot />
-    </GitApiProvider>
+    <QueryClientProvider client={client}>
+      <ApiProvider>
+        <AuthProvider>
+          <Slot />
+        </AuthProvider>
+      </ApiProvider>
+    </QueryClientProvider>
   );
 }
 

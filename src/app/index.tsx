@@ -15,11 +15,11 @@ import { DialogMethods } from "@src/components/dialogs/Dialog";
 import AccountTypeDialog from "@src/components/dialogs/AccountTypeDialog";
 import { AccountType } from "@src/api/types";
 import { slug } from "@src/utils/strings";
-import { useGitApi } from "@src/providers/GitApiProvider";
+import { useApi } from "@src/providers/ApiProvider";
 import colors from "@src/utils/colors";
 
 export default function HomeScreen() {
-  const { setService } = useGitApi();
+  const { api } = useApi();
   const dialogRef = useRef<DialogMethods>(null);
   const router = useRouter();
 
@@ -39,8 +39,8 @@ export default function HomeScreen() {
   }
 
   const onAccountTypeChoose = (accountType: AccountType) => {
-    if (!setService) {
-      throw new Error('Missing necessary function for setting up service for api resolver!');
+    if (!api) {
+      throw new Error('Missing API resolver!');
     }
 
     if (!dialogRef.current) {
@@ -50,7 +50,7 @@ export default function HomeScreen() {
     dialogRef.current.hide();
     setTimeout(async () => {
       // await invalidateQuery();
-      setService(accountType);
+      api.activeService = accountType;
       router.navigate(`auth/pat?type=${slug(accountType)}`);
     }, 150);
   }
