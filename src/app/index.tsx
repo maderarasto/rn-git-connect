@@ -9,17 +9,24 @@ import {
 } from "@expo-google-fonts/inter";
 
 import { useRouter } from "expo-router";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import PrimaryButton from "@src/components/buttons/PrimaryButton";
 import { DialogMethods } from "@src/components/dialogs/Dialog";
 import AccountTypeDialog from "@src/components/dialogs/AccountTypeDialog";
-import { AccountType } from "@src/api/types";
+import { AccountType, User } from "@src/api/types";
 import { slug } from "@src/utils/strings";
 import { useApi } from "@src/providers/ApiProvider";
 import colors from "@src/utils/colors";
+import { useAuth } from "@src/providers/AuthProvider";
+import useAuthQuery from "@src/hooks/useAuthQuery";
 
 export default function HomeScreen() {
+  const [queryEnabled, setQueryEnabled] = useState(false);
+  const [canRedirect, setCanRedirect] = useState(false);
+  
   const { api } = useApi();
+  const authContext = useAuth();
+
   const dialogRef = useRef<DialogMethods>(null);
   const router = useRouter();
 
@@ -30,9 +37,42 @@ export default function HomeScreen() {
     Inter_700Bold
   });
 
-  if (!fontsLoaded && !fontError) {
-    return null;
-  }
+  const {
+    data: user,
+    error,
+    isLoading,
+    invalidate,
+  } = useAuthQuery(authContext?.token ?? '', queryEnabled);
+
+  useEffect(() => {
+    if (!authContext?.token) {
+      return;
+    }
+    
+    setQueryEnabled(true);
+  }, [authContext?.token]);
+
+  useEffect(() => {
+    const initializeUser = async () => {
+      if (!user) {
+        return;
+      }
+
+      authContext?.setUser(user);
+      await invalidate();
+      setCanRedirect(true);
+    }
+    
+    if (!isLoading && user) {
+      initializeUser();
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (canRedirect) {
+      router.replace('(dashboard)');
+    }
+  }, [canRedirect])
 
   const onConnectPress = () => {
     dialogRef.current?.show();
@@ -49,21 +89,26 @@ export default function HomeScreen() {
 
     dialogRef.current.hide();
     setTimeout(async () => {
-      // await invalidateQuery();
+      await invalidate();
       api.activeService = accountType;
       router.navigate(`(auth)/pat?type=${slug(accountType)}`);
     }, 150);
+  }
+
+  if (!fontsLoaded && !fontError) {
+    return null;
   }
 
   return (
     <View style={styles.container}>
       <Image source={require('@assets/img/splash_temp.png')} style={styles.logo} />
       <View style={styles.bottom}>
-        <View style={{ gap: 12, display: 'none' }}>
-          <ActivityIndicator size="large" color="black" />
-          <Text style={{ fontSize: 14 }}>Signing in...</Text>
-        </View>
-        <PrimaryButton text="Connect" style={{ backgroundColor: colors.primary }} onPress={onConnectPress} />
+        {isLoading || (user && !canRedirect) ? (
+          <View style={{ gap: 12 }}>
+            <ActivityIndicator size="large" color="black" />
+            <Text style={{ fontSize: 14 }}>Authenticating...</Text>
+          </View>
+        ) : <PrimaryButton text="Connect" style={{ backgroundColor: colors.primary }} onPress={onConnectPress} />}
       </View>
       <AccountTypeDialog 
         ref={dialogRef} 

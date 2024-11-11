@@ -2,13 +2,15 @@ import { createContext, PropsWithChildren, useContext, useEffect, useState } fro
 import * as SecureStore from 'expo-secure-store';
 import useConnections, { Connection } from "@src/hooks/useConnections"
 
-import { User } from "@src/api/types"
+import { AccountType, User } from "@src/api/types"
 import useLocalStorage from "@src/hooks/useLocalStorage";
-import { slug } from "@src/utils/strings";
+import { capitalize, slug } from "@src/utils/strings";
+import { useApi } from "./ApiProvider";
 
 export type AuthContext = {
   user: User|null
   token: string|null
+  service: string|null
   setUser: (user: User) => void
   saveAccount: (user: User, token: string) => Promise<void>
 }
@@ -20,6 +22,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   const [accountId, setAccountId] = useLocalStorage<string>('active_account_id');
   const [token, setToken] = useState<string|null>(null);
 
+  const {service, setService} = useApi();
   const connections = useConnections();
 
   useEffect(() => {
@@ -27,8 +30,21 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       return;
     }
     
+    resolveService();
     loadAccountToken(accountId)
-  }, [accountId])
+  }, [accountId]);
+
+  const resolveService = () => {
+    if (!accountId) {
+      return;
+    }
+
+    const [_, slug] = accountId.match(/(\w+)[-]token/) ?? [];
+    
+    if (setService) {
+      setService(capitalize(slug) as AccountType);
+    }
+  }
 
   const loadAccountToken = async (accountId: string) => {
     if (accountId.length === 0) {
@@ -64,6 +80,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     <AuthContext.Provider value={{
       user,
       token,
+      service,
       setUser,
       saveAccount
     }}>
