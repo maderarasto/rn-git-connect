@@ -9,6 +9,7 @@ import { useApi } from "./ApiProvider";
 
 export type AuthContext = {
   user: User|null
+  accountId: string|null
   token: string|null
   service: string|null
   setUser: (user: User) => void
@@ -79,6 +80,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   return (
     <AuthContext.Provider value={{
       user,
+      accountId,
       token,
       service,
       setUser,
