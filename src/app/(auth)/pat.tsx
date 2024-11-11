@@ -1,6 +1,6 @@
 import { View, Text, ToastAndroid, Platform, TouchableWithoutFeedback, StyleSheet, Keyboard, ScrollView, ActivityIndicator, ViewStyle } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Redirect, useLocalSearchParams } from 'expo-router'
+import { Redirect, useLocalSearchParams, useNavigation } from 'expo-router'
 import AuthHeader from '@src/components/AuthHeader';
 import { AccountType, User } from '@src/api/types';
 import { unslug } from '@src/utils/strings';
@@ -18,6 +18,8 @@ const UNAUTHORIZED_MESSAGES = [
 
 const AuthPATScreen = () => {
   const {type} = useLocalSearchParams<{ type: string }>();
+  
+  const navigation = useNavigation();
   const authContext = useAuth();
 
   if (!authContext) {
@@ -48,6 +50,10 @@ const AuthPATScreen = () => {
   } = useAuthQuery(token, queryEnabled);
 
   useEffect(() => {
+    invalidate();
+  }, []);
+
+  useEffect(() => {
     if (!user) {
       return
     }
@@ -56,8 +62,8 @@ const AuthPATScreen = () => {
   }, [user]);
 
   const singIn = async (user: User) => {
-    // TODO: Save connections
-    // TODO: Set user
+    await authContext.saveAccount(user, token);
+    authContext.setUser(user);
 
     if (Platform.OS === 'android') {
       ToastAndroid.showWithGravity(
@@ -66,6 +72,17 @@ const AuthPATScreen = () => {
         ToastAndroid.BOTTOM
       );
     }
+
+    const navigationRoutes = [
+      { name: '(dashboard)'} as never,
+    ];
+
+    // TODO: navigate to redirect URL
+
+    navigation.reset({
+      index: 0,
+      routes: navigationRoutes,
+    });
   }
 
   const resolveError = () => {

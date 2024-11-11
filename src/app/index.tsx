@@ -9,7 +9,7 @@ import {
 } from "@expo-google-fonts/inter";
 
 import { useRouter } from "expo-router";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import PrimaryButton from "@src/components/buttons/PrimaryButton";
 import { DialogMethods } from "@src/components/dialogs/Dialog";
 import AccountTypeDialog from "@src/components/dialogs/AccountTypeDialog";
@@ -51,7 +51,7 @@ export default function HomeScreen() {
     setTimeout(async () => {
       // await invalidateQuery();
       api.activeService = accountType;
-      router.navigate(`auth/pat?type=${slug(accountType)}`);
+      router.navigate(`(auth)/pat?type=${slug(accountType)}`);
     }, 150);
   }
 
