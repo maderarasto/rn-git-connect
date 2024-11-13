@@ -44,7 +44,6 @@ export default class ApiResolver {
   // API methods
 
   public async check(token: string) : Promise<User> {
-    console.log('c');
     if (!this.activeService) {
       throw new Error('Missing an active service!');
     }

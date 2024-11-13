@@ -2,11 +2,10 @@ import { ErrorData } from '@src/api/ApiClient';
 import { User } from '@src/api/types';
 import { useApi } from '@src/providers/ApiProvider';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
 
 const useAuthQuery = (token : string, enabled: boolean) => {
-  const client = useQueryClient();
   const {api} = useApi();
+  const queryClient = useQueryClient();
 
   if (!api) {
     throw new Error();
@@ -17,6 +16,7 @@ const useAuthQuery = (token : string, enabled: boolean) => {
     error,
     status,
     isLoading,
+    isFetching,
     isFetched,
   } = useQuery<User, ErrorData>({
     queryKey: ['check'],
@@ -25,18 +25,24 @@ const useAuthQuery = (token : string, enabled: boolean) => {
     enabled,
   });
 
+  const invalidateQuery = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['check'] });
+    queryClient.setQueryData(['check'], null);
+  }
+
+  const removeQuery = () => {
+    queryClient.removeQueries({ queryKey: ['check'] });
+  }
+
   return {
     data,
     error,
     status,
     isLoading,
+    isFetching,
     isFetched,
-    invalidate: async () => {
-      client.setQueryData(['check'], null);
-      await client.invalidateQueries({
-        queryKey: ['check']
-      })
-    }
+    invalidateQuery,
+    removeQuery,
   }
 }
 

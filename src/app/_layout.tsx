@@ -5,8 +5,6 @@ import { Slot, Stack } from "expo-router";
 import { SQLiteProvider } from "expo-sqlite";
 import { DB_NAME, migrateDB } from "@src/utils/localdb";
 
-
-
 const client = new QueryClient();
 
 const RootLayout = () => {

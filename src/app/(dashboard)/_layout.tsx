@@ -16,6 +16,7 @@ import { useAuth } from '@src/providers/AuthProvider';
 import ConnectionButton from '@src/components/buttons/ConnectionButton';
 import AccountTypeDialog from '@src/components/dialogs/AccountTypeDialog';
 import UserCard from '@src/components/UserCard';
+import { useApi } from '@src/providers/ApiProvider';
 
 type DrawerContentProps = DrawerContentComponentProps & {
   dialogRef?:  React.RefObject<DialogMethods>
@@ -95,6 +96,7 @@ const DrawerContent = ({
 
 const DrawerLayout = () => {
   const router = useRouter();
+  const {api} = useApi();
   const dialogRef = useRef<DialogMethods>(null);
 
   function onAccountTypeChoose(accountType: AccountType) {
@@ -104,7 +106,12 @@ const DrawerLayout = () => {
 
     dialogRef.current.hide();
     setTimeout(() => {
-      router.navigate(`auth/pat?type=${slug(accountType)}`);
+      if (!api) {
+        throw new Error('Missing API resolver!');
+      }
+
+      api.activeService = accountType;
+      router.navigate(`(auth)/pat?type=${slug(accountType)}`);
     }, 150);
   }
 

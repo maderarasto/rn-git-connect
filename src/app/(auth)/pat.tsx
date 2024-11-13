@@ -46,24 +46,27 @@ const AuthPATScreen = () => {
     data: user,
     error,
     isLoading,
-    invalidate
+    isFetching,
+    invalidateQuery,
   } = useAuthQuery(token, queryEnabled);
 
   useEffect(() => {
-    invalidate();
-  }, []);
+    console.log(user);
+    if (user) {
+      singIn(user);
+    }
+  }, [user]);
 
   useEffect(() => {
-    if (!user) {
-      return
+    if (error) {
+      setQueryEnabled(false);
     }
-
-    singIn(user);
-  }, [user]);
+  })
 
   const singIn = async (user: User) => {
     await authContext.saveAccount(user, token);
     authContext.setUser(user);
+    await invalidateQuery();
 
     if (Platform.OS === 'android') {
       ToastAndroid.showWithGravity(
@@ -100,14 +103,16 @@ const AuthPATScreen = () => {
   const resolveLoadingStyle = () => {
     const loadingStyle: ViewStyle = {
       ...styles.loading,
-      display: isLoading ? 'flex' : 'none',
+      display: isFetching ? 'flex' : 'none',
     };
 
     return loadingStyle;
   }
 
   const onAuthorizePress = async () => {
-    await invalidate();
+    Keyboard.dismiss();
+    await invalidateQuery();
+    
     setQueryEnabled(true);
   }
 

@@ -41,7 +41,7 @@ export default function HomeScreen() {
     data: user,
     error,
     isLoading,
-    invalidate,
+    invalidateQuery,
   } = useAuthQuery(authContext?.token ?? '', queryEnabled);
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function HomeScreen() {
       }
 
       authContext?.setUser(user);
-      await invalidate();
+      invalidateQuery();
       setCanRedirect(true);
     }
     
@@ -89,7 +89,7 @@ export default function HomeScreen() {
 
     dialogRef.current.hide();
     setTimeout(async () => {
-      await invalidate();
+      invalidateQuery();
       api.activeService = accountType;
       router.navigate(`(auth)/pat?type=${slug(accountType)}`);
     }, 150);
