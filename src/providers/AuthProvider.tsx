@@ -13,6 +13,8 @@ export type AuthContext = {
   token: string|null
   service: string|null
   setUser: (user: User) => void
+  setActiveAccount: (accountId: string) => void
+  loadAccountToken: (accountId: string) => Promise<string|null>
   saveAccount: (user: User, token: string) => Promise<void>
 }
 
@@ -20,47 +22,51 @@ const AuthContext = createContext<AuthContext|null>(null);
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User|null>(null);
-  const [accountId, setAccountId] = useLocalStorage<string>('active_account_id');
+  const [activeAccount, setActiveAccount] = useLocalStorage<string>('active_account_id');
   const [token, setToken] = useState<string|null>(null);
 
   const {service, setService} = useApi();
   const connections = useConnections();
 
   useEffect(() => {
-    if (!accountId) {
+    if (!activeAccount) {
       return;
     }
     
     resolveService();
-    loadAccountToken(accountId)
-  }, [accountId]);
+    loadActiveAccountToken()
+  }, [activeAccount]);
 
   const resolveService = () => {
-    if (!accountId) {
+    if (!activeAccount) {
       return;
     }
 
-    const [_, slug] = accountId.match(/(\w+)[-]token/) ?? [];
+    const [_, slug] = activeAccount.match(/(\w+)[-]token/) ?? [];
     
     if (setService) {
       setService(capitalize(slug) as AccountType);
     }
   }
 
-  const loadAccountToken = async (accountId: string) => {
-    if (accountId.length === 0) {
+  const loadActiveAccountToken = async () => {
+    if (!activeAccount) {
       throw new Error('Account ID shouldn\'t be empty string!');
     }
 
-    const accountToken = await SecureStore.getItemAsync(accountId);
+    const accountToken = await loadAccountToken(activeAccount);
     setToken(accountToken);
   }
 
-  const saveAccountToken = async (accountId: string, accountToken: string) => {
+  const loadAccountToken = async (accountId: string) => {
     if (accountId.length === 0) {
-      throw new Error('Account ID shouldn\'t be empty string!');
+      return null;
     }
 
+    return SecureStore.getItemAsync(accountId);
+  }
+
+  const saveAccountToken = async (accountId: string, accountToken: string) => {
     await SecureStore.setItemAsync(accountId, accountToken);
   }
 
@@ -74,16 +80,18 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
     await connections.saveConnection(conn);
     await saveAccountToken(conn.account_id, token);
-    setAccountId(conn.account_id);
+    setActiveAccount(conn.account_id);
   }
 
   return (
     <AuthContext.Provider value={{
       user,
-      accountId,
+      accountId: activeAccount,
       token,
       service,
       setUser,
+      setActiveAccount,
+      loadAccountToken,
       saveAccount
     }}>
       {children}

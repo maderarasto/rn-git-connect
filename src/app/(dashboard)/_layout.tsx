@@ -17,6 +17,7 @@ import ConnectionButton from '@src/components/buttons/ConnectionButton';
 import AccountTypeDialog from '@src/components/dialogs/AccountTypeDialog';
 import UserCard from '@src/components/UserCard';
 import { useApi } from '@src/providers/ApiProvider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type DrawerContentProps = DrawerContentComponentProps & {
   dialogRef?:  React.RefObject<DialogMethods>

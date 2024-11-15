@@ -19,7 +19,7 @@ const useLocalStorage = <T extends Serializable,>(key: string): LocalStorageEntr
       if (serialized === null) {
         return;
       }
-
+      
       setValue(unserialize<T>(serialized));
     }
 
@@ -34,6 +34,7 @@ const useLocalStorage = <T extends Serializable,>(key: string): LocalStorageEntr
     
     const serialized = serialize(item);
     await AsyncStorage.setItem(key, serialized);
+    
     setValue(item);
   }
 

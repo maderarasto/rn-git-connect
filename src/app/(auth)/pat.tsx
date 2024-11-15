@@ -51,7 +51,6 @@ const AuthPATScreen = () => {
   } = useAuthQuery(token, queryEnabled);
 
   useEffect(() => {
-    console.log(user);
     if (user) {
       singIn(user);
     }

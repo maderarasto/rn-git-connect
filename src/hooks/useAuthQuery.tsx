@@ -21,7 +21,7 @@ const useAuthQuery = (token : string, enabled: boolean) => {
   } = useQuery<User, ErrorData>({
     queryKey: ['check'],
     queryFn: () => api.check(token),
-    retry: 0,
+    retry: 2,
     enabled,
   });
 

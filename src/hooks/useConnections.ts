@@ -14,15 +14,29 @@ const useConnections = () => {
   const db = useSQLiteContext();
 
   async function getConnections() {
-    return db.getAllAsync<Connection>(`
+    const connections = await db.getAllAsync<Connection>(`
       SELECT * FROM connections  
     `);
+
+    return connections.map((conn) => ({
+      ...conn,
+      expired: !!conn.expired,
+    }))
   }
 
   async function findConnection(accountId: string) {
-    return db.getFirstAsync(`
+    const connection = await db.getFirstAsync<Connection>(`
       SELECT * FROM connections WHERE account_id = ?  
     `, [ accountId ]);
+
+    if (!connection) {
+      return null;
+    }
+
+    return {
+      ...connection,
+      expired: !!connection.expired
+    };
   }  
 
   async function saveConnection(conn: Connection) {
@@ -30,20 +44,34 @@ const useConnections = () => {
     
     if (!foundConn) {
       await storeConnection(conn);
+    } else {
+      await updateConnection(conn);
     }
-    
   }
 
   async function storeConnection(conn: Connection) {
     const result = await db.runAsync(`
       INSERT INTO connections (account_id, service, username, fullname, expired)
       VALUES (?, ?, ?, ?, ?)  
-    `, [conn.account_id, conn.service, conn.username, conn.fullname, conn.expired ?? 0]);
+    `, [conn.account_id, conn.service, conn.username, conn.fullname, conn.expired ? 1 : 0]);
+  }
+
+  async function updateConnection(conn: Connection) {
+    const result = await db.runAsync(`
+      UPDATE connections 
+      SET 
+        service = ?, 
+        username = ?, 
+        fullname = ?, 
+        expired = ?
+      WHERE account_id = ?
+    `, conn.service, conn.username, conn.fullname, conn.expired ? 1 : 0, conn.account_id);
   }
 
   return {
-    saveConnection,
     getConnections,
+    findConnection,
+    saveConnection,
   }
 }
 

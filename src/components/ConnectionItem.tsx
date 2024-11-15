@@ -24,7 +24,7 @@ const ConnectionItem = ({
   const router = useRouter();
 
   function resolveIconSize() {
-    return size === 'large' ? 36 : 24;
+    return size === 'large' ? 36 : 32;
   }
 
   function resolveIcon() {
@@ -41,7 +41,7 @@ const ConnectionItem = ({
 
   function resolveConnectionDetails() {
     return (
-      <View style={{ flex: 1, }}>
+      <View style={{ flex: 1 }}>
         <Text style={styles.textFullname}>{connection.fullname}</Text>
         <Text style={styles.textUsername}>@{connection.username}</Text>
       </View>
@@ -62,7 +62,7 @@ const ConnectionItem = ({
 
   function onConnectionPress() {
     if (!onPress) {
-      router.navigate(`auth/switch?accountId=${connection.account_id}`);
+      router.navigate(`(auth)/switch?accountId=${connection.account_id}`);
     } else {
       onPress();
     }
@@ -114,13 +114,14 @@ const styles = StyleSheet.create({
   },
 
   textFullname: {
-    marginBottom: -2,
+    marginBottom: -4,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#333'
   },
 
   textUsername: {
-    fontSize: 12,
+    fontSize: 14,
     color: 'gray',
   }
 })
