@@ -15,6 +15,7 @@ export type AuthContext = {
   setUser: (user: User) => void
   setActiveAccount: (accountId: string) => void
   loadAccountToken: (accountId: string) => Promise<string|null>
+  saveAccountToken: (accountId: string, token: string) => Promise<void>
   saveAccount: (user: User, token: string) => Promise<void>
 }
 
@@ -92,6 +93,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       setUser,
       setActiveAccount,
       loadAccountToken,
+      saveAccountToken,
       saveAccount
     }}>
       {children}

@@ -1,6 +1,7 @@
 import { View, Text, ToastAndroid, Platform, TouchableWithoutFeedback, StyleSheet, Keyboard, ScrollView, ActivityIndicator, ViewStyle } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Redirect, useLocalSearchParams, useNavigation } from 'expo-router'
+import { Entypo } from '@expo/vector-icons';
 import AuthHeader from '@src/components/AuthHeader';
 import { AccountType, User } from '@src/api/types';
 import { unslug } from '@src/utils/strings';
@@ -60,7 +61,7 @@ const AuthPATScreen = () => {
     if (error) {
       setQueryEnabled(false);
     }
-  })
+  }, [error]);
 
   const singIn = async (user: User) => {
     await authContext.saveAccount(user, token);
@@ -76,7 +77,7 @@ const AuthPATScreen = () => {
     }
 
     const navigationRoutes = [
-      { name: '(dashboard)'} as never,
+      { name: 'dashboard'} as never,
     ];
 
     // TODO: navigate to redirect URL

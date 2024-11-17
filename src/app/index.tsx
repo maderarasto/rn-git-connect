@@ -70,7 +70,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (canRedirect) {
-      router.replace('(dashboard)');
+      router.replace('dashboard');
     }
   }, [canRedirect])
 
@@ -91,7 +91,7 @@ export default function HomeScreen() {
     setTimeout(async () => {
       invalidateQuery();
       api.activeService = accountType;
-      router.navigate(`(auth)/pat?type=${slug(accountType)}`);
+      router.navigate(`auth/pat?type=${slug(accountType)}`);
     }, 150);
   }
 

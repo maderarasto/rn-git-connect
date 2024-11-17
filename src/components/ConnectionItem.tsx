@@ -60,14 +60,6 @@ const ConnectionItem = ({
     return style;
   }
 
-  function onConnectionPress() {
-    if (!onPress) {
-      router.navigate(`(auth)/switch?accountId=${connection.account_id}`);
-    } else {
-      onPress();
-    }
-  }
-
   if (!interactable)
     return (
       <View style={styles.container}>
@@ -83,7 +75,7 @@ const ConnectionItem = ({
     )
   
   return (
-    <TouchableOpacity style={resolveTouchableStyle()} onPress={onConnectionPress}>
+    <TouchableOpacity style={resolveTouchableStyle()} onPress={onPress}>
       {resolveIcon()}
       {resolveConnectionDetails()}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>

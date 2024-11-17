@@ -1,8 +1,9 @@
 import { View, Text, StyleSheet, TouchableOpacity, TextStyle, ViewStyle } from 'react-native'
-import React from 'react'
+import React, { ReactNode } from 'react'
 
 export type PrimaryButtonProps = {
   text: string
+  icon?: ReactNode
   style?: ViewStyle
   textStyle?: TextStyle
   onPress?: () => void
@@ -10,6 +11,7 @@ export type PrimaryButtonProps = {
 
 const PrimaryButton = ({
   text,
+  icon,
   style = {},
   textStyle = {},
   onPress,
@@ -34,6 +36,7 @@ const PrimaryButton = ({
 
   return (
     <TouchableOpacity style={resolveStyle()} onPress={onPress}>
+      { icon ? icon : ''}
       <Text style={resolveTextStyle()}>{text}</Text>
     </TouchableOpacity>
   )
@@ -41,10 +44,13 @@ const PrimaryButton = ({
 
 const styles = StyleSheet.create({
   button: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
+    gap: 8,
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 4,
+    borderRadius: 24,
     backgroundColor: '#000'
   },
 

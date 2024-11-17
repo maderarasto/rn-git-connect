@@ -11,7 +11,7 @@ const ConnectionButton = ({
 }: ConnectionButtonProps) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
-      <AntDesign name="pluscircleo" size={24} color="#6b7280" />
+      <AntDesign name="pluscircleo" size={24} color="#6b7280" style={{ marginHorizontal: 4 }} />
       <Text style={styles.buttonText}>Add New Connection</Text>
     </TouchableOpacity>
   )

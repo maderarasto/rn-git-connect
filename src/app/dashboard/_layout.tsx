@@ -4,7 +4,7 @@ import { Drawer } from 'expo-router/drawer'
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useRouter } from 'expo-router';
-import {MaterialIcons, FontAwesome, Ionicons, Octicons} from '@expo/vector-icons';
+import {MaterialIcons, FontAwesome, Ionicons, Octicons, Feather} from '@expo/vector-icons';
 
 import { DialogMethods } from '@src/components/dialogs/Dialog';
 import { AccountType } from '@src/api/types';
@@ -13,11 +13,11 @@ import DrawerHeader from '@src/components/DrawerHeader';
 import useConnections, { Connection } from '@src/hooks/useConnections';
 import ConnectionItem from '@src/components/ConnectionItem';
 import { useAuth } from '@src/providers/AuthProvider';
-import ConnectionButton from '@src/components/buttons/ConnectionButton';
 import AccountTypeDialog from '@src/components/dialogs/AccountTypeDialog';
 import UserCard from '@src/components/UserCard';
 import { useApi } from '@src/providers/ApiProvider';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import PrimaryButton from '@src/components/buttons/PrimaryButton';
+import colors from '@src/utils/colors';
 
 type DrawerContentProps = DrawerContentComponentProps & {
   dialogRef?:  React.RefObject<DialogMethods>
@@ -41,6 +41,10 @@ const DrawerContent = ({
     
     loadConnections();
   }, []);
+
+  const switchAccount = ({ account_id: accountId}: Connection) => {
+    router.navigate(`auth/switch?accountId=${accountId}`);
+  }
   
   const onAddConnectionPress = () => {
     props.navigation.closeDrawer();
@@ -52,6 +56,13 @@ const DrawerContent = ({
     router.navigate('manage/profile/(tabs)');
   }
 
+  const onManageConnectionsPress = () => {
+    props.navigation.closeDrawer();
+
+    setTimeout(() => {
+      router.navigate('(manage)/connections');
+    }, 300);
+  }
 
   if (!authContext?.user) {
     return null;
@@ -73,15 +84,22 @@ const DrawerContent = ({
             
           </View>
         </View>
-        <View style={{ flex: 1,}}>
+        <View style={{ flex: 1, gap: 8, }}>
           {connections.map((connection) => (
             <ConnectionItem 
               key={connection.account_id} 
               connection={connection}
+              onPress={() => switchAccount(connection)}
               interactable={connection.account_id !== authContext?.accountId} 
               active={connection.account_id === authContext?.accountId} />
           ))}
-          <ConnectionButton onPress={onAddConnectionPress} />
+          {/* <ConnectionButton onPress={onAddConnectionPress} /> */}
+          <PrimaryButton 
+            text="Manage"
+            icon={<Feather name="settings" size={12} color="white" />}
+            style={{ paddingVertical: 8, backgroundColor: colors.primary }}
+            textStyle={{ fontSize: 12 }}
+            onPress={onManageConnectionsPress} />
         </View>
       </View>
       <View>
@@ -112,7 +130,7 @@ const DrawerLayout = () => {
       }
 
       api.activeService = accountType;
-      router.navigate(`(auth)/pat?type=${slug(accountType)}`);
+      router.navigate(`auth/pat?type=${slug(accountType)}`);
     }, 150);
   }
 
@@ -214,6 +232,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+    marginRight: 4,
   },
 
   drawerSectionLabel: { 

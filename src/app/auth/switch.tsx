@@ -107,7 +107,7 @@ const AuthSwitchScreen = () => {
     
     navigation.reset({
       index: 0,
-      routes: [{ name: '(dashboard)' } as never],
+      routes: [{ name: 'dashboard' } as never],
     });
   }, [authContext?.accountId]);
 
@@ -120,9 +120,8 @@ const AuthSwitchScreen = () => {
     if (!error || !connection) {
       return;
     }
-    console.log('prev');
+    
     updateExpiredConnection(connection).then(() => {
-      console.log('here');
       if (api?.setService && prevService) {
         api.setService(prevService);
       }

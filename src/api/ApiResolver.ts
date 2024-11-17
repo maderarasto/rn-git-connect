@@ -1,9 +1,10 @@
 import { ApiAdapter, AccountType, User } from "./types";
 import GithubClient from "./github/GithubClient";
 import GitlabClient from "./gitlab/GitlabClient";
-import ApiClient from "./ApiClient";
+import ApiClient, {ErrorData} from "./ApiClient";
 import GithubAdapter from "./github/GithubAdapter";
 import GitlabAdapter from "./gitlab/GitlabAdapter";
+import axios from "axios";
 
 export default class ApiResolver {
   private m_Services: Record<AccountType, ApiClient>;

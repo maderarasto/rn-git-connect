@@ -105,10 +105,10 @@ const PastableTextarea = ({
         multiline 
         style={{ maxHeight: 90 }}
         onChangeText={onChangeTextContent} />
-      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 16 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 16, paddingVertical: 8 }}>
         {allowActions ? (
           <>
-            {text.length > 0 ? (
+            {text ? (
               <TextButton text="Clear" textStyle={styles.clearButton} onPress={onClearPress} />
             ) : ''}
             <TextButton text="Paste"  textStyle={styles.saveButton} onPress={onPastePress} />

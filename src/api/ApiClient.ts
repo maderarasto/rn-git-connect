@@ -9,6 +9,7 @@ export type ApiClientOptions = {
 
 export type ErrorData = {
   message: string
+  error?: string
 };
 
 const DEFAULT_OPTIONS_TIMEOUT = 1000;
@@ -61,6 +62,10 @@ export default abstract class ApiClient {
 
       if (axios.isAxiosError(error) && error.response) {
           errorData = error.response.data;
+
+          if (errorData.error === 'invalid_token') {
+            errorData.message = 'Token is no longer valid!';
+          }
       }
 
       return Promise.reject(errorData);

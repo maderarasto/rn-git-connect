@@ -68,10 +68,17 @@ const useConnections = () => {
     `, conn.service, conn.username, conn.fullname, conn.expired ? 1 : 0, conn.account_id);
   }
 
+  async function removeConnection(conn: Connection) {
+    const result = await db.runAsync(`
+      DELETE FROM connections WHERE account_id = ?  
+    `, [conn.account_id]);
+  }
+
   return {
     getConnections,
     findConnection,
     saveConnection,
+    removeConnection,
   }
 }
 
