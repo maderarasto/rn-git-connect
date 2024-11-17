@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import BaseHeader from '@src/components/BaseHeader';
+import BaseHeader from '@src/components/headers/BaseHeader';
 import { useRouter } from 'expo-router';
 import {AntDesign} from '@expo/vector-icons';
 import useConnections, { Connection } from '@src/hooks/useConnections';

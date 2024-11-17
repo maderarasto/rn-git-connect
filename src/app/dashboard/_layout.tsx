@@ -9,7 +9,7 @@ import {MaterialIcons, FontAwesome, Ionicons, Octicons, Feather} from '@expo/vec
 import { DialogMethods } from '@src/components/dialogs/Dialog';
 import { AccountType } from '@src/api/types';
 import { slug } from '@src/utils/strings';
-import DrawerHeader from '@src/components/DrawerHeader';
+import DrawerHeader from '@src/components/headers/DrawerHeader';
 import useConnections, { Connection } from '@src/hooks/useConnections';
 import ConnectionItem from '@src/components/ConnectionItem';
 import { useAuth } from '@src/providers/AuthProvider';
@@ -53,7 +53,10 @@ const DrawerContent = ({
 
   const onProfilePress = () => {
     props.navigation.closeDrawer();
-    router.navigate('manage/profile/(tabs)');
+    
+    setTimeout(() => {
+      router.navigate('(manage)/profile/(tabs)');
+    }, 300);
   }
 
   const onManageConnectionsPress = () => {

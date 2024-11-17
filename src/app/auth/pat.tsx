@@ -2,7 +2,7 @@ import { View, Text, ToastAndroid, Platform, TouchableWithoutFeedback, StyleShee
 import React, { useEffect, useState } from 'react'
 import { Redirect, useLocalSearchParams, useNavigation } from 'expo-router'
 import { Entypo } from '@expo/vector-icons';
-import AuthHeader from '@src/components/AuthHeader';
+import AuthHeader from '@src/components/headers/AuthHeader';
 import { AccountType, User } from '@src/api/types';
 import { unslug } from '@src/utils/strings';
 import PastableTextarea from '@src/components/inputs/PastableTextarea';

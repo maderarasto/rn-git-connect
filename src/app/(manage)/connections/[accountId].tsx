@@ -4,7 +4,7 @@ import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import { FontAwesome6 } from '@expo/vector-icons';
 
 import useConnections, { Connection } from '@src/hooks/useConnections';
-import BaseHeader from '@src/components/BaseHeader';
+import BaseHeader from '@src/components/headers/BaseHeader';
 import BackButton from '@src/components/buttons/BackButton';
 import PrimaryButton from '@src/components/buttons/PrimaryButton';
 import { useAuth } from '@src/providers/AuthProvider';
