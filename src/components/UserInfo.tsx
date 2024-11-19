@@ -37,7 +37,7 @@ const UserInfo = ({
           <Text>{user.location}</Text>
         </View>
         <View style={styles.row}>
-          <FontAwesome6 name="building" size={16} color="black" style={styles.icon}  />
+          <FontAwesome6 name="calendar" size={16} color="black" style={styles.icon}  />
           <Text>Member since {resolveDate()}</Text>
         </View>
       </View>

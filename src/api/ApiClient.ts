@@ -154,4 +154,12 @@ export default abstract class ApiClient {
    * @param token represents a personal access token.
    */
   abstract check(token: string) : Promise<unknown>;
+
+  /**
+   * Gets all contribution events of specific user.
+   * 
+   * @param username unique username of user
+   * @query query parameters
+   */
+  abstract getEvents(username: string, query: Record<string, any>) : Promise<unknown>;
 };

@@ -1,5 +1,6 @@
-import { View, Text, ScrollView, StyleSheet } from 'react-native'
-import React from 'react'
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, ViewStyle, LayoutChangeEvent } from 'react-native'
+import React, { useState } from 'react'
+import {AntDesign, Feather} from '@expo/vector-icons';
 import PrimaryButton from '@src/components/buttons/PrimaryButton'
 import { useAuth } from '@src/providers/AuthProvider'
 import { useRouter } from 'expo-router'
@@ -7,30 +8,33 @@ import colors from '@src/utils/colors'
 import UserCard from '@src/components/UserCard'
 import UserInfo from '@src/components/UserInfo'
 import UserContacts from '@src/components/UserContacts'
+import { LayoutDimensions } from '@src/types'
 
 const UserProfileScreen = () => {
+  const [loadingLayout, setLoadingLayout] = useState<LayoutDimensions|null>(null);
+
   const authContext = useAuth();
   const router = useRouter();
 
-  // function resolveLoadingIndicatorStyle() {
-  //   let style: ViewStyle = {
-  //     ...styles.loadingIndicator
-  //   };
+  function resolveLoadingIndicatorStyle() {
+    let style: ViewStyle = {
+      ...styles.loadingIndicator
+    };
 
-  //   if (loadingLayout) {
-  //     style.transform = [
-  //       { translateX: -Math.trunc(loadingLayout.width / 2) },
-  //       { translateY: -Math.trunc(loadingLayout.height / 2) - 24 },
-  //     ]
-  //   }
+    if (loadingLayout) {
+      style.transform = [
+        { translateX: -Math.trunc(loadingLayout.width / 2) },
+        { translateY: -Math.trunc(loadingLayout.height / 2) - 12 },
+      ]
+    }
 
-  //   return style;
-  // }
+    return style;
+  }
 
-  // function onLoadingIndicatorLayout(ev: LayoutChangeEvent) {
-  //   const {x, y, width, height} = ev.nativeEvent.layout;
-  //   setLoadingLayout({ x, y, width, height});
-  // }
+  const onLoadingIndicatorLayout = (ev: LayoutChangeEvent) => {
+    const {x, y, width, height} = ev.nativeEvent.layout;
+    setLoadingLayout({ x, y, width, height});
+  }
 
   function onEditProfilePress() {
     router.navigate('(manage)/profile/edit');
@@ -62,6 +66,7 @@ const UserProfileScreen = () => {
         </View>
         <PrimaryButton 
           text="Edit profile"
+          icon={<Feather name="edit-2" size={14} color="white" />}
           style={{ 
             alignSelf: 'flex-end', 
             marginVertical: 12,
@@ -69,9 +74,16 @@ const UserProfileScreen = () => {
           }} 
           onPress={onEditProfilePress} />
       </View>
-      <View style={{ paddingHorizontal: 24, paddingVertical: 12, }}>
+      <View style={{ flex: 1, paddingHorizontal: 24, paddingVertical: 12, }}>
         <Text style={{ marginBottom: 16, fontSize: 20, fontWeight: 'bold' }}>Your recent activity</Text>
-        <View>
+        <View style={{ flex: 1 }}>
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator 
+              size="large" 
+              color="#2563eb" 
+              style={resolveLoadingIndicatorStyle()}
+              onLayout={onLoadingIndicatorLayout} />
+          </View>
           {/* {events?.pages.flat().map((activityEvent, index, allEvents) => (
             <ActivityItem 
               event={activityEvent}
