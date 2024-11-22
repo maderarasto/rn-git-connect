@@ -323,11 +323,11 @@ export type PullRequest = {
   base: Branch
   _links: Record<string, RepositoryLink>
   author_association: AuthorAssociation
-  auto_merge: unknown
+  auto_merge: boolean
   active_lock_reason: unknown
   merged: boolean
-  mergeable: unknown
-  rebaseable: unknown
+  mergeable: boolean
+  rebaseable: boolean
   mergeable_state: string
   merged_by: unknown
   comments: number
@@ -340,6 +340,7 @@ export type PullRequest = {
 }
 
 export type PushEventPayload = {
+  type: 'PushEvent'
   repository_id: number
   push_id: number
   size: number
@@ -351,6 +352,7 @@ export type PushEventPayload = {
 }
 
 export type CreateEventPayload = {
+  type: 'CreateEvent'
   ref: string
   ref_type: 'branch' | 'repository'
   master_branch: string
@@ -359,6 +361,7 @@ export type CreateEventPayload = {
 }
 
 export type IssuesEventPayload = {
+  type: 'IssuesEvent'
   action: 'opened' | 'reopened' | 'closed' | 'created'
   issue?: Issue
   comment?: IssueComment

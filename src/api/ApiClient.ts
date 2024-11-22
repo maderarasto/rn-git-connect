@@ -161,5 +161,5 @@ export default abstract class ApiClient {
    * @param username unique username of user
    * @query query parameters
    */
-  abstract getEvents(username: string, query: Record<string, any>) : Promise<unknown>;
+  abstract getEvents(username: string, query: Record<string, any>) : Promise<unknown[]>;
 };

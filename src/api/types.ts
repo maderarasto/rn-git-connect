@@ -5,6 +5,15 @@ export type AccountType = (
 
 export type ApiAdapter = {
   getUser: (user: any) => User
+  getSimpleUser: (user: any) => SimpleUser
+  getSimpleRepository: (repo: any) => SimpleRepository
+  getLabel: (label: any) => Label
+  getIssue: (issue: any) => Issue
+  getIssueComment: (comment: any) => IssueComment
+  getMergeRequest: (mergeRequest: any) => MergeRequest
+  getEventType: (eventType: string) => EventType
+  getEventPayload: (payload: any) => EventPayload
+  getEvent: (event: any) => Event
   // toApiUser: (user: User) => any
 };
 
@@ -12,17 +21,24 @@ export type User = {
   id: number
   service: AccountType,
   username?: string
-  fullname: string
+  fullname: string|null
   avatarUrl: string
   webUrl: string
-  company: string
-  location: string
-  email: string
-  bio: string
+  company: string|null
+  location: string|null
+  email: string|null
+  bio: string|null
   followers: number
   following: number
   createdAt: string
 }
+
+export type SimpleUser = Pick<User, (
+  | 'id'
+  | 'username'
+  | 'webUrl'
+  | 'avatarUrl'
+)>;
 
 export type Repository = {
   id: number
@@ -35,6 +51,7 @@ export type Repository = {
   language: string
   createdAt: string
   updatedAt: string
+  url: string
   avatarUrl: string
   gitUrl: string
   sshUrl: string
@@ -51,14 +68,20 @@ export type Repository = {
   defaultBranch: string
 }
 
+export type SimpleRepository = Pick<Repository, (
+  | 'id'
+  | 'name'
+  | 'url'
+)>
+
 export type MergeRequest = {
   id: number
-  nodeId: string
+  // nodeId: string
   number: number
-  asignee: User
-  asignees: User[]
+  assignee: SimpleUser|null
+  assignees: SimpleUser[]
   autoMerge: boolean
-  body?: string
+  body: string|null
   changedFiles: number
   commentCount: number
   commentsUrl: string
@@ -66,36 +89,36 @@ export type MergeRequest = {
   commitsUrl: string
   deletions: number
   draft: boolean
-  diffUrl: string
+  diffUrl: string|null
   issueUrl: string
   labels: Label[]
   locked: boolean
   merged: boolean
-  mergedAt?: string
-  mergedBy?: any
+  mergedAt: string|null
+  mergedBy: unknown|null
   rebaseable: boolean
-  requestedReviewers: User[]
+  requestedReviewers: SimpleUser[]
   requestedTeams: any[]
   reviewCommentUrl: string
   reviewCommentCount: number
   reviewCommentsUrl: string
   state: string
   title: string
-  user: User
+  user: SimpleUser
   createdAt: string
-  updatedAt?: string
-  closedAt?: string
+  updatedAt: string
+  closedAt: string|null
 }
 
 export type Issue = {
   id: number
   number: number
   title: string
-  body?: string
+  body: string|null
   labels: Label[]
   state: string
   commentCount: number
-  user: User
+  user: SimpleUser
   createdAt: string
   updatedAt: string
   closedAt: string|null
@@ -103,9 +126,9 @@ export type Issue = {
 
 export type IssueComment = {
   id: number
-  nodeId: string
-  body?: string
-  user: User
+  // nodeId: string
+  body: string|null
+  user: SimpleUser
   url: string
   htmlUrl: string
   issueUrl: string
@@ -116,8 +139,8 @@ export type IssueComment = {
 export type Event = {
   id: number
   type: EventType
-  author: User
-  repo?: Repository
+  user: SimpleUser
+  repo?: SimpleRepository
   payload: EventPayload
   createdAt: string
 }
@@ -132,21 +155,25 @@ export type EventType = (
   | 'PushEvent'
 );
 
-export type EventPayload = {
+export type PushData = {
   repoId: number
   commitCount: number
   commitTitle: string
   head: string
+}
+
+export type EventPayload = Partial<{
+  targetType: string|null
+  targetName: string|null
+  push: PushData
   issue: Issue
   comment: IssueComment
   mergeRequest: MergeRequest
-  targetType: string
-  targetName: string
-}
+}>
 
 export type Label = {
   id: number
-    name: string
-    description: string
-    color: string
+  name: string
+  description: string|null
+  color: string|null
 }
