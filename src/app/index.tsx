@@ -13,13 +13,12 @@ import { useEffect, useRef, useState } from "react";
 import PrimaryButton from "@src/components/buttons/PrimaryButton";
 import { DialogMethods } from "@src/components/dialogs/Dialog";
 import AccountTypeDialog from "@src/components/dialogs/AccountTypeDialog";
-import { AccountType, User } from "@src/api/types";
+import { AccountType } from "@src/api/types";
 import { slug } from "@src/utils/strings";
 import { useApi } from "@src/providers/ApiProvider";
 import colors from "@src/utils/colors";
 import { useAuth } from "@src/providers/AuthProvider";
 import useAuthQuery from "@src/hooks/useAuthQuery";
-import GithubClient from "@src/api/github/GithubClient";
 
 export default function HomeScreen() {
   const [queryEnabled, setQueryEnabled] = useState(false);
@@ -30,14 +29,6 @@ export default function HomeScreen() {
 
   const dialogRef = useRef<DialogMethods>(null);
   const router = useRouter();
-
-  // useEffect(() => {
-  //   const github = new GithubClient();
-
-  //   github.getEvents('maderarasto', { page: 1, per_page: 10}).then((res) => console.log(res[0].actor)).catch((err) => console.error(err));
-  // }, [])
-
-  // return <ActivityIndicator />;
 
   let [fontsLoaded, fontError] = useFonts({
     Inter_300Light,

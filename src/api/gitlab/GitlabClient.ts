@@ -1,5 +1,5 @@
 import ApiClient from "../ApiClient";
-import { User } from "./types";
+import { Event, User } from "./types";
 
 export default class GitlabClient extends ApiClient {
   constructor() {
@@ -14,5 +14,14 @@ export default class GitlabClient extends ApiClient {
         Authorization: `Bearer ${token}`
       }
     });
+  }
+
+  async getEvents(username: string, query: Record<string, any>): Promise<Event[]> {
+      return this.get<Event[]>(`/users/${username}/events`, {
+        params: query,
+        headers: {
+          Authorization: `${this.tokenPrefix} ${this.token}`
+        }
+      });
   }
 }
