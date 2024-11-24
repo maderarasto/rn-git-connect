@@ -1,4 +1,10 @@
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { Serializable } from "@src/types";
+
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
 
 export function isJSON(text: string) : boolean {
   let result = false;
@@ -42,4 +48,9 @@ export function unserialize<T extends Serializable>(serialized: string) {
   }
 
   return item as T;
+}
+
+
+export function getRelativeTime(until: Date | number | string) {
+  return dayjs().to(until);
 }

@@ -382,7 +382,7 @@ export type Event = {
   actor: Actor
   repo: Pick<Repository, 'id' | 'name' | 'url'>
   org?: Actor
-  payload: PushEventPayload | CreateEventPayload | IssuesEventPayload
+  payload: PushEventPayload | IssuesEventPayload | CreateEventPayload
   public: boolean
   created_at: string|null
 }

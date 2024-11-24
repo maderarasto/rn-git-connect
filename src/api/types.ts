@@ -12,7 +12,7 @@ export type ApiAdapter = {
   getIssueComment: (comment: any) => IssueComment
   getMergeRequest: (mergeRequest: any) => MergeRequest
   getEventType: (eventType: string) => EventType
-  getEventPayload: (payload: any) => EventPayload
+  getEventPayload: (eventType: string, payload: any) => EventPayload
   getEvent: (event: any) => Event
   // toApiUser: (user: User) => any
 };

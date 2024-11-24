@@ -26,7 +26,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   const [activeAccount, setActiveAccount] = useLocalStorage<string>('active_account_id');
   const [token, setToken] = useState<string|null>(null);
 
-  const {service, setService} = useApi();
+  const {api, service, setService} = useApi();
   const connections = useConnections();
 
   useEffect(() => {
@@ -55,7 +55,13 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       throw new Error('Account ID shouldn\'t be empty string!');
     }
 
+    if (!api) {
+      throw new Error('Missing important component: ApiResolver!');
+    }
+
     const accountToken = await loadAccountToken(activeAccount);
+    
+    api.token = accountToken ?? '';
     setToken(accountToken);
   }
 
@@ -75,8 +81,8 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     const conn: Connection = {
       account_id: `${slug(user.service)}-token.${user.username ?? ''}`,
       service: user.service,
-      username: user.username as string,
-      fullname: user.fullname,
+      username: user.username ?? '',
+      fullname: user.fullname ?? '',
     };
 
     await connections.saveConnection(conn);

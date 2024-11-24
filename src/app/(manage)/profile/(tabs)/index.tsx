@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, ViewStyle, LayoutChangeEvent } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {AntDesign, Feather} from '@expo/vector-icons';
 import PrimaryButton from '@src/components/buttons/PrimaryButton'
 import { useAuth } from '@src/providers/AuthProvider'
@@ -9,12 +9,28 @@ import UserCard from '@src/components/UserCard'
 import UserInfo from '@src/components/UserInfo'
 import UserContacts from '@src/components/UserContacts'
 import { LayoutDimensions } from '@src/types'
+import { useApi } from '@src/providers/ApiProvider';
+import useEventsQuery from '@src/hooks/useEventsQuery';
+import EventListItem from '@src/components/EventListItem';
 
 const UserProfileScreen = () => {
   const [loadingLayout, setLoadingLayout] = useState<LayoutDimensions|null>(null);
+  const [isQueryEnabled, setIsQueryEnabled] = useState(false);
 
   const authContext = useAuth();
   const router = useRouter();
+
+  const {
+    data: events,
+    error,
+    isFetching
+  } = useEventsQuery(authContext?.user?.username ?? '', isQueryEnabled);
+
+  useEffect(() => {
+    if (authContext?.user?.username) {
+      setIsQueryEnabled(true);
+    }
+  }, [authContext?.user?.username]);
 
   function resolveLoadingIndicatorStyle() {
     let style: ViewStyle = {
@@ -77,19 +93,21 @@ const UserProfileScreen = () => {
       <View style={{ flex: 1, paddingHorizontal: 24, paddingVertical: 12, }}>
         <Text style={{ marginBottom: 16, fontSize: 20, fontWeight: 'bold' }}>Your recent activity</Text>
         <View style={{ flex: 1 }}>
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator 
-              size="large" 
-              color="#2563eb" 
-              style={resolveLoadingIndicatorStyle()}
-              onLayout={onLoadingIndicatorLayout} />
-          </View>
-          {/* {events?.pages.flat().map((activityEvent, index, allEvents) => (
-            <ActivityItem 
+          {isFetching ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator 
+                size="large" 
+                color="#2563eb" 
+                style={resolveLoadingIndicatorStyle()}
+                onLayout={onLoadingIndicatorLayout} />
+            </View>
+          ) : ''}
+          {events?.pages.flat().map((activityEvent, index, allEvents) => (
+            <EventListItem 
               event={activityEvent}
               key={activityEvent.id}
               last={index === (allEvents.length - 1)} />
-          ))} */}
+          ))}
         </View>
       </View>
       {/* {isFetching ? (

@@ -59,16 +59,16 @@ export default class ApiResolver {
     }
 
     const events = await this.m_Services[this.activeService].getEvents(username, { page: 1, per_page: 10 });
-
+    
     if (this.activeService === 'Gitlab') {
       throw new Error('Method not implemented!');
     }
-
+    
     return events.map((event) => {
       if (!this.activeService) {
         throw new Error('Missing an active service!');
       }
-
+      
       return this.m_Adapters[this.activeService].getEvent(event);
     })
   }

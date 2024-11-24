@@ -10,6 +10,7 @@ import {
   IssuesEventPayload,
   CreateEventPayload,
   Event as GithubEvent,
+  EventType as GithubEventType,
 } from "./types";
 
 type GithubEventPayload = (
@@ -139,11 +140,20 @@ const GithubAdapter: ApiAdapter = {
     return resolvedType;
   },
 
-  getEventPayload(payload: GithubEventPayload): EventPayload {
+  getEventPayload(eventType: string, payload: GithubEventPayload): EventPayload {
+    const resolvedType: GithubEventType = eventType as GithubEventType;
     const resolvedPayload: EventPayload = {
       targetType: payload.type === 'CreateEvent' ? payload.ref_type : null,
       targetName: payload.type === 'PushEvent' || payload.type === 'CreateEvent' ? payload.ref : null,
     };
+
+    if (resolvedType === 'CreateEvent') {
+      payload.type = 'CreateEvent';
+    } else if (resolvedType === 'PushEvent') {
+      payload.type = 'PushEvent'
+    } else {
+      payload.type = 'IssuesEvent';
+    }
 
     if (payload.type === 'PushEvent') {
       const pushData: Partial<PushData> = {
@@ -180,7 +190,7 @@ const GithubAdapter: ApiAdapter = {
       type: this.getEventType(event.type ?? ''),
       user: this.getSimpleUser(event.actor),
       repo: this.getSimpleRepository(event.repo),
-      payload: this.getEventPayload(event.payload),
+      payload: this.getEventPayload(event.type ?? '', event.payload),
       createdAt: event.created_at ?? '',
     };
 
