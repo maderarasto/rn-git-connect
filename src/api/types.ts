@@ -14,6 +14,7 @@ export type ApiAdapter = {
   getEventType: (eventType: string) => EventType
   getEventPayload: (eventType: string, payload: any) => EventPayload
   getEvent: (event: any) => Event
+  getApiListQuery: (query: ListQuery) => Record<string, any>
   // toApiUser: (user: User) => any
 };
 
@@ -177,3 +178,8 @@ export type Label = {
   description: string|null
   color: string|null
 }
+
+export type ListQuery = Partial<{
+  page: number
+  perPage: number
+}>

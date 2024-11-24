@@ -1,9 +1,20 @@
 import { ErrorData } from "@src/api/ApiClient";
-import { Event } from "@src/api/types";
+import { Event, ListQuery } from "@src/api/types";
 import { useApi } from "@src/providers/ApiProvider";
 import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 
-const useEventsQuery = (username: string, enabled: boolean = false) => {
+export type EventQueryProps = {
+  params?: ListQuery
+  enabled: boolean
+}
+
+const useEventsQuery = (
+  username: string, 
+  { 
+    params = {}, 
+    enabled = false,
+  }: EventQueryProps
+) => {
   const {api} = useApi();
   const queryClient = useQueryClient();
 
@@ -18,7 +29,12 @@ const useEventsQuery = (username: string, enabled: boolean = false) => {
     isFetching
   } = useInfiniteQuery<Event[], ErrorData>({
     queryKey: ['getEvents'],
-    queryFn: () => api.getEvents(username),
+    queryFn: ({pageParam}) => {
+      return api.getEvents(username, { 
+        page: pageParam as number,
+        ...params,
+      });
+    },
     initialPageParam: 1,
     getNextPageParam: (lastPage, _, lastParamPage) => {
       if (!lastPage) {

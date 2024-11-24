@@ -1,10 +1,9 @@
-import { ApiAdapter, AccountType, User, Event } from "./types";
+import { ApiAdapter, AccountType, User, Event, ListQuery } from "./types";
 import GithubClient from "./github/GithubClient";
 import GitlabClient from "./gitlab/GitlabClient";
 import ApiClient, {ErrorData} from "./ApiClient";
 import GithubAdapter from "./github/GithubAdapter";
 import GitlabAdapter from "./gitlab/GitlabAdapter";
-import axios from "axios";
 
 export default class ApiResolver {
   private m_Services: Record<AccountType, ApiClient>;
@@ -53,7 +52,7 @@ export default class ApiResolver {
     return this.m_Adapters[this.activeService].getUser(apiUser);
   }
 
-  public async getEvents(username: string): Promise<Event[]> {
+  public async getEvents(username: string, query: ListQuery): Promise<Event[]> {
     if (!this.activeService) {
       throw new Error('Missing an active service!');
     }

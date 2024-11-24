@@ -1,4 +1,4 @@
-import { User, Event, ApiAdapter, EventType, SimpleUser, SimpleRepository, EventPayload, PushData, Issue, Label, IssueComment, MergeRequest } from "../types";
+import { User, Event, ApiAdapter, EventType, SimpleUser, SimpleRepository, EventPayload, PushData, Issue, Label, IssueComment, MergeRequest, ListQuery } from "../types";
 import { 
   User as GithubUser,
   Repository as GithubRepository,
@@ -11,6 +11,7 @@ import {
   CreateEventPayload,
   Event as GithubEvent,
   EventType as GithubEventType,
+  ListQuery as GithubListQuery,
 } from "./types";
 
 type GithubEventPayload = (
@@ -195,6 +196,13 @@ const GithubAdapter: ApiAdapter = {
     };
 
     return resolvedEvent;
+  },
+
+  getApiListQuery(query: ListQuery): GithubListQuery {
+    return {
+      page: query.page ?? 1,
+      per_page: query.perPage ?? 10,
+    } satisfies GithubListQuery;
   }
 };
 

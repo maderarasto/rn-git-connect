@@ -9,7 +9,6 @@ import UserCard from '@src/components/UserCard'
 import UserInfo from '@src/components/UserInfo'
 import UserContacts from '@src/components/UserContacts'
 import { LayoutDimensions } from '@src/types'
-import { useApi } from '@src/providers/ApiProvider';
 import useEventsQuery from '@src/hooks/useEventsQuery';
 import EventListItem from '@src/components/EventListItem';
 
@@ -24,7 +23,9 @@ const UserProfileScreen = () => {
     data: events,
     error,
     isFetching
-  } = useEventsQuery(authContext?.user?.username ?? '', isQueryEnabled);
+  } = useEventsQuery(authContext?.user?.username ?? '', {
+    enabled: isQueryEnabled
+  });
 
   useEffect(() => {
     if (authContext?.user?.username) {
