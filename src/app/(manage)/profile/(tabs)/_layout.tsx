@@ -6,7 +6,7 @@ import { useAuth } from '@src/providers/AuthProvider';
 
 const TabLayout = () => {
   const router = useRouter();
-
+  
   async function onBackPress() {
     router.back();
   }

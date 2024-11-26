@@ -98,7 +98,7 @@ const GithubAdapter: ApiAdapter = {
       return {
         id: mergeRequest.id,
         number: mergeRequest.number,
-        assignee: this.getSimpleUser(mergeRequest.assignee),
+        assignee: mergeRequest.assignee ? this.getSimpleUser(mergeRequest.assignee) : null,
         assignees: mergeRequest.assignees.map((assignee) => this.getSimpleUser(assignee)),
         autoMerge: mergeRequest.auto_merge,
         body: mergeRequest.body,

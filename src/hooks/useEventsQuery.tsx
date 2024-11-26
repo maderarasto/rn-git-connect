@@ -4,14 +4,18 @@ import { useApi } from "@src/providers/ApiProvider";
 import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type EventQueryProps = {
+  queryKey: string  
   params?: ListQuery
-  enabled: boolean
+  enabled?: boolean
 }
+
+const DEFAULT_LIST_LIMIT = 20;
 
 const useEventsQuery = (
   username: string, 
   { 
-    params = {}, 
+    queryKey,
+    params = { perPage: 10 }, 
     enabled = false,
   }: EventQueryProps
 ) => {
@@ -26,9 +30,11 @@ const useEventsQuery = (
     data,
     error,
     isLoading,
-    isFetching
+    isFetching,
+    hasNextPage,
+    fetchNextPage,
   } = useInfiniteQuery<Event[], ErrorData>({
-    queryKey: ['getEvents'],
+    queryKey: [queryKey],
     queryFn: ({pageParam}) => {
       return api.getEvents(username, { 
         page: pageParam as number,
@@ -37,22 +43,22 @@ const useEventsQuery = (
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage, _, lastParamPage) => {
-      if (!lastPage) {
-        return;
+      if (lastPage.length < (params.perPage ?? DEFAULT_LIST_LIMIT)) {
+        return undefined;
       }
-
+      
       return (lastParamPage as number) + 1;
     },
-    retry: 2,
+    retry: false,
     enabled
   });
 
-  const invalidateQuery = async () => {
-    await queryClient.invalidateQueries({ queryKey: ['getEvents'] });
-    queryClient.setQueryData(['getEvents'], null);
+  const invalidateQuery = async (key: string = queryKey) => {
+    await queryClient.invalidateQueries({ queryKey: [key] });
+    queryClient.setQueryData([key], null);
   }
 
-  return { data, error, isLoading, isFetching, invalidateQuery};
+  return { data, error, isLoading, isFetching, hasNextPage, fetchNextPage, invalidateQuery};
 };
 
 export default useEventsQuery;

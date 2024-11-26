@@ -1,9 +1,9 @@
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, ViewStyle, LayoutChangeEvent } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {AntDesign, Feather} from '@expo/vector-icons';
 import PrimaryButton from '@src/components/buttons/PrimaryButton'
 import { useAuth } from '@src/providers/AuthProvider'
-import { useRouter } from 'expo-router'
+import { useFocusEffect, useRouter } from 'expo-router'
 import colors from '@src/utils/colors'
 import UserCard from '@src/components/UserCard'
 import UserInfo from '@src/components/UserInfo'
@@ -22,9 +22,11 @@ const UserProfileScreen = () => {
   const {
     data: events,
     error,
-    isFetching
+    isFetching,
+    invalidateQuery,
   } = useEventsQuery(authContext?.user?.username ?? '', {
-    enabled: isQueryEnabled
+    queryKey: 'getRecentEvents',
+    enabled: isQueryEnabled,
   });
 
   useEffect(() => {
@@ -32,6 +34,10 @@ const UserProfileScreen = () => {
       setIsQueryEnabled(true);
     }
   }, [authContext?.user?.username]);
+
+  useFocusEffect(useCallback(() => {
+    invalidateQuery('getAllEvents');
+  }, []));
 
   function resolveLoadingIndicatorStyle() {
     let style: ViewStyle = {
