@@ -143,10 +143,6 @@ const GithubAdapter: ApiAdapter = {
 
   getEventPayload(eventType: string, payload: GithubEventPayload): EventPayload {
     const resolvedType: GithubEventType = eventType as GithubEventType;
-    const resolvedPayload: EventPayload = {
-      targetType: payload.type === 'CreateEvent' ? payload.ref_type : null,
-      targetName: payload.type === 'PushEvent' || payload.type === 'CreateEvent' ? payload.ref : null,
-    };
 
     if (resolvedType === 'CreateEvent') {
       payload.type = 'CreateEvent';
@@ -155,6 +151,11 @@ const GithubAdapter: ApiAdapter = {
     } else {
       payload.type = 'IssuesEvent';
     }
+
+    const resolvedPayload: EventPayload = {
+      targetType: payload.type === 'CreateEvent' ? payload.ref_type : null,
+      targetName: payload.type === 'PushEvent' || payload.type === 'CreateEvent' ? payload.ref : null,
+    };
 
     if (payload.type === 'PushEvent') {
       const pushData: Partial<PushData> = {

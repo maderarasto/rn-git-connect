@@ -113,7 +113,6 @@ const EventListItem = ({
     } else if (event.type === 'IssueCommentEvent' && event.payload.issue) {
       title = getIssueCommentTitle();
     } else if (event.type === 'PushEvent') {
-      
       title = getPushEventTitle();
     } else if (event.type === 'CreateEvent' && event.repo) {
       if (event.payload.targetType === 'branch') {
