@@ -162,4 +162,11 @@ export default abstract class ApiClient {
    * @query query parameters
    */
   abstract getEvents(username: string, query: Record<string, any>) : Promise<unknown[]>;
+
+  /**
+   * Gets a repository with specific id.
+   * 
+   * @param id unique identifier
+   */
+  abstract getRepository(id: number) : Promise<unknown>;
 };

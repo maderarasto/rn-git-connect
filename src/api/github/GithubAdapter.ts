@@ -1,7 +1,25 @@
-import { User, Event, ApiAdapter, EventType, SimpleUser, SimpleRepository, EventPayload, PushData, Issue, Label, IssueComment, MergeRequest, ListQuery } from "../types";
+import ApiAdapter from "../ApiAdapter";
+import { 
+  User, 
+  Event, 
+  EventType, 
+  SimpleUser, 
+  SimpleRepository, 
+  EventPayload, 
+  PushData, 
+  Issue, 
+  Label, 
+  IssueComment, 
+  MergeRequest, 
+  ListQuery, 
+  SimpleMergeRequest, 
+  SimpleIssue 
+} from "../types";
 import { 
   User as GithubUser,
+  Actor as GithubActor,
   Repository as GithubRepository,
+  SimpleRepository as GithubSimpleRepository,
   Label as GithubLabel,
   Issue as GithubIssue,
   IssueComment as GithubIssueComment,
@@ -20,8 +38,8 @@ type GithubEventPayload = (
   | CreateEventPayload
 );
 
-const GithubAdapter: ApiAdapter = {
-  getUser(user: GithubUser) : User {
+export default class GithubAdapter implements ApiAdapter {
+  public getUser(user: GithubUser): User {
     return {
       id: user.id,
       service: 'Github',
@@ -36,102 +54,73 @@ const GithubAdapter: ApiAdapter = {
       followers: user.followers,
       following: user.following,
       createdAt: user.created_at
-    } satisfies User;
-  },
+    }
+  }
 
-  getSimpleUser(user: GithubUser): SimpleUser {
+  public getSimpleUser(user: GithubUser|GithubActor): SimpleUser {
     return {
       id: user.id,
       username: user.login,
       webUrl: user.url,
       avatarUrl: user.avatar_url
     };
-  },
+  }
 
-  getSimpleRepository(repo: GithubRepository) : SimpleRepository {
+  public getSimpleRepository(repo: GithubRepository|GithubSimpleRepository): SimpleRepository {
     return {
       id: repo.id,
       name: repo.name,
       url: repo.url
     };
-  },
+  }
 
-  getLabel(label: GithubLabel): Label {
+  public getSimpleIssue(issue: GithubIssue): SimpleIssue {
+    return {
+      id: issue.id,
+      number: issue.number,
+      title: issue.title,
+      state: issue.state
+    }
+  }
+
+  public getSimpleMergeRequest(mergeRequest: GithubPullRequest): SimpleMergeRequest {
+    return {
+      id: mergeRequest.id,
+      number: mergeRequest.number,
+      title: mergeRequest.title,
+      state: mergeRequest.state,
+    };
+  }
+
+  public getEvent(event: GithubEvent): Event {
+    return {
+      id: event.id,
+      type: this.resolveEventType(event.type ?? ''),
+      user: this.getSimpleUser(event.actor),
+      repo: this.getSimpleRepository(event.repo),
+      payload: this.resolveEventPayload(event.type ?? '', event.payload),
+      createdAt: event.created_at ?? '',
+    }
+  }
+
+  public getLabel (label: GithubLabel): Label {
     return {
       id: label.id,
       name: label.name,
       description: label.description,
       color: label.color
     };
-  },
+  }
 
-  getIssue(issue: GithubIssue): Issue {
+  public getApiListQuery(params: ListQuery): GithubListQuery {
     return {
-      id: issue.id,
-      number: issue.number,
-      title: issue.title,
-      body: issue.body,
-      labels: issue.labels.map((label) => this.getLabel(label)),
-      state: issue.state, // open/closed
-      commentCount: issue.comments,
-      user: this.getSimpleUser(issue.user),
-      createdAt: issue.created_at,
-      updatedAt: issue.updated_at,
-      closedAt: issue.closed_at
+      page: params.page ?? 1,
+      per_page: params.perPage ?? 10,
     };
-  },
+  }
 
-  getIssueComment(comment: GithubIssueComment): IssueComment {
-    return {
-      id: comment.id,
-      body: comment.body,
-      user: this.getSimpleUser(comment.user),
-      url: comment.url,
-      htmlUrl: comment.html_url,
-      issueUrl: comment.issue_url,
-      createdAt: comment.created_at,
-      updatedAt: comment.updated_at,
-    };
-  },
-
-  getMergeRequest(mergeRequest: GithubPullRequest): MergeRequest {
-      return {
-        id: mergeRequest.id,
-        number: mergeRequest.number,
-        assignee: mergeRequest.assignee ? this.getSimpleUser(mergeRequest.assignee) : null,
-        assignees: mergeRequest.assignees.map((assignee) => this.getSimpleUser(assignee)),
-        autoMerge: mergeRequest.auto_merge,
-        body: mergeRequest.body,
-        changedFiles: mergeRequest.changed_files,
-        commentCount: mergeRequest.comments,
-        commentsUrl: mergeRequest.comments_url,
-        commitCount: mergeRequest.commits,
-        commitsUrl: mergeRequest.commits_url,
-        deletions: mergeRequest.deletions,
-        draft: mergeRequest.draft,
-        diffUrl: mergeRequest.diff_url,
-        issueUrl: mergeRequest.issue_url,
-        labels: mergeRequest.labels.map((label) => this.getLabel(label)),
-        locked: mergeRequest.locked,
-        merged: mergeRequest.merged,
-        mergedAt: mergeRequest.merged_at,
-        mergedBy: mergeRequest.merged_by,
-        rebaseable: mergeRequest.rebaseable,
-        requestedReviewers: mergeRequest.requested_reviewers.map((reviewer) => this.getSimpleUser(reviewer)),
-        requestedTeams: mergeRequest.requested_teams,
-        reviewCommentUrl: mergeRequest.review_comment_url,
-        reviewCommentCount: mergeRequest.review_comments,
-        reviewCommentsUrl: mergeRequest.review_comments_url,
-        state: mergeRequest.state,
-        title: mergeRequest.title,
-        user: this.getSimpleUser(mergeRequest.user),
-        createdAt: mergeRequest.created_at,
-        updatedAt: mergeRequest.updated_at,
-        closedAt: mergeRequest.closed_at,
-      };
-  },
-
-  getEventType(eventType: string) {
+  // protected
+  protected resolveEventType(eventType: string): EventType {
     let resolvedType: EventType = eventType as EventType 
 
     if (eventType === 'PullRequestEvent') {
@@ -139,9 +128,9 @@ const GithubAdapter: ApiAdapter = {
     }
 
     return resolvedType;
-  },
+  }
 
-  getEventPayload(eventType: string, payload: GithubEventPayload): EventPayload {
+  protected resolveEventPayload(eventType: string, payload: GithubEventPayload): EventPayload {
     const resolvedType: GithubEventType = eventType as GithubEventType;
 
     if (resolvedType === 'CreateEvent') {
@@ -184,27 +173,71 @@ const GithubAdapter: ApiAdapter = {
     }
 
     return resolvedPayload;
-  },
-
-  getEvent(event: GithubEvent): Event {
-    const resolvedEvent: Event = {
-      id: event.id,
-      type: this.getEventType(event.type ?? ''),
-      user: this.getSimpleUser(event.actor),
-      repo: this.getSimpleRepository(event.repo),
-      payload: this.getEventPayload(event.type ?? '', event.payload),
-      createdAt: event.created_at ?? '',
-    };
-
-    return resolvedEvent;
-  },
-
-  getApiListQuery(query: ListQuery): GithubListQuery {
-    return {
-      page: query.page ?? 1,
-      per_page: query.perPage ?? 10,
-    } satisfies GithubListQuery;
   }
-};
 
-export default GithubAdapter;
+  protected getIssue(issue: GithubIssue): Issue {
+    return {
+      id: issue.id,
+      number: issue.number,
+      title: issue.title,
+      body: issue.body,
+      labels: issue.labels.map((label) => this.getLabel(label)),
+      state: issue.state, // open/closed
+      commentCount: issue.comments,
+      user: this.getSimpleUser(issue.user),
+      createdAt: issue.created_at,
+      updatedAt: issue.updated_at,
+      closedAt: issue.closed_at
+    };
+  }
+
+  protected getMergeRequest(mergeRequest: GithubPullRequest): MergeRequest {
+    return {
+      id: mergeRequest.id,
+      number: mergeRequest.number,
+      assignee: mergeRequest.assignee ? this.getSimpleUser(mergeRequest.assignee) : null,
+      assignees: mergeRequest.assignees.map((assignee) => this.getSimpleUser(assignee)),
+      autoMerge: mergeRequest.auto_merge,
+      body: mergeRequest.body,
+      changedFiles: mergeRequest.changed_files,
+      commentCount: mergeRequest.comments,
+      commentsUrl: mergeRequest.comments_url,
+      commitCount: mergeRequest.commits,
+      commitsUrl: mergeRequest.commits_url,
+      deletions: mergeRequest.deletions,
+      draft: mergeRequest.draft,
+      diffUrl: mergeRequest.diff_url,
+      issueUrl: mergeRequest.issue_url,
+      labels: mergeRequest.labels.map((label) => this.getLabel(label)),
+      locked: mergeRequest.locked,
+      merged: mergeRequest.merged,
+      mergedAt: mergeRequest.merged_at,
+      mergedBy: mergeRequest.merged_by,
+      rebaseable: mergeRequest.rebaseable,
+      requestedReviewers: mergeRequest.requested_reviewers.map((reviewer) => this.getSimpleUser(reviewer)),
+      requestedTeams: mergeRequest.requested_teams,
+      reviewCommentUrl: mergeRequest.review_comment_url,
+      reviewCommentCount: mergeRequest.review_comments,
+      reviewCommentsUrl: mergeRequest.review_comments_url,
+      state: mergeRequest.state,
+      title: mergeRequest.title,
+      user: this.getSimpleUser(mergeRequest.user),
+      createdAt: mergeRequest.created_at,
+      updatedAt: mergeRequest.updated_at,
+      closedAt: mergeRequest.closed_at,
+    };
+  }
+
+  protected getIssueComment(comment: GithubIssueComment): IssueComment {
+    return {
+      id: comment.id,
+      body: comment.body,
+      user: this.getSimpleUser(comment.user),
+      url: comment.url,
+      htmlUrl: comment.html_url,
+      issueUrl: comment.issue_url,
+      createdAt: comment.created_at,
+      updatedAt: comment.updated_at,
+    };
+  }
+}

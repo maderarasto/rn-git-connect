@@ -173,6 +173,8 @@ export type Repository = {
   default_branch: string
 }
 
+export type SimpleRepository = Pick<Repository, 'id' | 'name' | 'url'>
+
 export type Branch = {
   label: string
   ref: string
@@ -380,7 +382,7 @@ export type Event = {
   id: number
   type: EventType|null
   actor: Actor
-  repo: Pick<Repository, 'id' | 'name' | 'url'>
+  repo: SimpleRepository
   org?: Actor
   payload: PushEventPayload | IssuesEventPayload | CreateEventPayload
   public: boolean

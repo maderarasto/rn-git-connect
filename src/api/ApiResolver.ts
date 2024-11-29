@@ -1,9 +1,11 @@
-import { ApiAdapter, AccountType, User, Event, ListQuery } from "./types";
+import { AccountType, User, Event, ListQuery } from "./types";
 import GithubClient from "./github/GithubClient";
 import GitlabClient from "./gitlab/GitlabClient";
 import ApiClient, {ErrorData} from "./ApiClient";
 import GithubAdapter from "./github/GithubAdapter";
 import GitlabAdapter from "./gitlab/GitlabAdapter";
+import ApiAdapter from "./ApiAdapter";
+import { Project } from "./gitlab/types";
 
 export default class ApiResolver {
   private m_Services: Record<AccountType, ApiClient>;
@@ -20,8 +22,8 @@ export default class ApiResolver {
     };
 
     this.m_Adapters = {
-      Github: GithubAdapter,
-      Gitlab: GitlabAdapter
+      Github: new GithubAdapter(),
+      Gitlab: new GitlabAdapter(),
     }
   }
 
@@ -60,16 +62,20 @@ export default class ApiResolver {
     const params = this.m_Adapters[this.activeService].getApiListQuery(query);
     const events = await this.m_Services[this.activeService].getEvents(username, params);
     
-    if (this.activeService === 'Gitlab') {
-      throw new Error('Method not implemented!');
-    }
-    
-    return events.map((event) => {
-      if (!this.activeService) {
-        throw new Error('Missing an active service!');
+    let resolvedEvents: Event[] = [];
+
+    for (const event of events) {
+      const resolvedEvent = this.m_Adapters[this.activeService].getEvent(event);
+
+      if (this.activeService === 'Gitlab' && resolvedEvent.repo) {
+        const repo = await this.m_Services['Gitlab'].getRepository(resolvedEvent.repo.id);
+        resolvedEvent.repo.name = (repo as Project).name;
+        resolvedEvent.repo.url = (repo as Project).web_url;
       }
-      
-      return this.m_Adapters[this.activeService].getEvent(event);
-    })
+
+      resolvedEvents.push(resolvedEvent);
+    }
+
+    return resolvedEvents;
   }
 }

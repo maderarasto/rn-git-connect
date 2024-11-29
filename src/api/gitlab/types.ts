@@ -386,7 +386,7 @@ export type EventAction = (
   | 'updated'
 )
 
-export type EventTarget = (
+export type EventTargetType = (
   | 'Issue'
   | 'Note'
   | 'Milestone'
@@ -400,7 +400,7 @@ export type Event = {
   action_name: EventAction
   target_id: number|null
   target_iid: number|null
-  target_type: EventTarget|null
+  target_type: EventTargetType|null
   author_id: number
   target_title: string|null
   created_at: string
@@ -411,3 +411,12 @@ export type Event = {
   note?: EventNote
   author_username: string
 }
+
+//--------------------------------------------------------\\
+//                     QUERY PARAMETERS                   \\
+//--------------------------------------------------------\\
+
+export type ListQuery = Partial<{
+  page: number
+  per_page: number
+}>

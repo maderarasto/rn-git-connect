@@ -3,21 +3,6 @@ export type AccountType = (
   | 'Gitlab'
 );
 
-export type ApiAdapter = {
-  getUser: (user: any) => User
-  getSimpleUser: (user: any) => SimpleUser
-  getSimpleRepository: (repo: any) => SimpleRepository
-  getLabel: (label: any) => Label
-  getIssue: (issue: any) => Issue
-  getIssueComment: (comment: any) => IssueComment
-  getMergeRequest: (mergeRequest: any) => MergeRequest
-  getEventType: (eventType: string) => EventType
-  getEventPayload: (eventType: string, payload: any) => EventPayload
-  getEvent: (event: any) => Event
-  getApiListQuery: (query: ListQuery) => Record<string, any>
-  // toApiUser: (user: User) => any
-};
-
 export type User = {
   id: number
   service: AccountType,
@@ -111,19 +96,33 @@ export type MergeRequest = {
   closedAt: string|null
 }
 
+export type SimpleMergeRequest = Pick<MergeRequest, (
+  | 'id'
+  | 'number'
+  | 'title'
+  | 'state'
+)>;
+
 export type Issue = {
   id: number
   number: number
   title: string
   body: string|null
   labels: Label[]
-  state: string
+  state?: string
   commentCount: number
-  user: SimpleUser
+  user: SimpleUser|null
   createdAt: string
   updatedAt: string
   closedAt: string|null
 }
+
+export type SimpleIssue = Pick<Issue, (
+  | 'id'
+  | 'number'
+  | 'title'
+  | 'state'
+)>
 
 export type IssueComment = {
   id: number
@@ -136,6 +135,14 @@ export type IssueComment = {
   createdAt: string
   updatedAt: string
 }
+
+export type SimpleIssueComment = Pick<IssueComment, (
+  | 'id'
+  | 'body'
+  | 'user'
+  | 'createdAt'
+  | 'updatedAt'
+)>
 
 export type Event = {
   id: number
@@ -167,9 +174,9 @@ export type EventPayload = Partial<{
   targetType: string|null
   targetName: string|null
   push: PushData
-  issue: Issue
-  comment: IssueComment
-  mergeRequest: MergeRequest
+  issue: SimpleIssue
+  comment: SimpleIssueComment
+  mergeRequest: SimpleMergeRequest
 }>
 
 export type Label = {

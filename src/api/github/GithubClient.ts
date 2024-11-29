@@ -1,5 +1,5 @@
 import ApiClient from "../ApiClient";
-import { Event, ListQuery, User } from "./types";
+import { Event, ListQuery, Repository, User } from "./types";
 
 export default class GithubClient extends ApiClient {
 
@@ -14,6 +14,14 @@ export default class GithubClient extends ApiClient {
     return this.get<User>('/user', {
       headers: {
         Authorization: `${this.tokenPrefix} ${token}`
+      }
+    });
+  }
+
+  async getRepository(id: number): Promise<Repository> {
+    return this.get<Repository>(`/repositories/${id}`, {
+      headers: {
+        Authorization: `${this.tokenPrefix} ${this.token}`
       }
     });
   }
