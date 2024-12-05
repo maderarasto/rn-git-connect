@@ -21,7 +21,7 @@ const useEventsQuery = (
 ) => {
   const {api} = useApi();
   const queryClient = useQueryClient();
-
+  
   if (!api) {
     throw new Error();
   }
@@ -41,7 +41,7 @@ const useEventsQuery = (
         ...params,
       });
     },
-    initialPageParam: 1,
+    initialPageParam: 2,
     getNextPageParam: (lastPage, _, lastParamPage) => {
       if (lastPage.length < (params.perPage ?? DEFAULT_LIST_LIMIT)) {
         return undefined;

@@ -64,12 +64,13 @@ export default class ApiResolver {
     
     let resolvedEvents: Event[] = [];
 
+    
     for (const event of events) {
       const resolvedEvent = this.m_Adapters[this.activeService].getEvent(event);
 
       if (this.activeService === 'Gitlab' && resolvedEvent.repo) {
         const repo = await this.m_Services['Gitlab'].getRepository(resolvedEvent.repo.id);
-        resolvedEvent.repo.name = (repo as Project).name;
+        resolvedEvent.repo.name = (repo as Project).name_with_namespace;
         resolvedEvent.repo.url = (repo as Project).web_url;
       }
 

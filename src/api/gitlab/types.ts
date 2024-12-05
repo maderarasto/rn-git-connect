@@ -377,10 +377,10 @@ export type EventNote = {
 }
 
 export type EventAction = (
-  | 'pushed_to'
-  | 'pushed_new'
+  | 'pushed to'
+  | 'pushed new'
   | 'opened'
-  | 'commented_on'
+  | 'commented on'
   | 'closed'
   | 'created'
   | 'updated'
@@ -409,6 +409,7 @@ export type Event = {
   imported_from: string
   push_data?: PushData
   note?: EventNote
+  wiki_page?: WikiPage
   author_username: string
 }
 

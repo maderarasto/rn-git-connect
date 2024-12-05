@@ -144,6 +144,30 @@ export type SimpleIssueComment = Pick<IssueComment, (
   | 'updatedAt'
 )>
 
+export type Milestone = {
+  id: number
+  title: string
+  state: string
+}
+
+export type SimpleMilestone = Pick<Milestone, (
+  | 'id'
+  | 'title'
+  | 'state'
+)>
+
+export type WikiPage = {
+  format: string
+  slug: string
+  title: string
+}
+
+export type SimplelWikiPage = Pick<WikiPage, (
+  | 'format'
+  | 'slug'
+  | 'title'
+)>
+
 export type Event = {
   id: number
   type: EventType
@@ -155,11 +179,13 @@ export type Event = {
 
 export type EventType = (
   | 'CreateEvent'
+  | 'UpdateEvent'
   | 'DeleteEvent'
   | 'ForkEvent'
   | 'IssueCommentEvent'
   | 'IssuesEvent'
   | 'MergeRequestEvent'
+  | 'MilestoneEvent'
   | 'PushEvent'
 );
 
@@ -177,6 +203,8 @@ export type EventPayload = Partial<{
   issue: SimpleIssue
   comment: SimpleIssueComment
   mergeRequest: SimpleMergeRequest
+  milestone: SimpleMilestone
+  wiki: WikiPage
 }>
 
 export type Label = {

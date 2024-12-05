@@ -11,6 +11,8 @@ import UserContacts from '@src/components/UserContacts'
 import { LayoutDimensions } from '@src/types'
 import useEventsQuery from '@src/hooks/useEventsQuery';
 import EventListItem from '@src/components/EventListItem';
+import RefreshList from '@src/components/RefreshList';
+import RefreshListView from '@src/components/RefreshListView';
 
 const UserProfileScreen = () => {
   const [loadingLayout, setLoadingLayout] = useState<LayoutDimensions|null>(null);
@@ -28,6 +30,14 @@ const UserProfileScreen = () => {
     queryKey: 'getRecentEvents',
     enabled: isQueryEnabled,
   });
+
+  console.log(events);
+
+  useEffect(() => {
+    return () => {
+      invalidateQuery('getRecentEvents');
+    }
+  }, []);
 
   useEffect(() => {
     if (authContext?.user?.username) {
@@ -84,8 +94,8 @@ const UserProfileScreen = () => {
       </View>
       <View style={{ gap: 12, marginHorizontal: 24, paddingVertical: 12,  }}>
         <View style={{ gap: 12, paddingBottom: 12, borderBottomColor: '#ccc', borderBottomWidth: 1 }}>
-          <UserInfo user={authContext?.user} style={{ flex: 1, }} />
-          <UserContacts user={authContext?.user} style={{ flex: 1 }} />
+          <UserInfo user={authContext.user} style={{ flex: 1, }} />
+          <UserContacts user={authContext.user} style={{ flex: 1 }} />
         </View>
         <PrimaryButton 
           text="Edit profile"
@@ -99,33 +109,16 @@ const UserProfileScreen = () => {
       </View>
       <View style={{ flex: 1, paddingHorizontal: 24, paddingVertical: 12, }}>
         <Text style={{ marginBottom: 16, fontSize: 20, fontWeight: 'bold' }}>Your recent activity</Text>
-        <View style={{ flex: 1 }}>
-          {isFetching ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator 
-                size="large" 
-                color="#2563eb" 
-                style={resolveLoadingIndicatorStyle()}
-                onLayout={onLoadingIndicatorLayout} />
-            </View>
-          ) : ''}
-          {events?.pages.flat().map((activityEvent, index, allEvents) => (
-            <EventListItem 
-              event={activityEvent}
-              key={activityEvent.id}
-              last={index === (allEvents.length - 1)} />
-          ))}
-        </View>
+        <RefreshListView 
+          data={events?.pages.flat()} 
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={(item, index, all) => (
+            <EventListItem
+              event={item}
+              last={index === (all.length-1)} />
+          )} 
+          isLoading={isFetching} />
       </View>
-      {/* {isFetching ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator 
-            size="large" 
-            color="#2563eb" 
-            style={resolveLoadingIndicatorStyle()}
-            onLayout={onLoadingIndicatorLayout} />
-        </View>
-      ) : '' } */}
     </ScrollView>
 
   )

@@ -26,6 +26,7 @@ const UserCard = ({
     return containerStyle;
   }
 
+
   function resolveAvatarStyle() {
     let avatarStyle = {
       ...styles.avatarImage,

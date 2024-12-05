@@ -18,7 +18,7 @@ const EventListItem = ({
   const resolveIcon = () => {
     let icon = <Octicons name="issue-opened" size={18} color="#e5e7eb" />
     
-    if (event.type === 'PushEvent') {
+    if (event.type === 'PushEvent' || event.type === 'UpdateEvent') {
       icon = <Octicons name="git-commit" size={18} color="#e5e7eb" />
     } else if (event.type === 'IssuesEvent' && event.payload.issue?.state === 'closed') {
       icon = <Octicons name="issue-closed" size={18} color="#e5e7eb" />
@@ -52,6 +52,17 @@ const EventListItem = ({
     return (
       <Text style={{ fontSize: 16 }}>
         {issueStateText} issue <TextBold>{issueTitleText}</TextBold> at <TextBold>{event.repo?.name}</TextBold>
+      </Text>
+    );
+  }
+
+  const getMilestoneTitle = () => {
+    const milestoneStateText = event.payload.milestone?.state === 'closed' ? 'Closed' : 'Opened';
+    const milestoneTitleText = `%${event.payload.milestone?.title}`;
+
+    return (
+      <Text style={{ fontSize: 16 }}>
+        {milestoneStateText} milestone <TextBold>{milestoneTitleText}</TextBold> at <TextBold>{event.repo?.name}</TextBold>
       </Text>
     );
   }
@@ -103,11 +114,29 @@ const EventListItem = ({
     );
   }
 
+  const getWikiPageTitle = () => {
+    let actionName = '';
+
+    if (event.type === 'CreateEvent') {
+      actionName = 'Created';
+    } else if (event.type === 'UpdateEvent') {
+      actionName = 'Updated';
+    }
+
+    return (
+      <Text style={{ fontSize: 16 }}>
+        {actionName} wiki page <TextBold>{event.payload.wiki?.title}</TextBold> in the wiki for {event.repo?.name}
+      </Text>
+    )
+  }
+
   const resolveTitle = () => {
     let title: React.JSX.Element|string = '';
     
-    if (event.type === 'IssuesEvent' && event.payload.issue) {
+    if (event.type === 'IssuesEvent') {
       title = getIssueTitle();
+    } else if (event.type === 'MilestoneEvent') {
+      title = getMilestoneTitle();
     } else if (event.type === 'MergeRequestEvent' && event.payload.mergeRequest) {
       title = getMergeRequestTitle();
     } else if (event.type === 'IssueCommentEvent' && event.payload.issue) {
@@ -117,9 +146,13 @@ const EventListItem = ({
     } else if (event.type === 'CreateEvent' && event.repo) {
       if (event.payload.targetType === 'branch') {
         title = getCreateBranchTitle();
+      } else if (event.payload.wiki) {
+        title = getWikiPageTitle();
       } else if (event.payload.targetType === 'repository') {
         title = getCreateRepositoryTitle();
       }
+    } else if (event.payload.wiki) {
+      title = getWikiPageTitle();
     }
 
     return title;

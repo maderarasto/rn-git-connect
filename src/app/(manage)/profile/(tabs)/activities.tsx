@@ -22,6 +22,10 @@ const ActiviesScreen = () => {
     enabled: true,
   });
 
+  useEffect(() => {
+    console.log(error);
+  }, [error]);
+
   const renderActivityIndicator = () => {
     return isLoading ? (
       <ActivityIndicator 

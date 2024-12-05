@@ -23,7 +23,7 @@ const UserInfo = ({
   function resolveDate() {
     return dayjs(user.createdAt).format('MMMM D, YYYY');
   }
-
+  
   return (
     <View style={resolveContainerStyle()}>
       <Text style={styles.title}>Info</Text>

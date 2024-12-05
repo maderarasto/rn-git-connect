@@ -17,11 +17,13 @@ export default class GitlabClient extends ApiClient {
   }
 
   async getRepository(id: number) : Promise<Project> {
-    return this.get<Project>(`/projects/${id}`, {
-      headers: {
-        Authorization: `${this.tokenPrefix} ${this.token}`
-      }
-    });
+    try{
+      return this.get<Project>(`/projects/${id}`, {
+        headers: {
+          Authorization: `${this.tokenPrefix} ${this.token}`
+        }
+      });
+    } catch (err) { console.log(err); throw err; }
   }
 
   async getEvents(username: string, query: Record<string, any>): Promise<Event[]> {

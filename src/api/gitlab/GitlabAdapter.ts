@@ -66,7 +66,10 @@ export default class GitlabAdapter implements ApiAdapter {
   getEvent(event: GitlabEvent): Event {
     return {
       id: event.id,
-      type: this.resolveEventType(event.action_name, event.push_data?.action ?? ''),
+      type: this.resolveEventType(
+        event.action_name, 
+        event.target_type ?? '', 
+        event.push_data?.action ?? ''),
       user: this.getSimpleUser(event.author),
       repo: {
         id: event.project_id,
@@ -85,19 +88,23 @@ export default class GitlabAdapter implements ApiAdapter {
   }
 
   // protected
-  resolveEventType(actionName: string, pushAction: string): EventType {
+  resolveEventType(actionName: string, targetType: string, pushAction: string): EventType {
     let type: EventType = 'CreateEvent';
-
+    
     if (actionName === 'pushed to' && pushAction === 'pushed') {
         type = 'PushEvent';
     } else if (actionName === 'pushed new' && pushAction === 'created') {
         type = 'CreateEvent';
+    } else if (actionName === 'updated') {
+      type = 'UpdateEvent';
     } else if (actionName === 'commented on') {
         type = 'IssueCommentEvent'
-    } else if (actionName === 'MergeRequest') {
+    } else if (targetType === 'MergeRequest') {
         type = 'MergeRequestEvent';
-    } else if (actionName === 'Issue') {
+    } else if (targetType === 'Issue') {
         type = 'IssuesEvent';
+    } else if (targetType === 'Milestone') {
+      type = 'MilestoneEvent';
     }
 
     return type;
@@ -130,6 +137,14 @@ export default class GitlabAdapter implements ApiAdapter {
       };
     }
 
+    if (event.target_type === 'Milestone') {
+      resolvedPayload.milestone = {
+        id: event.target_iid as number,
+        title: event.target_title as string,
+        state: event.action_name,
+      };
+    }
+
     if (event.target_type === 'MergeRequest') {
       resolvedPayload.mergeRequest = {
         id: event.target_id as number,
@@ -139,7 +154,7 @@ export default class GitlabAdapter implements ApiAdapter {
       }
     }
 
-    if (event.action_name === 'commented_on' && event.note) {
+    if (event.action_name === 'commented on' && event.note) {
       resolvedPayload.comment = {
         id: event.target_id as number,
         body: event.note.body,
@@ -152,6 +167,16 @@ export default class GitlabAdapter implements ApiAdapter {
         id: event.note.noteable_id,
         title: event.target_title as string,
         number: event.note.noteable_iid,
+      }
+
+      console.log(resolvedPayload);
+    }
+
+    if (event.wiki_page) {
+      resolvedPayload.wiki = {
+        format: event.wiki_page.format,
+        slug: event.wiki_page.slug,
+        title: event.wiki_page.title
       }
     }
 
