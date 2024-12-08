@@ -31,8 +31,6 @@ const UserProfileScreen = () => {
     enabled: isQueryEnabled,
   });
 
-  console.log(events);
-
   useEffect(() => {
     return () => {
       invalidateQuery('getRecentEvents');

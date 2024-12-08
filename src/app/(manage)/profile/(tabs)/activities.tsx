@@ -5,17 +5,20 @@ import { useAuth } from '@src/providers/AuthProvider'
 import EventListItem from '@src/components/EventListItem'
 import useBackHandler from '@src/hooks/useBackHandler'
 import { useRouter } from 'expo-router'
+import RefreshList from '@src/components/RefreshList'
+import { Event } from '@src/api/types';
 
 const ActiviesScreen = () => {
   const authContext = useAuth();
   
   const {
     data: events,
-    isLoading,
+    isFetching,
     error,
     hasNextPage,
     fetchNextPage,
-    invalidateQuery
+    invalidateQuery,
+    resetQuery,
   } = useEventsQuery(authContext?.user?.username ?? '', {
     queryKey: 'getAllEvents',
     params: { perPage: 20 },
@@ -26,8 +29,12 @@ const ActiviesScreen = () => {
     console.log(error);
   }, [error]);
 
+  const isLastItem = (item: Event, index: number) => {
+    return index === ((events?.pages.flat().length ?? 0) - 1);
+  }
+
   const renderActivityIndicator = () => {
-    return isLoading ? (
+    return isFetching ? (
       <ActivityIndicator 
           size="large" 
           color="#2563eb" 
@@ -36,14 +43,14 @@ const ActiviesScreen = () => {
   }
 
   const onEventListReachedEnd = () => {
-    if (!isLoading) {
+    if (!isFetching) {
       fetchNextPage();
     }
   }
 
   return (
     <View style={styles.container}>
-      <FlatList 
+      {/* <FlatList 
         contentContainerStyle={{ paddingBottom: 70}}
         data={events?.pages.flat()}
         keyExtractor={(event) => event.id.toString()}
@@ -56,13 +63,28 @@ const ActiviesScreen = () => {
         }}
         ListFooterComponent={renderActivityIndicator}
         onEndReachedThreshold={0.75}
-        onEndReached={onEventListReachedEnd}/>
+        onEndReached={onEventListReachedEnd}/> */}
+        <RefreshList
+          data={events?.pages.flat()}
+          keyExtractor={(event) => event.id.toString()}
+          contentContainerStyle={{ paddingBottom: 70 }}
+          onEndReachedThreshold={0.75}
+          onEndReached={onEventListReachedEnd}
+          renderItem={({ item, index }) => (
+            <EventListItem 
+              event={item}
+              last={isLastItem(item, index)}
+              />
+          )}
+          isLoading={isFetching}
+          onRetry={() => resetQuery()}/>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     paddingHorizontal: 16,
     paddingTop: 8,
   },

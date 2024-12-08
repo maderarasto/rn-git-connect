@@ -8,16 +8,27 @@ export type RefreshListProps<T> = FlatListProps<T> & {
  containerStyle?: ViewStyle
  isLoading?: boolean
  loadingMessage?: string
+ onRetry?: () => void
 }
 
 const RefreshList = <T,>({
-  containerStyle,
+  containerStyle = {},
   isLoading = false,
   loadingMessage = '',
+  onRetry,
   ...listProps
 }: RefreshListProps<T>) => {
   const shouldRenderList = () => {
     return (listProps.data?.length ?? 0) > 0 || isLoading; 
+  }
+
+  const resolveContainerStyle = () => {
+    const resolvedStyle: ViewStyle = {
+      ...styles.container,
+      ...containerStyle,
+    };
+
+    return resolvedStyle;
   }
 
   const renderLoading = () => isLoading ? (
@@ -33,7 +44,7 @@ const RefreshList = <T,>({
   ): '';
 
   return (
-    <View style={styles.container}>
+    <View style={resolveContainerStyle()}>
       {shouldRenderList() ? (
         <FlatList 
           ListFooterComponent={renderLoading}
@@ -45,7 +56,8 @@ const RefreshList = <T,>({
             text="Try again" 
             icon={<Ionicons name="refresh" size={16} color="white" />}
             style={styles.retryButton} 
-            textStyle={styles.retryButtonText} />
+            textStyle={styles.retryButtonText}
+            onPress={onRetry} />
         </View>
       )}
     </View>

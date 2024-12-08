@@ -168,8 +168,6 @@ export default class GitlabAdapter implements ApiAdapter {
         title: event.target_title as string,
         number: event.note.noteable_iid,
       }
-
-      console.log(resolvedPayload);
     }
 
     if (event.wiki_page) {

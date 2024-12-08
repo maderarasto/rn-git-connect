@@ -41,7 +41,7 @@ const useEventsQuery = (
         ...params,
       });
     },
-    initialPageParam: 2,
+    initialPageParam: 1,
     getNextPageParam: (lastPage, _, lastParamPage) => {
       if (lastPage.length < (params.perPage ?? DEFAULT_LIST_LIMIT)) {
         return undefined;
@@ -58,7 +58,11 @@ const useEventsQuery = (
     queryClient.setQueryData([key], null);
   }
 
-  return { data, error, isLoading, isFetching, hasNextPage, fetchNextPage, invalidateQuery};
+  const resetQuery = async () => {
+    queryClient.setQueryData([queryKey], null);
+  }
+
+  return { data, error, isLoading, isFetching, hasNextPage, fetchNextPage, invalidateQuery, resetQuery};
 };
 
 export default useEventsQuery;
