@@ -57,7 +57,6 @@ export default abstract class ApiClient {
         const response = await this.m_Client.get<T>(url, requestConfig);;
         return response.data;
     } catch (error) {
-      console.log('error', error);
       let errorData: ErrorData = {
           message: (error as Error).message,
       };

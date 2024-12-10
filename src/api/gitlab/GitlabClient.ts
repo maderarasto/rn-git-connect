@@ -18,29 +18,22 @@ export default class GitlabClient extends ApiClient {
 
   async getRepository(id: number) : Promise<Project> {
     try{
-      const project = await this.get<Project>(`/projects/${id}`, {
+      return this.get<Project>(`/projects/${id}`, {
         headers: {
           Authorization: `${this.tokenPrefix} ${this.token}`
         }
       });
-      console.log(project);
-      return project;
-    } catch (err) { console.log(err); throw err; }
+    } catch (err) { throw err; }
   }
 
   async getEvents(username: string, query: Record<string, any>): Promise<Event[]> {
     try {
-      const events = await this.get<Event[]>(`/users/${username}/events`, {
+      return this.get<Event[]>(`/users/${username}/events`, {
         params: query,
         headers: {
           Authorization: `${this.tokenPrefix} ${this.token}`
         }
       });
-      console.log(events);
-      return events;
-    } catch (err) {
-      console.log(err);
-      throw err;
-    }
+    } catch (err) { throw err; }
   }
 }

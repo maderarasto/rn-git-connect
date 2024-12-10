@@ -31,14 +31,6 @@ const ActiviesScreen = () => {
     console.log(error);
   }, [error]);
 
-  useFocusEffect(useCallback(() => {
-    console.log('focus');
-
-    return () => {
-      console.log('lost focus');
-    }
-  }, []))
-
   const isLastItem = (item: Event, index: number) => {
     return index === ((events?.pages.flat().length ?? 0) - 1);
   }
