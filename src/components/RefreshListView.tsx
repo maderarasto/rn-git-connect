@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, ActivityIndicator, ViewStyle } from 'react-native'
 import React from 'react'
 import {Ionicons} from '@expo/vector-icons';
 import PrimaryButton from './buttons/PrimaryButton'
@@ -10,17 +10,23 @@ export type RefreshListViewProps<T = any> = {
   keyExtractor?: (item: T, index: number) => string
   loadingMessage?: string
   isLoading?: boolean
+  onRetry?: () => void
 }
 
 const RefreshListView = <T,>({
   data = [],
   renderItem,
   keyExtractor,
+  onRetry,
   loadingMessage = '',
   isLoading = false
 }: RefreshListViewProps<T>) => {
   const shouldRenderData = () => {
-    return isLoading || (data?.length ?? 0) > 0;
+    return (data?.length ?? 0) > 0;
+  }
+
+  const shouldRenderDefaultMessage = () => {
+    return !isLoading && !shouldRenderData();
   }
 
   const resolveItemKey = (item: T, index: number) => {
@@ -29,6 +35,19 @@ const RefreshListView = <T,>({
     }
 
     return keyExtractor(item, index);
+  }
+
+  const resolveContainerStyle = () => {
+    const resolvedStyle: ViewStyle = {
+      ...styles.container,
+    }
+
+    if (!shouldRenderData() && isLoading) {
+      resolvedStyle.justifyContent = 'center';
+      resolvedStyle.alignItems = 'center';
+    }
+
+    return resolvedStyle;
   }
 
   const renderLoading = () => (
@@ -43,21 +62,22 @@ const RefreshListView = <T,>({
     </View>
   );
 
-  if (!shouldRenderData()) {
+  if (shouldRenderDefaultMessage()) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', gap: 16, padding: 32}}>
         <Text style={{ fontSize: 16, color: 'gray' }}>No items found</Text>
         <PrimaryButton 
-          text="Try again" 
+          text="Refresh" 
           icon={<Ionicons name="refresh" size={16} color="white" />}
           style={styles.retryButton} 
-          textStyle={styles.retryButtonText} />
+          textStyle={styles.retryButtonText}
+          onPress={onRetry} />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={resolveContainerStyle()}>
       {data?.map((item, index, all) => (
         <View key={resolveItemKey(item, index)}>
           {renderItem(item, index, all)}

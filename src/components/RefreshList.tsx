@@ -18,8 +18,12 @@ const RefreshList = <T,>({
   onRetry,
   ...listProps
 }: RefreshListProps<T>) => {
-  const shouldRenderList = () => {
-    return (listProps.data?.length ?? 0) > 0 || isLoading; 
+  const shouldRenderDefaultMessage = () => {
+    return !isLoading && !shouldRenderData();
+  }
+
+  const shouldRenderData = () => {
+    return (listProps.data?.length ?? 0) > 0; 
   }
 
   const resolveContainerStyle = () => {
@@ -27,6 +31,11 @@ const RefreshList = <T,>({
       ...styles.container,
       ...containerStyle,
     };
+
+    if (!shouldRenderData() && isLoading) {
+      resolvedStyle.justifyContent = 'center';
+      resolvedStyle.alignItems = 'center';
+    }
 
     return resolvedStyle;
   }
@@ -43,23 +52,28 @@ const RefreshList = <T,>({
     </View>
   ): '';
 
+  if (shouldRenderDefaultMessage()) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', gap: 16, padding: 32}}>
+        <Text style={{ fontSize: 18, color: 'gray' }}>No items found</Text>
+        <PrimaryButton 
+          text="Try again" 
+          icon={<Ionicons name="refresh" size={16} color="white" />}
+          style={styles.retryButton} 
+          textStyle={styles.retryButtonText}
+          onPress={onRetry} />
+      </View>
+    )
+  }
+
   return (
     <View style={resolveContainerStyle()}>
-      {shouldRenderList() ? (
+      {shouldRenderData() ? (
         <FlatList 
-          ListFooterComponent={renderLoading}
+          contentContainerStyle={{ position: 'relative' }}
           {...listProps} />
-      ) : (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', gap: 16, padding: 32}}>
-          <Text style={{ fontSize: 18, color: 'gray' }}>No items found</Text>
-          <PrimaryButton 
-            text="Try again" 
-            icon={<Ionicons name="refresh" size={16} color="white" />}
-            style={styles.retryButton} 
-            textStyle={styles.retryButtonText}
-            onPress={onRetry} />
-        </View>
-      )}
+      ) : ''}
+      {isLoading ? renderLoading() : ''}
     </View>
   )
 }
