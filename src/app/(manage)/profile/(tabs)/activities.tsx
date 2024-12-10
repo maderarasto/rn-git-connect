@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet, ActivityIndicator, FlatList } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import useEventsQuery from '@src/hooks/useEventsQuery'
 import { useAuth } from '@src/providers/AuthProvider'
 import EventListItem from '@src/components/EventListItem'
 import useBackHandler from '@src/hooks/useBackHandler'
-import { useRouter } from 'expo-router'
+import { useFocusEffect, useRouter } from 'expo-router'
 import RefreshList from '@src/components/RefreshList'
 import { Event } from '@src/api/types';
 
@@ -26,8 +26,18 @@ const ActiviesScreen = () => {
   });
 
   useEffect(() => {
+    if (!error) return;
+
     console.log(error);
   }, [error]);
+
+  useFocusEffect(useCallback(() => {
+    console.log('focus');
+
+    return () => {
+      console.log('lost focus');
+    }
+  }, []))
 
   const isLastItem = (item: Event, index: number) => {
     return index === ((events?.pages.flat().length ?? 0) - 1);

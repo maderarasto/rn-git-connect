@@ -1,4 +1,4 @@
-import axios, {Axios, AxiosRequestConfig} from 'axios';
+import axios, {Axios, AxiosError, AxiosRequestConfig} from 'axios';
 
 export type ApiClientOptions = {
   baseUrl: string
@@ -17,6 +17,7 @@ const DEFAULT_OPTIONS_TOKEN = '';
 const DEFAULT_OPTIONS_TOKEN_PREFIX = 'Bearer';
 const DEFAULT_OPTIONS_HEADERS = {
   Accept: 'application/json',
+  'Content-Type': 'application/json',
 };
 
 export default abstract class ApiClient {
@@ -53,9 +54,10 @@ export default abstract class ApiClient {
     }
 
     try {
-        const response = await this.m_Client.get<T>(url, requestConfig);
+        const response = await this.m_Client.get<T>(url, requestConfig);;
         return response.data;
     } catch (error) {
+      console.log('error', error);
       let errorData: ErrorData = {
           message: (error as Error).message,
       };

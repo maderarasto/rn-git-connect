@@ -49,7 +49,7 @@ const useEventsQuery = (
       
       return (lastParamPage as number) + 1;
     },
-    retry: false,
+    retry: 2,
     enabled
   });
 
@@ -58,8 +58,9 @@ const useEventsQuery = (
     queryClient.setQueryData([key], null);
   }
 
-  const resetQuery = async () => {
-    queryClient.setQueryData([queryKey], null);
+  const resetQuery = async (key: string = queryKey) => {
+    await queryClient.resetQueries({ queryKey: [key]});
+    // queryClient.setQueryData([key], null);
   }
 
   return { data, error, isLoading, isFetching, hasNextPage, fetchNextPage, invalidateQuery, resetQuery};

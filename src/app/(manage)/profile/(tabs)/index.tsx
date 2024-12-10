@@ -26,6 +26,7 @@ const UserProfileScreen = () => {
     error,
     isFetching,
     invalidateQuery,
+    resetQuery,
   } = useEventsQuery(authContext?.user?.username ?? '', {
     queryKey: 'getRecentEvents',
     enabled: isQueryEnabled,
@@ -44,7 +45,7 @@ const UserProfileScreen = () => {
   }, [authContext?.user?.username]);
 
   useFocusEffect(useCallback(() => {
-    invalidateQuery('getAllEvents');
+    resetQuery('getAllEvents');
   }, []));
 
   function resolveLoadingIndicatorStyle() {
@@ -115,6 +116,7 @@ const UserProfileScreen = () => {
               event={item}
               last={index === (all.length-1)} />
           )} 
+          onRetry={() => invalidateQuery()}
           isLoading={isFetching} />
       </View>
     </ScrollView>
