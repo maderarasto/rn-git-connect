@@ -20,9 +20,15 @@ An idea for this project was to easily maintain project repositories and also us
 :white_check_mark:&nbsp;&nbsp;SignIn screen for signing user to github or gitlab<br />
 :white_check_mark:&nbsp;&nbsp;Dashboard drawer for routing to another in-app screens.<br />
 :white_check_mark:&nbsp;&nbsp;Managing your connections and switching between them.<br />
+:white_check_mark:&nbsp;&nbsp;Services for interacting with GitHub and GitLab<br />
+:white_check_mark:&nbsp;&nbsp;Access to profile and activity events of user<br />
 
 ## Features to implement
-:hourglass:&nbsp;&nbsp;Services for interacting with GitHub and GitLab<br />
+:hourglass:&nbsp;&nbsp;Editing user information in profile.</br>
+:hourglass:&nbsp;&nbsp;Access to list of repositories.</br>
+:hourglass:&nbsp;&nbsp;Access to list of merge requests.</br>
+:hourglass:&nbsp;&nbsp;Access to list of issues.</br>
+:hourglass:&nbsp;&nbsp;Dashboard screen for quick management.</br>
 
 ## Design
 ![Wireframe design for appliccation](readme/git_connect_wireframe.png "Wireframe design for Git Connect")
@@ -32,13 +38,16 @@ An idea for this project was to easily maintain project repositories and also us
     <img src="readme/screenshot_1.png" width="128" />
     <img src="readme/screenshot_2.png" width="128" />
     <img src="readme/screenshot_3.png" width="128" />
-    <img src="readme/screenshot_4.png" width="128" />
+    <!-- <img src="readme/screenshot_4.png" width="128" /> -->
     <img src="readme/screenshot_5.png" width="128" />
     <img src="readme/screenshot_6.png" width="128" />
-    <img src="readme/screenshot_7.png" width="128" />
+    <!-- <img src="readme/screenshot_7.png" width="128" />
     <img src="readme/screenshot_8.png" width="128" />
     <img src="readme/screenshot_9.png" width="128" />
-    <img src="readme/screenshot_10.png" width="128" />
+    <img src="readme/screenshot_10.png" width="128" /> -->
     <img src="readme/screenshot_11.png" width="128" />
     <img src="readme/screenshot_12.png" width="128" />
+    <img src="readme/screenshot_13.png" width="128" />
+    <img src="readme/screenshot_14.png" width="128" />
+    <img src="readme/screenshot_15.png" width="128" />
 </div>
