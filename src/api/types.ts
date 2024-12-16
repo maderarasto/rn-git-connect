@@ -162,7 +162,7 @@ export type WikiPage = {
   title: string
 }
 
-export type SimplelWikiPage = Pick<WikiPage, (
+export type SimpleWikiPage = Pick<WikiPage, (
   | 'format'
   | 'slug'
   | 'title'
@@ -187,6 +187,7 @@ export type EventType = (
   | 'MergeRequestEvent'
   | 'MilestoneEvent'
   | 'PushEvent'
+  | 'WatchEvent'
 );
 
 export type PushData = {

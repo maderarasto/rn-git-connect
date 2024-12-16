@@ -15,7 +15,7 @@ import {
   SimpleMergeRequest, 
   SimpleIssue 
 } from "../types";
-import { 
+import {
   User as GithubUser,
   Actor as GithubActor,
   Repository as GithubRepository,
@@ -29,13 +29,14 @@ import {
   CreateEventPayload,
   Event as GithubEvent,
   EventType as GithubEventType,
-  ListQuery as GithubListQuery,
+  ListQuery as GithubListQuery, DeleteEventPayload,
 } from "./types";
 
 type GithubEventPayload = (
   | PushEventPayload
   | IssuesEventPayload
   | CreateEventPayload
+  | DeleteEventPayload
 );
 
 export default class GithubAdapter implements ApiAdapter {
@@ -135,6 +136,8 @@ export default class GithubAdapter implements ApiAdapter {
 
     if (resolvedType === 'CreateEvent') {
       payload.type = 'CreateEvent';
+    } else if (resolvedType === 'DeleteEvent') {
+      payload.type = 'DeleteEvent';
     } else if (resolvedType === 'PushEvent') {
       payload.type = 'PushEvent'
     } else {
@@ -142,8 +145,9 @@ export default class GithubAdapter implements ApiAdapter {
     }
 
     const resolvedPayload: EventPayload = {
-      targetType: payload.type === 'CreateEvent' ? payload.ref_type : null,
-      targetName: payload.type === 'PushEvent' || payload.type === 'CreateEvent' ? payload.ref : null,
+      targetType: payload.type === 'CreateEvent' || payload.type === 'DeleteEvent' ? payload.ref_type : null,
+      targetName: payload.type === 'PushEvent' || payload.type === 'CreateEvent' || payload.type === 'DeleteEvent'
+          ? payload.ref : null,
     };
 
     if (payload.type === 'PushEvent') {

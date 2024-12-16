@@ -1,6 +1,6 @@
 
 import { StyleSheet, Text, View } from 'react-native';
-import { FontAwesome5, Octicons } from '@expo/vector-icons';
+import {Feather, FontAwesome5, Octicons} from '@expo/vector-icons';
 import { Event } from '@src/api/types';
 import TextBold from './TextBold';
 import React from 'react';
@@ -26,6 +26,10 @@ const EventListItem = ({
       icon = <FontAwesome5 name="comment" size={18} color="#e5e7eb" />
     } else if (event.type === 'MergeRequestEvent') {
       icon = <Octicons name="git-pull-request" size={18} color="#e5e7eb" />
+    } else if (event.type === 'WatchEvent') {
+      icon = <FontAwesome5 name="eye" size={16} color="#e5e7eb" />
+    } else if (event.type === 'DeleteEvent') {
+      icon = <Feather name="trash-2" size={18} color="#e5e7eb" />
     }
 
     return icon;
@@ -106,11 +110,27 @@ const EventListItem = ({
     );
   }
 
+  const getDeleteBranchTitle = () => {
+    return (
+        <Text style={{ fontSize: 16 }}>
+          Deleted a branch <TextBold></TextBold> in <TextBold>{event.repo?.name}</TextBold>
+        </Text>
+    );
+  }
+
   const getCreateRepositoryTitle = () => {
     return (
       <Text style={{ fontSize: 16 }}>
         Created a repository <TextBold>{event.repo?.name}</TextBold>
       </Text>
+    );
+  }
+
+  const getDeleteRepositoryTitle = () => {
+    return (
+        <Text style={{ fontSize: 16 }}>
+          Deleted a repository <TextBold>{event.repo?.name}</TextBold>
+        </Text>
     );
   }
 
@@ -126,6 +146,14 @@ const EventListItem = ({
     return (
       <Text style={{ fontSize: 16 }}>
         {actionName} wiki page <TextBold>{event.payload.wiki?.title}</TextBold> in the wiki for {event.repo?.name}
+      </Text>
+    )
+  }
+
+  const getWatchEventTitle = () => {
+    return (
+      <Text style={{ fontSize: 16 }}>
+        Started watching repository <TextBold>{event.repo?.name}</TextBold>.
       </Text>
     )
   }
@@ -151,8 +179,16 @@ const EventListItem = ({
       } else if (event.payload.targetType === 'repository') {
         title = getCreateRepositoryTitle();
       }
+    } else if (event.type === 'DeleteEvent') {
+      if (event.payload.targetType === 'branch') {
+        title = getDeleteBranchTitle();
+      } else if (event.payload.targetType === 'repository') {
+        title = getDeleteRepositoryTitle();
+      }
     } else if (event.payload.wiki) {
       title = getWikiPageTitle();
+    } else if (event.type === 'WatchEvent') {
+      title = getWatchEventTitle();
     }
 
     return title;

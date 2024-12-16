@@ -362,6 +362,15 @@ export type CreateEventPayload = {
   pusher_type: string
 }
 
+export type DeleteEventPayload = {
+  type: 'DeleteEvent'
+  ref: string
+  ref_type: 'branch' | 'repository'
+  master_branch: string
+  description: string|null
+  pusher_type: string
+}
+
 export type IssuesEventPayload = {
   type: 'IssuesEvent'
   action: 'opened' | 'reopened' | 'closed' | 'created'
@@ -373,9 +382,11 @@ export type IssuesEventPayload = {
 export type EventType = (
   | 'PushEvent'
   | 'CreateEvent'
+  | 'DeleteEvent'
   | 'PullRequestEvent'
   | 'IssuesEvent'
   | 'IssueCommentEvent'
+  | 'WatchEvent'
 )
 
 export type Event = {
@@ -384,7 +395,7 @@ export type Event = {
   actor: Actor
   repo: SimpleRepository
   org?: Actor
-  payload: PushEventPayload | IssuesEventPayload | CreateEventPayload
+  payload: PushEventPayload | IssuesEventPayload | CreateEventPayload | DeleteEventPayload
   public: boolean
   created_at: string|null
 }
