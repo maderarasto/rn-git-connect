@@ -50,6 +50,18 @@ export function unserialize<T extends Serializable>(serialized: string) {
   return item as T;
 }
 
+export function pickFromObject<T extends Record<string, any>>(obj: T, keys: (keyof T)[]) {
+  return Object.entries(obj)
+    .reduce((prev, [key, value]) => {
+      const result: Record<string, any> = { ...prev };
+
+      if (keys.includes(key)) {
+        result[key] = value;
+      }
+
+      return result;
+    }, {});
+}
 
 export function getRelativeTime(until: Date | number | string) {
   return dayjs().to(until);

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image, ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
 
 import { 
@@ -39,7 +39,6 @@ export default function HomeScreen() {
 
   const {
     data: user,
-    error,
     isLoading,
     invalidateQuery,
   } = useAuthQuery(authContext?.token ?? '', queryEnabled);
@@ -59,7 +58,7 @@ export default function HomeScreen() {
       }
 
       authContext?.setUser(user);
-      invalidateQuery();
+      await invalidateQuery();
       setCanRedirect(true);
     }
     
