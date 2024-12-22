@@ -158,6 +158,7 @@ export type Issue = {
   state: 'open' | 'closed'
   comments: number
   user: SimpleUser|null
+  issue_url: string
   created_at: string
   updated_at: string
   closed_at: string|null
@@ -195,22 +196,10 @@ export type SimpleIssueComment = Pick<IssueComment, (
   | 'updated_at'
 )>
 
-export type PullRequest = {
-  id: number // issue alike
-  number: number // issue alike
-  title: string // issue alike
-  body: string|null // issue alike
-  assignee: SimpleUser|null // issue alike
-  assignees: SimpleUser[] // issue alike
-  comments: number // issue alike
-  comments_url: string // issue alike
-  state: string // issue alike
+export type PullRequest = Issue & {
   commits: number
   commits_url: string
   diff_url: string
-  issue_url: string // issue alike
-  labels: Label[] // issue alike
-  user: SimpleUser // issue alike
   additions: number
   deletions: number
   changed_files: number
@@ -220,16 +209,10 @@ export type PullRequest = {
   merged: boolean
   merged_at: string|null
   merged_by: unknown|null
-  created_at: string // issue alike
-  updated_at: string // issue alike
   closed_at: string|null
   draft: boolean
   locked: boolean
-
-  // Other properties
-  [key: string]: any
 }
-
 
 export type PushEventPayload = {
   type: 'PushEvent'
