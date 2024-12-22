@@ -39,13 +39,13 @@ export type Repository = {
   updatedAt: string
   url: string
   avatarUrl: string
-  gitUrl: string
   sshUrl: string
-  cloneUrl: string
+  gitUrl?: string
+  cloneUrl?: string
   hasIssues: boolean
   hasWiki: boolean
-  hasPages: boolean
-  hasDiscussions: boolean
+  hasPages?: boolean
+  hasDiscussions?: boolean
   topics: string[]
   visibility: string
   forks: number
@@ -60,9 +60,29 @@ export type SimpleRepository = Pick<Repository, (
   | 'url'
 )>
 
+export type Issue = {
+  id: number
+  number: number
+  title: string
+  body: string|null
+  labels: Label[]
+  state?: string
+  commentCount: number
+  user: SimpleUser|null
+  createdAt: string
+  updatedAt: string
+  closedAt: string|null
+}
+
+export type SimpleIssue = Pick<Issue, (
+  | 'id'
+  | 'number'
+  | 'title'
+  | 'state'
+  )>
+
 export type MergeRequest = {
   id: number
-  // nodeId: string
   number: number
   assignee: SimpleUser|null
   assignees: SimpleUser[]
@@ -99,27 +119,6 @@ export type SimpleMergeRequest = Pick<MergeRequest, (
   | 'title'
   | 'state'
 )>;
-
-export type Issue = {
-  id: number
-  number: number
-  title: string
-  body: string|null
-  labels: Label[]
-  state?: string
-  commentCount: number
-  user: SimpleUser|null
-  createdAt: string
-  updatedAt: string
-  closedAt: string|null
-}
-
-export type SimpleIssue = Pick<Issue, (
-  | 'id'
-  | 'number'
-  | 'title'
-  | 'state'
-)>
 
 export type IssueComment = {
   id: number
