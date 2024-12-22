@@ -66,13 +66,13 @@ export type MergeRequest = {
   number: number
   assignee: SimpleUser|null
   assignees: SimpleUser[]
-  autoMerge: boolean
   body: string|null
   changedFiles: number
   commentCount: number
   commentsUrl: string
   commitCount: number
   commitsUrl: string
+  additions: number
   deletions: number
   draft: boolean
   diffUrl: string|null
@@ -82,9 +82,6 @@ export type MergeRequest = {
   merged: boolean
   mergedAt: string|null
   mergedBy: unknown|null
-  rebaseable: boolean
-  requestedReviewers: SimpleUser[]
-  requestedTeams: any[]
   reviewCommentUrl: string
   reviewCommentCount: number
   reviewCommentsUrl: string
