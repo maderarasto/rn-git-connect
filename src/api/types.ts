@@ -67,8 +67,10 @@ export type Issue = {
   body: string|null
   labels: Label[]
   state?: string
-  commentCount: number
+  assignee: SimpleUser|null
+  assignees: SimpleUser[]
   user: SimpleUser|null
+  commentCount: number
   createdAt: string
   updatedAt: string
   closedAt: string|null
@@ -81,36 +83,21 @@ export type SimpleIssue = Pick<Issue, (
   | 'state'
   )>
 
-export type MergeRequest = {
-  id: number
-  number: number
-  assignee: SimpleUser|null
-  assignees: SimpleUser[]
-  body: string|null
-  changedFiles: number
-  commentCount: number
-  commentsUrl: string
+export type MergeRequest = Issue & {
   commitCount: number
   commitsUrl: string
-  additions: number
+  changedFiles: number
   deletions: number
   draft: boolean
   diffUrl: string|null
   issueUrl: string
-  labels: Label[]
-  locked: boolean
+  reviewCommentUrl: string
+  reviewCommentCount: number
+  additions: number
+  reviewCommentsUrl: string
   merged: boolean
   mergedAt: string|null
   mergedBy: unknown|null
-  reviewCommentUrl: string
-  reviewCommentCount: number
-  reviewCommentsUrl: string
-  state: string
-  title: string
-  user: SimpleUser
-  createdAt: string
-  updatedAt: string
-  closedAt: string|null
 }
 
 export type SimpleMergeRequest = Pick<MergeRequest, (
@@ -122,7 +109,6 @@ export type SimpleMergeRequest = Pick<MergeRequest, (
 
 export type IssueComment = {
   id: number
-  // nodeId: string
   body: string|null
   user: SimpleUser
   url: string
