@@ -1,7 +1,6 @@
-import { View, Text, ToastAndroid, Platform, TouchableWithoutFeedback, StyleSheet, Keyboard, ScrollView, ActivityIndicator, ViewStyle } from 'react-native'
+import { View, Text, ToastAndroid, Platform, TouchableWithoutFeedback, StyleSheet, Keyboard, ActivityIndicator, ViewStyle } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Redirect, useLocalSearchParams, useNavigation } from 'expo-router'
-import { Entypo } from '@expo/vector-icons';
 import AuthHeader from '@src/components/headers/AuthHeader';
 import { AccountType, User } from '@src/api/types';
 import { unslug } from '@src/utils/strings';
@@ -9,7 +8,7 @@ import PastableTextarea from '@src/components/inputs/PastableTextarea';
 import TextButton from '@src/components/buttons/TextButton';
 import PrimaryButton from '@src/components/buttons/PrimaryButton';
 import colors from '@src/utils/colors';
-import useAuthQuery from '@src/hooks/useAuthQuery';
+import useAuthQuery from '@src/hooks/query/useAuthQuery';
 import { useAuth } from '@src/providers/AuthProvider';
 
 const UNAUTHORIZED_MESSAGES = [
@@ -46,7 +45,6 @@ const AuthPATScreen = () => {
   const {
     data: user,
     error,
-    isLoading,
     isFetching,
     invalidateQuery,
   } = useAuthQuery(token, queryEnabled);

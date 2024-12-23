@@ -18,7 +18,7 @@ import { slug } from "@src/utils/strings";
 import { useApi } from "@src/providers/ApiProvider";
 import colors from "@src/utils/colors";
 import { useAuth } from "@src/providers/AuthProvider";
-import useAuthQuery from "@src/hooks/useAuthQuery";
+import useAuthQuery from "@src/hooks/query/useAuthQuery";
 
 export default function HomeScreen() {
   const [queryEnabled, setQueryEnabled] = useState(false);

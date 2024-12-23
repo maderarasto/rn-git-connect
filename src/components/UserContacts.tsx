@@ -23,14 +23,18 @@ const UserContacts = ({
     <View style={resolveContainerStyle()}>
       <Text style={styles.title}>Contact</Text>
       <View>
-        <View style={styles.row}>
-          <Feather name="mail" size={16} color="black" style={styles.icon} />
-          <Text>{user.email}</Text>
-        </View>
-        <View style={styles.row}>
-          <FontAwesome5 name="globe" size={16} color="black" style={styles.icon} />
-          <Text>{user.webUrl}</Text>
-        </View>
+        {user.email ? (
+          <View style={styles.row}>
+            <Feather name="mail" size={16} color="black" style={styles.icon} />
+            <Text>{user.email}</Text>
+          </View>
+        ) : ''}
+        {user.url ? (
+          <View style={styles.row}>
+            <FontAwesome5 name="globe" size={16} color="black" style={styles.icon} />
+            <Text>{user.url}</Text>
+          </View>
+        ) : ''}
       </View>
     </View>
   )

@@ -1,6 +1,6 @@
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, ViewStyle, LayoutChangeEvent } from 'react-native'
+import { View, Text, ScrollView, StyleSheet } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
-import {AntDesign, Feather} from '@expo/vector-icons';
+import {Feather} from '@expo/vector-icons';
 import PrimaryButton from '@src/components/buttons/PrimaryButton'
 import { useAuth } from '@src/providers/AuthProvider'
 import { useFocusEffect, useRouter } from 'expo-router'
@@ -8,14 +8,11 @@ import colors from '@src/utils/colors'
 import UserCard from '@src/components/UserCard'
 import UserInfo from '@src/components/UserInfo'
 import UserContacts from '@src/components/UserContacts'
-import { LayoutDimensions } from '@src/types'
-import useEventsQuery from '@src/hooks/useEventsQuery';
+import useEventsQuery from '@src/hooks/query/useEventsQuery';
 import EventListItem from '@src/components/EventListItem';
-import RefreshList from '@src/components/RefreshList';
 import RefreshListView from '@src/components/RefreshListView';
 
 const UserProfileScreen = () => {
-  const [loadingLayout, setLoadingLayout] = useState<LayoutDimensions|null>(null);
   const [isQueryEnabled, setIsQueryEnabled] = useState(false);
 
   const authContext = useAuth();
@@ -23,7 +20,6 @@ const UserProfileScreen = () => {
 
   const {
     data: events,
-    error,
     isFetching,
     invalidateQuery,
     resetQuery,
@@ -47,26 +43,6 @@ const UserProfileScreen = () => {
   useFocusEffect(useCallback(() => {
     resetQuery('getAllEvents');
   }, []));
-
-  function resolveLoadingIndicatorStyle() {
-    let style: ViewStyle = {
-      ...styles.loadingIndicator
-    };
-
-    if (loadingLayout) {
-      style.transform = [
-        { translateX: -Math.trunc(loadingLayout.width / 2) },
-        { translateY: -Math.trunc(loadingLayout.height / 2) - 12 },
-      ]
-    }
-
-    return style;
-  }
-
-  const onLoadingIndicatorLayout = (ev: LayoutChangeEvent) => {
-    const {x, y, width, height} = ev.nativeEvent.layout;
-    setLoadingLayout({ x, y, width, height});
-  }
 
   function onEditProfilePress() {
     router.navigate('(manage)/profile/edit');

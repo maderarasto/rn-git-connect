@@ -1,4 +1,5 @@
 import axios, {Axios, AxiosRequestConfig} from 'axios';
+import {Event, Repository, User} from './types';
 
 export type ApiClientOptions = {
   baseUrl: string
@@ -54,7 +55,7 @@ export default abstract class ApiClient {
     }
 
     try {
-        const response = await this.m_Client.get<T>(url, requestConfig);
+        const response = await this.m_Client.get<T>(url, requestConfig);;
         return response.data;
     } catch (error) {
       let errorData: ErrorData = {
@@ -111,7 +112,7 @@ export default abstract class ApiClient {
     return this.m_Client.put<T>(url, requestConfig);
   }
 
-  protected async patch<T = any>(url: string, data: any = {}, config?: AxiosRequestConfig) {
+  protected async patch<T = any>(url: string, config?: AxiosRequestConfig) {
     if (!this.m_Client) {
         throw new Error('An axios client is missing!');
     }
@@ -127,7 +128,7 @@ export default abstract class ApiClient {
       }
     }
 
-    return this.m_Client.patch<T>(url, data, requestConfig);
+    return this.m_Client.patch<T>(url, requestConfig);
   }
 
   protected async delete<T = any>(url: string, config?: AxiosRequestConfig) {
@@ -158,9 +159,9 @@ export default abstract class ApiClient {
 
   /**
    * Gets all contribution events of specific user.
-   *
+   * 
    * @param username unique username of user
-   * @param query query parameters
+   * @query query parameters
    */
   abstract getEvents(username: string, query: Record<string, any>) : Promise<unknown[]>;
 
@@ -177,4 +178,5 @@ export default abstract class ApiClient {
    * @param user user to be updated.
    */
   abstract updateAuthUser(user: unknown): Promise<unknown>;
+  abstract getRepository(id: number) : Promise<Repository>;
 };

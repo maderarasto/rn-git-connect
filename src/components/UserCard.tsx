@@ -68,7 +68,7 @@ const UserCard = ({
     <View style={resolveContainerStyle()}>
       <Image source={{ uri: user.avatarUrl }} style={resolveAvatarStyle()} />
       <View>
-        <Text style={resolveFullNameStyle()}>{user.fullname}</Text>
+        <Text style={resolveFullNameStyle()}>{user.name}</Text>
         <Text style={resolveUsernameStyle()}>@{user.username}</Text>
       </View>
     </View>
