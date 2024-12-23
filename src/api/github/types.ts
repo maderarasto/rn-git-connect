@@ -270,7 +270,7 @@ export type Event = {
   org?: Actor
   payload: PushEventPayload | IssuesEventPayload | CreateEventPayload | DeleteEventPayload
   public: boolean
-  created_at: string|null
+  created_at: string
 }
 
 //--------------------------------------------------------\\

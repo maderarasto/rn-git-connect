@@ -1,4 +1,5 @@
-import axios, {Axios, AxiosError, AxiosRequestConfig} from 'axios';
+import axios, {Axios, AxiosRequestConfig} from 'axios';
+import { User } from './types';
 
 export type ApiClientOptions = {
   baseUrl: string
@@ -54,7 +55,7 @@ export default abstract class ApiClient {
     }
 
     try {
-        const response = await this.m_Client.get<T>(url, requestConfig);;
+        const response = await this.m_Client.get<T>(url, requestConfig);
         return response.data;
     } catch (error) {
       let errorData: ErrorData = {
@@ -154,13 +155,13 @@ export default abstract class ApiClient {
    * 
    * @param token represents a personal access token.
    */
-  abstract check(token: string) : Promise<unknown>;
+  abstract check(token: string) : Promise<User>;
 
   /**
    * Gets all contribution events of specific user.
-   * 
+   *
    * @param username unique username of user
-   * @query query parameters
+   * @param query query parameters
    */
   abstract getEvents(username: string, query: Record<string, any>) : Promise<unknown[]>;
 
