@@ -6,9 +6,9 @@ import {
   Repository as GithubRepository,
   User as GithubUser
 } from "./types";
-import {deserializeEvent, deserializeRepository, deserializeUser} from "@src/api/github/utils";
+import * as GithubUtils from "@src/api/github/utils";
 
-export default class Client extends ApiClient {
+export default class GithubClient extends ApiClient {
 
   constructor() {
     super({
@@ -24,7 +24,7 @@ export default class Client extends ApiClient {
       }
     });
 
-    return deserializeUser(user);
+    return GithubUtils.deserializeUser(user);
   }
 
   async getRepository(id: number): Promise<Repository> {
@@ -34,7 +34,7 @@ export default class Client extends ApiClient {
       }
     });
 
-    return deserializeRepository(repository);
+    return GithubUtils.deserializeRepository(repository);
   }
 
   async getEvents(
@@ -48,6 +48,8 @@ export default class Client extends ApiClient {
       }
     });
 
-    return events.map((event) => deserializeEvent(event));
+    return events.map((event) => {
+      return GithubUtils.deserializeEvent(event);
+    });
   }
 }

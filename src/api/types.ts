@@ -35,7 +35,7 @@ export type Repository = {
   description: string|null
   language: string|null
   topics: string[]
-  owner: SimpleUser
+  owner: SimpleUser|null
   visibility: string
   forks: number
   openIssues: number

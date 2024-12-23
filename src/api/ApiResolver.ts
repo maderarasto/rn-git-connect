@@ -1,7 +1,6 @@
 import { AccountType, User, Event, ListQuery } from "./types";
-import { Project } from "./gitlab/types";
 import GithubClient from "./github/client";
-import GitlabClient from "./gitlab/GitlabClient";
+import GitlabClient from "./gitlab/client";
 import ApiClient from "./ApiClient";
 import {serializeListQuery} from "@src/api/github/utils";
 
@@ -43,6 +42,10 @@ export default class ApiResolver {
     this.activeClient.token = value;
   }
 
+  public service(accountType: AccountType) {
+    return this.m_Services[accountType];
+  }
+
   // API methods
 
   public async check(token: string) : Promise<User> {
@@ -52,13 +55,14 @@ export default class ApiResolver {
   public async getEvents(username: string, query: ListQuery): Promise<Event[]> {
     const params = serializeListQuery(query);
     const events = await this.activeClient.getEvents(username, params);
-    
+
     for (const event of events) {
-      // if (this.activeService === 'Gitlab' && resolvedEvent.repo) {
-      //   const repo = await this.m_Services['Gitlab'].getRepository(resolvedEvent.repo.id);
-      //   resolvedEvent.repo.name = (repo as Project).name_with_namespace;
-      //   resolvedEvent.repo.url = (repo as Project).web_url;
-      // }
+      if (this.activeService === 'Gitlab' && event.repo) {
+        const repo = await this.service('Gitlab').getRepository(event.repo.id);
+
+        event.repo.name = repo.fullName;
+        event.repo.url = repo.url;
+      }
     }
 
     return events

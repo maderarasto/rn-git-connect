@@ -1,7 +1,7 @@
 import { ErrorData } from "@src/api/ApiClient";
 import { Event, ListQuery } from "@src/api/types";
 import { useApi } from "@src/providers/ApiProvider";
-import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 
 export type EventQueryProps = {
   queryKey: string  
