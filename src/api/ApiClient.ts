@@ -1,5 +1,5 @@
 import axios, {Axios, AxiosRequestConfig} from 'axios';
-import { User } from './types';
+import {Event, Repository, User} from './types';
 
 export type ApiClientOptions = {
   baseUrl: string
@@ -163,12 +163,12 @@ export default abstract class ApiClient {
    * @param username unique username of user
    * @param query query parameters
    */
-  abstract getEvents(username: string, query: Record<string, any>) : Promise<unknown[]>;
+  abstract getEvents(username: string, query: Record<string, any>) : Promise<Event[]>;
 
   /**
    * Gets a repository with specific id.
    * 
    * @param id unique identifier
    */
-  abstract getRepository(id: number) : Promise<unknown>;
+  abstract getRepository(id: number) : Promise<Repository>;
 };

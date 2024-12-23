@@ -1,10 +1,8 @@
-import { View, Text, StyleSheet, ActivityIndicator, FlatList } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
-import useEventsQuery from '@src/hooks/useEventsQuery'
+import { View, StyleSheet } from 'react-native'
+import React, { useEffect } from 'react'
+import useEventsQuery from '@src/hooks/query/useEventsQuery'
 import { useAuth } from '@src/providers/AuthProvider'
 import EventListItem from '@src/components/EventListItem'
-import useBackHandler from '@src/hooks/useBackHandler'
-import { useFocusEffect, useRouter } from 'expo-router'
 import RefreshList from '@src/components/RefreshList'
 import { Event } from '@src/api/types';
 
@@ -17,7 +15,6 @@ const ActiviesScreen = () => {
     error,
     hasNextPage,
     fetchNextPage,
-    invalidateQuery,
     resetQuery,
   } = useEventsQuery(authContext?.user?.username ?? '', {
     queryKey: 'getAllEvents',
@@ -35,51 +32,28 @@ const ActiviesScreen = () => {
     return index === ((events?.pages.flat().length ?? 0) - 1);
   }
 
-  const renderActivityIndicator = () => {
-    return isFetching ? (
-      <ActivityIndicator 
-          size="large" 
-          color="#2563eb" 
-          style={styles.loadingIndicator} />
-    ) : '';
-  }
-
-  const onEventListReachedEnd = () => {
-    if (!isFetching) {
-      fetchNextPage();
+  const onEventListReachedEnd = async () => {
+    if (!isFetching && hasNextPage) {
+      await fetchNextPage();
     }
   }
 
   return (
     <View style={styles.container}>
-      {/* <FlatList 
-        contentContainerStyle={{ paddingBottom: 70}}
+      <RefreshList
         data={events?.pages.flat()}
         keyExtractor={(event) => event.id.toString()}
-        renderItem={({item: event, index}) => {
-          return (
-            <EventListItem 
-              event={event}
-              last={index === ((events?.pages.flat().length ?? 0) - 1)} />
-          );
-        }}
-        ListFooterComponent={renderActivityIndicator}
+        contentContainerStyle={{ paddingBottom: 70 }}
         onEndReachedThreshold={0.75}
-        onEndReached={onEventListReachedEnd}/> */}
-        <RefreshList
-          data={events?.pages.flat()}
-          keyExtractor={(event) => event.id.toString()}
-          contentContainerStyle={{ paddingBottom: 70 }}
-          onEndReachedThreshold={0.75}
-          onEndReached={onEventListReachedEnd}
-          renderItem={({ item, index }) => (
-            <EventListItem 
-              event={item}
-              last={isLastItem(item, index)}
-              />
-          )}
-          isLoading={isFetching}
-          onRetry={() => resetQuery()}/>
+        onEndReached={onEventListReachedEnd}
+        renderItem={({ item, index }) => (
+          <EventListItem
+            event={item}
+            last={isLastItem(item, index)}
+            />
+        )}
+        isLoading={isFetching}
+        onRetry={() => resetQuery()}/>
     </View>
   )
 }

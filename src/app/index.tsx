@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image, ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
 
 import { 
@@ -18,7 +18,7 @@ import { slug } from "@src/utils/strings";
 import { useApi } from "@src/providers/ApiProvider";
 import colors from "@src/utils/colors";
 import { useAuth } from "@src/providers/AuthProvider";
-import useAuthQuery from "@src/hooks/useAuthQuery";
+import useAuthQuery from "@src/hooks/query/useAuthQuery";
 
 export default function HomeScreen() {
   const [queryEnabled, setQueryEnabled] = useState(false);
@@ -39,7 +39,6 @@ export default function HomeScreen() {
 
   const {
     data: user,
-    error,
     isLoading,
     invalidateQuery,
   } = useAuthQuery(authContext?.token ?? '', queryEnabled);

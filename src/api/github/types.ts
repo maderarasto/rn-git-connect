@@ -3,7 +3,7 @@ export type User = {
   login?: string // Accessible for authenticated user
   name: string|null
   avatar_url: string
-  url: string
+  blog: string
   company: string|null
   location: string|null
   email: string|null

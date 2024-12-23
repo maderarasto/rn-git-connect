@@ -1,11 +1,10 @@
 import { View, Text, Image, StyleSheet, Platform, ToastAndroid, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import React, { useEffect, useState } from 'react';
 import useConnections, { Connection } from '@src/hooks/useConnections';
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import ConnectionItem from '@src/components/ConnectionItem';
 import { useApi } from '@src/providers/ApiProvider';
-import useAuthQuery from '@src/hooks/useAuthQuery';
+import useAuthQuery from '@src/hooks/query/useAuthQuery';
 import { AccountType, User } from '@src/api/types';
 import { useAuth } from '@src/providers/AuthProvider';
 
@@ -25,7 +24,6 @@ const AuthSwitchScreen = () => {
   const {
     data: user,
     error,
-    isFetching,
     invalidateQuery,
   } = useAuthQuery(accountToken, isQueryEnabled);
 
@@ -92,7 +90,7 @@ const AuthSwitchScreen = () => {
     }
     
     if (user && connection) {
-      initializeUser(user, connection);;
+      initializeUser(user, connection);
     }
   }, [user]);
 

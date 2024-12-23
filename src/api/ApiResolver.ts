@@ -1,16 +1,13 @@
 import { AccountType, User, Event, ListQuery } from "./types";
-import GithubClient from "./github/GithubClient";
-import GitlabClient from "./gitlab/GitlabClient";
-import ApiClient, {ErrorData} from "./ApiClient";
-import GithubAdapter from "./github/GithubAdapter";
-import GitlabAdapter from "./gitlab/GitlabAdapter";
-import ApiAdapter from "./ApiAdapter";
 import { Project } from "./gitlab/types";
+import GithubClient from "./github/client";
+import GitlabClient from "./gitlab/GitlabClient";
+import ApiClient from "./ApiClient";
+import {serializeListQuery} from "@src/api/github/utils";
 
 export default class ApiResolver {
-  private m_Services: Record<AccountType, ApiClient>;
-  private m_Adapters: Record<AccountType, ApiAdapter>;
-  
+  private readonly m_Services: Record<AccountType, ApiClient>;
+
   // Public props
   public activeService: AccountType|null;
 
@@ -20,11 +17,14 @@ export default class ApiResolver {
       Github: new GithubClient(),
       Gitlab: new GitlabClient()
     };
+  }
 
-    this.m_Adapters = {
-      Github: new GithubAdapter(),
-      Gitlab: new GitlabAdapter(),
+  public get activeClient(): ApiClient {
+    if (!this.activeService) {
+      throw new Error('Missing an active service!');
     }
+
+    return this.m_Services[this.activeService];
   }
 
   public get token() : string|undefined {
@@ -32,7 +32,7 @@ export default class ApiResolver {
       return undefined;
     }
 
-    return this.m_Services[this.activeService].token
+    return this.activeClient.token;
   }
 
   public set token(value: string) {
@@ -40,43 +40,27 @@ export default class ApiResolver {
       return;
     }
 
-    this.m_Services[this.activeService].token = value;
+    this.activeClient.token = value;
   }
 
   // API methods
 
   public async check(token: string) : Promise<User> {
-    if (!this.activeService) {
-      throw new Error('Missing an active service!');
-    }
-
-    const apiUser = await this.m_Services[this.activeService].check(token);
-    return this.m_Adapters[this.activeService].getUser(apiUser);
+    return this.activeClient.check(token)
   }
 
   public async getEvents(username: string, query: ListQuery): Promise<Event[]> {
-    if (!this.activeService) {
-      throw new Error('Missing an active service!');
-    }
-
-    const params = this.m_Adapters[this.activeService].getApiListQuery(query);
-    const events = await this.m_Services[this.activeService].getEvents(username, params);
-    
-    let resolvedEvents: Event[] = [];
-
+    const params = serializeListQuery(query);
+    const events = await this.activeClient.getEvents(username, params);
     
     for (const event of events) {
-      const resolvedEvent = this.m_Adapters[this.activeService].getEvent(event);
-
-      if (this.activeService === 'Gitlab' && resolvedEvent.repo) {
-        const repo = await this.m_Services['Gitlab'].getRepository(resolvedEvent.repo.id);
-        resolvedEvent.repo.name = (repo as Project).name_with_namespace;
-        resolvedEvent.repo.url = (repo as Project).web_url;
-      }
-
-      resolvedEvents.push(resolvedEvent);
+      // if (this.activeService === 'Gitlab' && resolvedEvent.repo) {
+      //   const repo = await this.m_Services['Gitlab'].getRepository(resolvedEvent.repo.id);
+      //   resolvedEvent.repo.name = (repo as Project).name_with_namespace;
+      //   resolvedEvent.repo.url = (repo as Project).web_url;
+      // }
     }
 
-    return resolvedEvents;
+    return events
   }
 }

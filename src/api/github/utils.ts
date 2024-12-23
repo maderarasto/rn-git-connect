@@ -108,7 +108,7 @@ export function deserializeUser(user: GithubUser): User {
     username: user.login,
     name: user.name,
     avatarUrl: user.avatar_url,
-    url: user.url,
+    url: user.blog,
     company: user.company,
     location: user.location,
     email: user.email,

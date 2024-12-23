@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Keyboard, TouchableWithoutFeedback, Platform, ToastAndroid, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, Keyboard, TouchableWithoutFeedback, Platform, ToastAndroid, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import { FontAwesome6 } from '@expo/vector-icons';
@@ -11,8 +11,7 @@ import { useAuth } from '@src/providers/AuthProvider';
 import colors from '@src/utils/colors';
 import ConnectionHeader from '@src/components/ConnectionHeader';
 import PastableTextarea from '@src/components/inputs/PastableTextarea';
-import useAuthQuery from '@src/hooks/useAuthQuery';
-import { User } from '@src/api/types';
+import useAuthQuery from '@src/hooks/query/useAuthQuery';
 import { useApi } from '@src/providers/ApiProvider';
 
 const UNAUTHORIZED_MESSAGES = [
@@ -23,9 +22,8 @@ const UNAUTHORIZED_MESSAGES = [
 const EditConnectionScreen = () => {
   const {accountId} = useLocalSearchParams<{accountId: string}>();
   
-  const [connection, setConection] = useState<Connection|null>(null);
+  const [connection, setConnection] = useState<Connection|null>(null);
   const [isQueryEnabled, setIsQueryEnabled] = useState(false);
-  const [prevService, setPrevService] = useState('');
   const [accessToken, setAccessToken] = useState('');
 
   const router = useRouter();
@@ -42,7 +40,6 @@ const EditConnectionScreen = () => {
   const {
     data: user,
     error,
-    isLoading,
     isFetching,
     invalidateQuery,
   } = useAuthQuery(accessToken, isQueryEnabled);
@@ -72,7 +69,7 @@ const EditConnectionScreen = () => {
         api.setService(conn.service)
       }
 
-      setConection(conn);
+      setConnection(conn);
       
       const loadedToken = await authContext?.loadAccountToken(conn.account_id);
 
