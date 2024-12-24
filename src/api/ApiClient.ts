@@ -1,5 +1,5 @@
 import axios, {Axios, AxiosRequestConfig} from 'axios';
-import {Event, Repository, User} from './types';
+import {EditableUser, Event, Repository, User} from './types';
 
 export type ApiClientOptions = {
   baseUrl: string
@@ -55,7 +55,7 @@ export default abstract class ApiClient {
     }
 
     try {
-        const response = await this.m_Client.get<T>(url, requestConfig);;
+        const response = await this.m_Client.get<T>(url, requestConfig);
         return response.data;
     } catch (error) {
       let errorData: ErrorData = {
@@ -74,7 +74,7 @@ export default abstract class ApiClient {
     }
   }
 
-  protected async post<T = any>(url: string, config?: AxiosRequestConfig) {
+  protected async post<T = any>(url: string, data: Record<string, any>, config?: AxiosRequestConfig) {
     if (!this.m_Client) {
         throw new Error('An axios client is missing!');
     }
@@ -90,10 +90,10 @@ export default abstract class ApiClient {
       }
     }
 
-    return this.m_Client.post<T>(url, requestConfig);
+    return this.m_Client.post<T>(url, data, requestConfig);
   }
 
-  protected async put<T = any>(url: string, config?: AxiosRequestConfig) {
+  protected async put<T = any>(url: string, data: Record<string, any>, config?: AxiosRequestConfig) {
     if (!this.m_Client) {
         throw new Error('An axios client is missing!');
     }
@@ -109,10 +109,10 @@ export default abstract class ApiClient {
       }
     }
 
-    return this.m_Client.put<T>(url, requestConfig);
+    return this.m_Client.put<T>(url, data, requestConfig);
   }
 
-  protected async patch<T = any>(url: string, config?: AxiosRequestConfig) {
+  protected async patch<T = any>(url: string, data: Record<string, any>, config?: AxiosRequestConfig) {
     if (!this.m_Client) {
         throw new Error('An axios client is missing!');
     }
@@ -128,7 +128,7 @@ export default abstract class ApiClient {
       }
     }
 
-    return this.m_Client.patch<T>(url, requestConfig);
+    return this.m_Client.patch<T>(url, data, requestConfig);
   }
 
   protected async delete<T = any>(url: string, config?: AxiosRequestConfig) {
@@ -155,28 +155,28 @@ export default abstract class ApiClient {
    * 
    * @param token represents a personal access token.
    */
-  abstract check(token: string) : Promise<unknown>;
+  abstract check(token: string) : Promise<User>;
 
   /**
    * Gets all contribution events of specific user.
-   * 
+   *
    * @param username unique username of user
+   * @param query
    * @query query parameters
    */
-  abstract getEvents(username: string, query: Record<string, any>) : Promise<unknown[]>;
+  abstract getEvents(username: string, query: Record<string, any>) : Promise<Event[]>;
 
   /**
    * Gets a repository with specific id.
    * 
    * @param id unique identifier
    */
-  abstract getRepository(id: number) : Promise<unknown>;
+  abstract getRepository(id: number) : Promise<Repository>;
 
   /**
    * Updates an authenticated user.
    *
    * @param user user to be updated.
    */
-  abstract updateAuthUser(user: unknown): Promise<unknown>;
-  abstract getRepository(id: number) : Promise<Repository>;
+  abstract updateAuthUser(user: EditableUser): Promise<unknown>;
 };
