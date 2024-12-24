@@ -1,4 +1,4 @@
-import { AccountType, User, Event, ListQuery } from "./types";
+import {AccountType, User, Event, ListQuery, EditableUser} from "./types";
 import GithubClient from "./github/client";
 import GitlabClient from "./gitlab/client";
 import ApiClient from "./ApiClient";
@@ -66,5 +66,9 @@ export default class ApiResolver {
     }
 
     return events
+  }
+
+  public async updateAuthUser(updateData: EditableUser): Promise<User> {
+    return this.activeClient.updateAuthUser(updateData);
   }
 }

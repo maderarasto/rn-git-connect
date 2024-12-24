@@ -176,7 +176,7 @@ export default abstract class ApiClient {
   /**
    * Updates an authenticated user.
    *
-   * @param user user to be updated.
+   * @param updateData user to be updated.
    */
-  abstract updateAuthUser(user: EditableUser): Promise<unknown>;
+  abstract updateAuthUser(updateData: EditableUser): Promise<User>;
 };

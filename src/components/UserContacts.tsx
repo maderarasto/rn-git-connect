@@ -32,7 +32,7 @@ const UserContacts = ({
         {user.url ? (
           <View style={styles.row}>
             <FontAwesome5 name="globe" size={16} color="black" style={styles.icon} />
-            <Text>{user.url}</Text>
+            <Text>{user.blog}</Text>
           </View>
         ) : ''}
       </View>

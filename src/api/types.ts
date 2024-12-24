@@ -12,12 +12,21 @@ export type User = {
   url: string
   company: string|null
   location: string|null
+  blog: string|null
   email: string|null
   bio: string|null
   followers: number
   following: number
   createdAt: Date
 }
+
+export type EditableUser = Pick<User, (
+  | 'name'
+  | 'bio'
+  | 'company'
+  | 'location'
+  | 'blog'
+)>
 
 export type SimpleUser = Pick<User, (
   | 'id'

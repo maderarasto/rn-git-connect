@@ -112,6 +112,7 @@ export function deserializeUser(user: GitlabUser): User {
     name: user.name,
     avatarUrl: user.avatar_url,
     url: user.web_url,
+    blog: user.website_url,
     company: user.organization,
     location: user.location,
     email: user.email ?? null,

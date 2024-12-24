@@ -82,7 +82,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       account_id: `${slug(user.service)}-token.${user.username ?? ''}`,
       service: user.service,
       username: user.username ?? '',
-      fullname: user.fullname ?? '',
+      fullname: user.name ?? '',
     };
 
     await connections.saveConnection(conn);

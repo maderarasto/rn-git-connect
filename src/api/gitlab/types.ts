@@ -4,6 +4,7 @@ export type User = {
   name: string
   avatar_url: string
   web_url: string
+  website_url: string|null
   organization: string|null
   location: string|null
   email?: string

@@ -8,7 +8,8 @@ An idea for this project was to easily maintain project repositories and also us
 
 ## What I have learned
 - Context API
-- useQuery and useInfiniteQuery hooks
+- React/Tan Query hooks such as useQuery, useInfiniteQuery and useMutation
+- Handling forms using React Form hooks
 - React Native animations
 
 ## What is finished
@@ -22,9 +23,9 @@ An idea for this project was to easily maintain project repositories and also us
 :white_check_mark:&nbsp;&nbsp;Managing your connections and switching between them.<br />
 :white_check_mark:&nbsp;&nbsp;Services for interacting with GitHub and GitLab<br />
 :white_check_mark:&nbsp;&nbsp;Access to profile and activity events of user<br />
+:white_check_mark:&nbsp;&nbsp;Editing basic fields in your profile<br />
 
 ## Features to implement
-:hourglass:&nbsp;&nbsp;Editing user information in profile.</br>
 :hourglass:&nbsp;&nbsp;Access to list of repositories.</br>
 :hourglass:&nbsp;&nbsp;Access to list of merge requests.</br>
 :hourglass:&nbsp;&nbsp;Access to list of issues.</br>
@@ -35,19 +36,20 @@ An idea for this project was to easily maintain project repositories and also us
 
 ## Screenshots
 <div>
-    <img src="readme/screenshot_1.png" width="128" />
-    <img src="readme/screenshot_2.png" width="128" />
-    <img src="readme/screenshot_3.png" width="128" />
+    <img src="readme/screenshot_1.png" alt="Screenshot of Intro Screen" width="128" />
+    <img src="readme/screenshot_2.png" alt="Screenshot of selecting service" width="128" />
+    <img src="readme/screenshot_3.png" alt="Screenshot of Github Sign-In Screen" width="128" />
     <!-- <img src="readme/screenshot_4.png" width="128" /> -->
-    <img src="readme/screenshot_5.png" width="128" />
-    <img src="readme/screenshot_6.png" width="128" />
+    <img src="readme/screenshot_5.png" alt="Screenshot of Gitlab Sign-In Screen" width="128" />
+    <img src="readme/screenshot_6.png" alt="Screenshot of open drawer" width="128" />
     <!-- <img src="readme/screenshot_7.png" width="128" />
     <img src="readme/screenshot_8.png" width="128" />
     <img src="readme/screenshot_9.png" width="128" />
     <img src="readme/screenshot_10.png" width="128" /> -->
-    <img src="readme/screenshot_11.png" width="128" />
-    <img src="readme/screenshot_12.png" width="128" />
-    <img src="readme/screenshot_13.png" width="128" />
-    <img src="readme/screenshot_14.png" width="128" />
-    <img src="readme/screenshot_15.png" width="128" />
+    <img src="readme/screenshot_11.png" alt="Screenshot of Connection Details Screen" width="128" />
+    <img src="readme/screenshot_12.png" alt="Screenshot of switching accounts" width="128" />
+    <img src="readme/screenshot_13.png" alt="Screenshot of Connections Screen" width="128" />
+    <img src="readme/screenshot_14.png" alt="Screenshot of User Profile Screen" width="128" />
+    <img src="readme/screenshot_15.png" alt="Screenshot of Edit User Profile Screen" width="128" />
+    <img src="readme/screenshot_16.png" alt="Screenshot of User Activity Screen" width="128" />
 </div>

@@ -1,5 +1,5 @@
 import ApiClient from "../ApiClient";
-import { User, Repository, Event } from "../types";
+import {User, Repository, Event, EditableUser} from "../types";
 import {
   ListQuery,
   Event as GithubEvent,
@@ -51,5 +51,15 @@ export default class GithubClient extends ApiClient {
     return events.map((event) => {
       return GithubUtils.deserializeEvent(event);
     });
+  }
+
+  async updateAuthUser(updateData: EditableUser): Promise<User> {
+    const response = await this.patch<GithubUser>('/user', updateData, {
+      headers: {
+        Authorization: `${this.tokenPrefix} ${this.token}`
+      }
+    });
+
+    return GithubUtils.deserializeUser(response.data);
   }
 }

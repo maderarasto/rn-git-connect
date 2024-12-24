@@ -11,12 +11,14 @@ import UserContacts from '@src/components/UserContacts'
 import useEventsQuery from '@src/hooks/query/useEventsQuery';
 import EventListItem from '@src/components/EventListItem';
 import RefreshListView from '@src/components/RefreshListView';
+import {useApi} from "@src/providers/ApiProvider";
 
 const UserProfileScreen = () => {
   const [isQueryEnabled, setIsQueryEnabled] = useState(false);
 
   const authContext = useAuth();
   const router = useRouter();
+  const api = useApi();
 
   const {
     data: events,
@@ -51,7 +53,7 @@ const UserProfileScreen = () => {
   if (!authContext?.user) {
     return null;
   }
-
+  console.log(api.service);
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 70 }}>
       <View style={{ marginBottom: 24, paddingHorizontal: 24, }}>
@@ -72,15 +74,17 @@ const UserProfileScreen = () => {
           <UserInfo user={authContext.user} style={{ flex: 1, }} />
           <UserContacts user={authContext.user} style={{ flex: 1 }} />
         </View>
-        <PrimaryButton 
-          text="Edit profile"
-          icon={<Feather name="edit-2" size={14} color="white" />}
-          style={{ 
-            alignSelf: 'flex-end', 
-            marginVertical: 12,
-            backgroundColor: colors.primary 
-          }} 
-          onPress={onEditProfilePress} />
+        {api.service !== 'Gitlab' ? (
+          <PrimaryButton
+            text="Edit profile"
+            icon={<Feather name="edit-2" size={14} color="white" />}
+            style={{
+              alignSelf: 'flex-end',
+              marginVertical: 12,
+              backgroundColor: colors.primary
+            }}
+            onPress={onEditProfilePress} />
+        ) : ''}
       </View>
       <View style={{ flex: 1, paddingHorizontal: 24, paddingVertical: 12, }}>
         <Text style={{ marginBottom: 16, fontSize: 20, fontWeight: 'bold' }}>Your recent activity</Text>

@@ -1,5 +1,5 @@
 import ApiClient from "../ApiClient";
-import { User, Repository, Event } from "../types";
+import { User, Repository, Event, EditableUser} from "../types";
 import {
   User as GitlabUser,
   Project as GitlabProject,
@@ -45,5 +45,9 @@ export default class GitlabClient extends ApiClient {
     return events.map((event) => {
       return GitlabUtils.deserializeEvent(event);
     });
+  }
+
+  updateAuthUser(updateData: EditableUser): Promise<User> {
+    throw new Error("Method not supported.");
   }
 }
