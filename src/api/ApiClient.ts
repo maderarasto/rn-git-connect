@@ -179,4 +179,11 @@ export default abstract class ApiClient {
    * @param updateData user to be updated.
    */
   abstract updateAuthUser(updateData: EditableUser): Promise<User>;
+
+  /**
+   * Gets repositories of owner.
+   *
+   * @param query query parameters.
+   */
+  abstract getOwnerRepositories(query: Record<string, any>): Promise<Repository[]>;
 };

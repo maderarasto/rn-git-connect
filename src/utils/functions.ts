@@ -63,6 +63,10 @@ export function pickFromObject<T extends Record<string, any>>(obj: T, keys: (key
     }, {});
 }
 
+export function randomInt(min: number, max: number = 100) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 export function getRelativeTime(until: Date | number | string) {
   return dayjs().to(until);
 }
