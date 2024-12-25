@@ -10,7 +10,7 @@ export type OwnerReposQueryProps = {
   enabled?: boolean
 };
 
-const useOwnerReposQuery = ({
+const useMemberReposQuery = ({
   queryKey,
   params = {
     perPage: 10
@@ -65,4 +65,4 @@ const useOwnerReposQuery = ({
   return { data, error, hasNextPage, isFetching, isFetchingNextPage, fetchNextPage, invalidateQuery, resetQuery};
 }
 
-export default useOwnerReposQuery;
+export default useMemberReposQuery;

@@ -69,7 +69,7 @@ export default class ApiResolver {
   }
 
   public async getOwnerRepositories(query: ListQuery): Promise<Repository[]> {
-    return this.activeClient.getOwnerRepositories(query);
+    return this.activeClient.getAuthUserRepositories(query);
   }
 
   public async updateAuthUser(updateData: EditableUser): Promise<User> {

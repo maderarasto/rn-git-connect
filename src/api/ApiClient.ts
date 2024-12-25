@@ -1,5 +1,5 @@
 import axios, {Axios, AxiosRequestConfig} from 'axios';
-import {EditableUser, Event, Repository, User} from './types';
+import {EditableUser, Event, ListQuery, Repository, User} from './types';
 
 export type ApiClientOptions = {
   baseUrl: string
@@ -185,5 +185,5 @@ export default abstract class ApiClient {
    *
    * @param query query parameters.
    */
-  abstract getOwnerRepositories(query: Record<string, any>): Promise<Repository[]>;
+  abstract getAuthUserRepositories(query: ListQuery): Promise<Repository[]>;
 };

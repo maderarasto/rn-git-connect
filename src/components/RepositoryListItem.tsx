@@ -4,7 +4,7 @@ import AvatarImage from "@src/components/AvatarImage";
 import {getRelativeTime} from "@src/utils/functions";
 import {slug} from "@src/utils/strings";
 import {Repository} from "@src/api/types";
-import {getRandomColor} from "@src/utils/colors";
+import {getColorFromPalette} from "@src/utils/colors";
 
 export type RepositoryListItemProps = {
   repository: Repository
@@ -18,7 +18,7 @@ const RepositoryListItem = ({
       <AvatarImage
         imageUrl={repository.avatarUrl}
         letterFrom={repository.name}
-        backgroundColor={getRandomColor()}/>
+        backgroundColor={getColorFromPalette({ type: 'modulo', value: repository.name.length})}/>
       <View style={{ flex: 1, gap: 4 }}>
         <View style={{ flex: 1, gap: 2 }}>
           <Text style={styles.repositoryTitle}>{repository.fullName}</Text>

@@ -4,14 +4,14 @@ import {Drawer} from "expo-router/drawer";
 import {AntDesign} from "@expo/vector-icons";
 import DrawerHeader from "@src/components/headers/DrawerHeader";
 import {DrawerHeaderProps} from "@react-navigation/drawer";
-import useOwnerReposQuery from "@src/hooks/query/useOwnerReposQuery";
+import useMemberReposQuery from "@src/hooks/query/useMemberReposQuery";
 import RepositoryListItem from "@src/components/RepositoryListItem";
 import RefreshList from "@src/components/RefreshList";
 import {useFocusEffect} from "expo-router";
 
 const RepositoriesScreen = () => {
   useFocusEffect(useCallback(() => {
-    reloadRepos('owner_repos');
+    reloadRepos('member_repos');
   }, []))
 
   const renderHeader = ({navigation, options}: DrawerHeaderProps) => (
@@ -37,8 +37,8 @@ const RepositoriesScreen = () => {
     hasNextPage,
     fetchNextPage,
     resetQuery: reloadRepos,
-  } = useOwnerReposQuery({
-    queryKey: 'owner_repos',
+  } = useMemberReposQuery({
+    queryKey: 'member_repos',
   });
 
   const onEventListReachedEnd = async () => {

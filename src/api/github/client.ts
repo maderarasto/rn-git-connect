@@ -63,7 +63,7 @@ export default class GithubClient extends ApiClient {
     return GithubUtils.deserializeUser(response.data);
   }
 
-  async getOwnerRepositories(query: Record<string, any>): Promise<Repository[]> {
+  async getAuthUserRepositories(query: Record<string, any>): Promise<Repository[]> {
     const repos = await this.get<GithubRepository[]>('user/repos', {
       params: GithubUtils.serializeListQuery(query),
       headers: {

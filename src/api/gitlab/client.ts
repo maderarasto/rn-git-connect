@@ -3,7 +3,7 @@ import { User, Repository, Event, EditableUser} from "../types";
 import {
   User as GitlabUser,
   Project as GitlabProject,
-  Event as GitlabEvent
+  Event as GitlabEvent, ListQuery
 } from "./types";
 import * as GitlabUtils from "@src/api/gitlab/utils";
 
@@ -44,6 +44,22 @@ export default class GitlabClient extends ApiClient {
 
     return events.map((event) => {
       return GitlabUtils.deserializeEvent(event);
+    });
+  }
+
+  async getAuthUserRepositories(query: ListQuery): Promise<Repository[]> {
+    const repos = await this.get<GitlabProject[]>('/projects', {
+      params: {
+        ...GitlabUtils.serializeListQuery(query),
+        membership: true
+      },
+      headers: {
+        Authorization: `${this.tokenPrefix} ${this.token}`
+      }
+    });
+
+    return repos.map((project) => {
+      return GitlabUtils.deserializeRepository(project);
     });
   }
 
