@@ -10,7 +10,7 @@ const UnfocusView = ({
   style = {}
 }: UnfocusViewProps) => {
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss}>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={style}>
         {children}
       </View>
