@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, ActivityIndicator, ViewStyle } from 'react-native'
 import React from 'react'
 import {Ionicons} from '@expo/vector-icons';
-import PrimaryButton from './buttons/PrimaryButton'
+import PrimaryButton from '../buttons/PrimaryButton'
 import colors from '@src/utils/colors'
 
 export type RefreshListViewProps<T = any> = {

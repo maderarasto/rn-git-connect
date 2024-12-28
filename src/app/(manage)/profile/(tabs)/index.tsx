@@ -10,7 +10,7 @@ import UserInfo from '@src/components/UserInfo'
 import UserContacts from '@src/components/UserContacts'
 import useEventsQuery from '@src/hooks/query/useEventsQuery';
 import EventListItem from '@src/components/EventListItem';
-import RefreshListView from '@src/components/RefreshListView';
+import RefreshListView from '@src/components/views/RefreshListView';
 import {useApi} from "@src/providers/ApiProvider";
 
 const UserProfileScreen = () => {

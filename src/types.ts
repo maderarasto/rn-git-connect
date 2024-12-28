@@ -11,3 +11,9 @@ export type LayoutDimensions = {
   width: number
   height: number
 };
+
+export type Tag = {
+  label: string
+  key?: string
+  selected?: boolean
+};
