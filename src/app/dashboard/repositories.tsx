@@ -7,9 +7,11 @@ import {DrawerHeaderProps} from "@react-navigation/drawer";
 import useMemberReposQuery from "@src/hooks/query/useMemberReposQuery";
 import RepositoryListItem from "@src/components/RepositoryListItem";
 import RefreshList from "@src/components/RefreshList";
-import {useFocusEffect} from "expo-router";
+import {useFocusEffect, useRouter} from "expo-router";
 
 const RepositoriesScreen = () => {
+  const router = useRouter();
+
   useFocusEffect(useCallback(() => {
     reloadRepos('member_repos');
   }, []))
@@ -21,7 +23,7 @@ const RepositoriesScreen = () => {
       titleStyle={{ flex: 1 }}
       headerRight={() => (
         <>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={() => router.navigate('(search)/repositories')}>
             <AntDesign name="search1" size={24} color="black" />
           </TouchableOpacity>
           <TouchableOpacity>
