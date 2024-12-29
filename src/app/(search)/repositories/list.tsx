@@ -1,9 +1,9 @@
 import {Platform, StyleSheet, ToastAndroid, TouchableOpacity, View} from "react-native";
-import {useLocalSearchParams, useRouter} from "expo-router";
+import {useFocusEffect, useLocalSearchParams, useRouter} from "expo-router";
 import {useAuth} from "@src/providers/AuthProvider";
 import BaseHeader from "@src/components/headers/BaseHeader";
 import {AntDesign} from "@expo/vector-icons";
-import React from "react";
+import React, {useCallback} from "react";
 import useSearchReposQuery from "@src/hooks/query/useSearchReposQuery";
 import RepositoryListItem from "@src/components/RepositoryListItem";
 import RefreshList from "@src/components/RefreshList";
@@ -36,13 +36,21 @@ const SearchRepositoriesListScreen = () => {
     hasNextPage,
     fetchNextPage,
     resetQuery: reloadRepos,
+    invalidateQuery,
   } = useSearchReposQuery({
     queryKey: 'search_repos',
     params: {
       owner: authContext.user.username ?? '',
+      membership: true,
       language,
     }
   });
+
+  useFocusEffect(useCallback(() => {
+    return () => {
+      invalidateQuery('search_repos');
+    }
+  }, []))
 
   const onEventListReachedEnd = async () => {
     if (!isFetching && hasNextPage) {

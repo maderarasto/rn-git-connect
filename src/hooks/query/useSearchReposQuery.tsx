@@ -9,11 +9,13 @@ export type SearchReposQueryProps = {
   enabled?: boolean
 }
 
+const DEFAULT_LIST_PAGE = 1;
+const DEFAULT_LIST_PAGE_SIZE = 10;
+
 const useSearchReposQuery = ({
   queryKey,
   params = {
-    page: 1,
-    perPage: 10
+    perPage: 10,
   },
   enabled = true
 }: SearchReposQueryProps) => {
@@ -30,13 +32,13 @@ const useSearchReposQuery = ({
     isFetching,
     isFetchingNextPage,
     hasNextPage,
-    fetchNextPage
+    fetchNextPage,
   } = useInfiniteQuery<Repository[], ErrorData>({
     queryKey: [queryKey],
     queryFn: ({pageParam}) => {
       return api.searchRepositories({
+        ...resolveParams(params),
         page: pageParam as number,
-        ...params,
       });
     },
     initialPageParam: 1,
@@ -50,6 +52,18 @@ const useSearchReposQuery = ({
     retry: 2,
     enabled
   });
+
+  const resolveParams = ({
+    page,
+    perPage,
+    ...props
+  }: SearchReposParams): SearchReposParams => {
+    return {
+      page: params.page ?? DEFAULT_LIST_PAGE,
+      perPage: params.perPage ?? DEFAULT_LIST_PAGE_SIZE,
+      ...props,
+    };
+  }
 
   const invalidateQuery = async (key: string = queryKey) => {
     await queryClient.invalidateQueries({ queryKey: [key] });

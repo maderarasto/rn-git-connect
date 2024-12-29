@@ -5,11 +5,13 @@ import TextEdit, {TextEditMethods} from "@src/components/inputs/TextEdit";
 import {AntDesign} from "@expo/vector-icons";
 
 export type SearchHeaderProps = BaseHeaderProps & {
+  searchPlaceholder?: string
   onChangeText?: (text: string) => void
   onClearText?: () => void
 };
 
 const SearchHeader = ({
+  searchPlaceholder = '',
   onChangeText,
   onClearText,
   ...baseHeaderProps
@@ -43,6 +45,7 @@ const SearchHeader = ({
           <TextEdit
             ref={searchTextRef}
             containerStyle={{ flex: 1}}
+            placeholder={searchPlaceholder}
             icon={<AntDesign name="search1" size={20} color="gray" />}
             onChangeText={onSearchTextChange}/>
           {showClear ? (

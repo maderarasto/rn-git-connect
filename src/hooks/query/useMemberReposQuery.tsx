@@ -1,4 +1,4 @@
-import {ListParams, Repository} from "@src/api/types";
+import {Repository, RepositoryListParams} from "@src/api/types";
 import {useAuth} from "@src/providers/AuthProvider";
 import {useApi} from "@src/providers/ApiProvider";
 import {useInfiniteQuery, useQueryClient} from "@tanstack/react-query";
@@ -6,14 +6,17 @@ import {ErrorData} from "@src/api/ApiClient";
 
 export type OwnerReposQueryProps = {
   queryKey: string
-  params?: ListParams
+  params?: RepositoryListParams
   enabled?: boolean
 };
+
+const DEFAULT_LIST_PAGE = 1;
+const DEFAULT_LIST_PAGE_SIZE = 10;
 
 const useMemberReposQuery = ({
   queryKey,
   params = {
-    perPage: 10
+    perPage: 10,
   },
   enabled = true
 }: OwnerReposQueryProps) => {
@@ -36,8 +39,8 @@ const useMemberReposQuery = ({
     queryKey: [queryKey],
     queryFn: ({pageParam}) => {
       return api.getOwnerRepositories({
+        ...resolveParams(params),
         page: pageParam as number,
-        ...params,
       });
     },
     initialPageParam: 1,
@@ -51,6 +54,18 @@ const useMemberReposQuery = ({
     retry: 2,
     enabled
   });
+
+  const resolveParams = ({
+    page,
+    perPage,
+    ...props
+  }: RepositoryListParams): RepositoryListParams => {
+    return {
+      page: params.page ?? DEFAULT_LIST_PAGE,
+      perPage: params.perPage ?? DEFAULT_LIST_PAGE_SIZE,
+      ...props,
+    };
+  }
 
   const invalidateQuery = async (key: string = queryKey) => {
     await queryClient.invalidateQueries({ queryKey: [key] });

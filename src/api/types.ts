@@ -207,7 +207,12 @@ export type ListParams = Partial<{
   perPage: number
 }>
 
-export type SearchReposParams = ListParams & Partial<{
+export type RepositoryListParams = ListParams & Partial<{
+  owned: boolean
+  membership: boolean
+}>;
+
+export type SearchReposParams = RepositoryListParams & Partial<{
   owner: string
   searchText: string
   language: string

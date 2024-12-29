@@ -98,8 +98,6 @@ const TagPicker = ({
     }
   }
 
-  console.log(tags);
-
   return (
     <View style={styles.container}>
       {tags.map((tag) => (
