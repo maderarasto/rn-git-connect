@@ -44,7 +44,7 @@ const SearchRepositoriesScreen = () => {
       />
       <View style={styles.content}>
         <Text style={{ marginBottom: 8, fontSize: 14, color: 'gray' }}>List your repositories by language</Text>
-        <TagPicker items={ProgrammingLanguages} onPick={onPickLanguage} />
+        <TagPicker items={[...ProgrammingLanguages]} onPick={onPickLanguage} />
       </View>
     </UnfocusView>
   );

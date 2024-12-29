@@ -42,7 +42,7 @@ const TagPicker = ({
       if (typeof item === 'string') {
         tag.label = item;
         tag.key = `tag[${index}]:${item}`;
-        tag.selected = !multiple ? index === 0 : false
+        tag.selected = multiple ? index === 0 : false
       } else {
         tag.label = item.label;
         tag.key = item.key ? item.key : `tag[${index}]:${item}`;
@@ -97,6 +97,8 @@ const TagPicker = ({
       }
     }
   }
+
+  console.log(tags);
 
   return (
     <View style={styles.container}>
