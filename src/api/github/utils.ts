@@ -6,7 +6,7 @@ import {
   SimpleUser,
   User,
   Label,
-  ListQuery,
+  ListParams,
   EventType,
   EventPayload,
   PushData,
@@ -14,7 +14,7 @@ import {
   SimpleIssueComment,
   Event,
   Issue,
-  MergeRequest
+  MergeRequest, SearchReposParams
 } from '@src/api/types';
 import {
   User as GithubUser,
@@ -27,7 +27,8 @@ import {
   SimpleIssueComment as GithubSimpleIssueComment,
   PullRequest as GithubPullRequest,
   Label as GithubLabel,
-  ListQuery as GithubListQuery,
+  ListParams as GithubListParams,
+  SearchReposParams as GithubSearchReposParams,
   EventType as GithubEventType,
   Event as GithubEvent,
   PushEventPayload,
@@ -271,9 +272,29 @@ export function deserializeLabel(label: GithubLabel): Label {
   };
 }
 
-export function serializeListQuery(params: ListQuery): GithubListQuery {
+export function serializeListParams(params: ListParams): GithubListParams {
   return {
     page: params.page ?? 1,
     per_page: params.perPage ?? 10,
   };
+}
+
+export function serializeSearchReposParams(params: SearchReposParams): GithubSearchReposParams {
+  let query = `user:${params.owner}` ?? '';
+
+  if (params.language) {
+    query += query.length > 0 ? ' ' : '';
+    query += `language:${params.language?.toLowerCase()}`;
+  }
+
+
+  if (query.length > 0 && params.searchText) {
+    query += query.length > 0 ? ' ' : '';
+    query += params.searchText;
+  }
+
+  return {
+    ...serializeListParams(params),
+    q: query
+  }
 }

@@ -1,5 +1,5 @@
 import axios, {Axios, AxiosRequestConfig} from 'axios';
-import {EditableUser, Event, ListQuery, Repository, User} from './types';
+import {EditableUser, Event, ListParams, Repository, SearchReposParams, User} from './types';
 
 export type ApiClientOptions = {
   baseUrl: string
@@ -185,5 +185,12 @@ export default abstract class ApiClient {
    *
    * @param query query parameters.
    */
-  abstract getAuthUserRepositories(query: ListQuery): Promise<Repository[]>;
+  abstract getAuthUserRepositories(query: ListParams): Promise<Repository[]>;
+
+  /**
+   * Searches repositories with search text or filtered by language.
+   *
+   * @param params params for searching repositories
+   */
+  abstract searchRepositories(params: SearchReposParams): Promise<Repository[]>
 };

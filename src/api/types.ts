@@ -202,7 +202,14 @@ export type Label = {
   color: string|null
 }
 
-export type ListQuery = Partial<{
+export type ListParams = Partial<{
   page: number
   perPage: number
 }>
+
+export type SearchReposParams = ListParams & Partial<{
+  owner: string
+  searchText: string
+  language: string
+}>;
+

@@ -1,11 +1,11 @@
 import { ErrorData } from "@src/api/ApiClient";
-import { Event, ListQuery } from "@src/api/types";
+import { Event, ListParams } from "@src/api/types";
 import { useApi } from "@src/providers/ApiProvider";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 
 export type EventQueryProps = {
   queryKey: string  
-  params?: ListQuery
+  params?: ListParams
   enabled?: boolean
 }
 

@@ -24,4 +24,4 @@ export const ProgrammingLanguages = [
   'Swift',
   'TypeScript',
   'Vue',
-];
+] as const;

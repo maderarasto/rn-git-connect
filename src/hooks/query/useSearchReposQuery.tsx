@@ -1,28 +1,27 @@
-import {ListParams, Repository} from "@src/api/types";
-import {useAuth} from "@src/providers/AuthProvider";
-import {useApi} from "@src/providers/ApiProvider";
+import {Repository, SearchReposParams} from "@src/api/types";
 import {useInfiniteQuery, useQueryClient} from "@tanstack/react-query";
+import {useApi} from "@src/providers/ApiProvider";
 import {ErrorData} from "@src/api/ApiClient";
 
-export type OwnerReposQueryProps = {
+export type SearchReposQueryProps = {
   queryKey: string
-  params?: ListParams
+  params?: SearchReposParams
   enabled?: boolean
-};
+}
 
-const useMemberReposQuery = ({
+const useSearchReposQuery = ({
   queryKey,
   params = {
+    page: 1,
     perPage: 10
   },
   enabled = true
-}: OwnerReposQueryProps) => {
-  const authContext = useAuth();
+}: SearchReposQueryProps) => {
   const queryClient = useQueryClient();
   const {api} = useApi();
 
-  if (!authContext?.user || !api) {
-    throw new Error('Missing required api resolver or auth user!');
+  if (!api) {
+    throw new Error('Missing required api resolver!');
   }
 
   const {
@@ -35,7 +34,7 @@ const useMemberReposQuery = ({
   } = useInfiniteQuery<Repository[], ErrorData>({
     queryKey: [queryKey],
     queryFn: ({pageParam}) => {
-      return api.getOwnerRepositories({
+      return api.searchRepositories({
         page: pageParam as number,
         ...params,
       });
@@ -65,4 +64,4 @@ const useMemberReposQuery = ({
   return { data, error, hasNextPage, isFetching, isFetchingNextPage, fetchNextPage, invalidateQuery, resetQuery};
 }
 
-export default useMemberReposQuery;
+export default useSearchReposQuery;

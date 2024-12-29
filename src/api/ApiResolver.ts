@@ -1,8 +1,8 @@
-import {AccountType, User, Event, ListQuery, EditableUser, Repository} from "./types";
+import {AccountType, User, Event, ListParams, EditableUser, Repository, SearchReposParams} from "./types";
 import GithubClient from "./github/client";
 import GitlabClient from "./gitlab/client";
 import ApiClient from "./ApiClient";
-import {serializeListQuery} from "@src/api/github/utils";
+import {serializeListParams} from "@src/api/github/utils";
 
 export default class ApiResolver {
   private readonly m_Services: Record<AccountType, ApiClient>;
@@ -52,8 +52,8 @@ export default class ApiResolver {
     return this.activeClient.check(token)
   }
 
-  public async getEvents(username: string, query: ListQuery): Promise<Event[]> {
-    const params = serializeListQuery(query);
+  public async getEvents(username: string, query: ListParams): Promise<Event[]> {
+    const params = serializeListParams(query);
     const events = await this.activeClient.getEvents(username, params);
 
     for (const event of events) {
@@ -68,11 +68,15 @@ export default class ApiResolver {
     return events
   }
 
-  public async getOwnerRepositories(query: ListQuery): Promise<Repository[]> {
+  public async getOwnerRepositories(query: ListParams): Promise<Repository[]> {
     return this.activeClient.getAuthUserRepositories(query);
   }
 
   public async updateAuthUser(updateData: EditableUser): Promise<User> {
     return this.activeClient.updateAuthUser(updateData);
+  }
+
+  public async searchRepositories(params: SearchReposParams): Promise<Repository[]> {
+    return this.activeClient.searchRepositories(params);
   }
 }

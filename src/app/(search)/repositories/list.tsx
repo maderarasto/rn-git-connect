@@ -4,6 +4,9 @@ import {useAuth} from "@src/providers/AuthProvider";
 import BaseHeader from "@src/components/headers/BaseHeader";
 import {AntDesign} from "@expo/vector-icons";
 import React from "react";
+import useSearchReposQuery from "@src/hooks/query/useSearchReposQuery";
+import RepositoryListItem from "@src/components/RepositoryListItem";
+import RefreshList from "@src/components/RefreshList";
 
 const SearchRepositoriesListScreen = () => {
   const {language} = useLocalSearchParams<{ language: string }>();
@@ -23,8 +26,28 @@ const SearchRepositoriesListScreen = () => {
     router.back();
   }
 
-  if (!authContext) {
+  if (!authContext || !authContext.user) {
     return null;
+  }
+
+  const {
+    data: repos,
+    isFetching,
+    hasNextPage,
+    fetchNextPage,
+    resetQuery: reloadRepos,
+  } = useSearchReposQuery({
+    queryKey: 'search_repos',
+    params: {
+      owner: authContext.user.username ?? '',
+      language,
+    }
+  });
+
+  const onEventListReachedEnd = async () => {
+    if (!isFetching && hasNextPage) {
+      await fetchNextPage();
+    }
   }
 
   return (
@@ -38,6 +61,18 @@ const SearchRepositoriesListScreen = () => {
         ),
         title: `Repositories with ${language}`,
       }}/>
+      <RefreshList
+        data={repos?.pages.flat()}
+        keyExtractor={(repo) => {
+          return repo.id.toString();
+        }}
+        isLoading={isFetching}
+        renderItem={({item: repo}) => {
+          return <RepositoryListItem repository={repo} />;
+        }}
+        onEndReachedThreshold={0.5}
+        onEndReached={onEventListReachedEnd}
+        onRetry={() => reloadRepos()}/>
     </View>
   )
 };

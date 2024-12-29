@@ -1,6 +1,6 @@
 import {
   SimpleUser, User, Repository, SimpleRepository,
-  ListQuery, Event, EventType, EventPayload
+  ListParams, Event, EventType, EventPayload
 } from '@src/api/types';
 import {
   User as GitlabUser,
@@ -184,7 +184,7 @@ export function deserializeEvent(event: GitlabEvent): Event {
   }
 }
 
-export function serializeListQuery(params: ListQuery): GitlabListQuery {
+export function serializeListQuery(params: ListParams): GitlabListQuery {
   return {
     page: params.page ?? 1,
     per_page: params.perPage ?? 10,

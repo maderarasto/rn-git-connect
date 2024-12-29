@@ -1,12 +1,13 @@
 import ApiClient from "../ApiClient";
 import {User, Repository, Event, EditableUser} from "../types";
 import {
-  ListQuery,
+  ListParams,
   Event as GithubEvent,
   Repository as GithubRepository,
-  User as GithubUser
+  User as GithubUser, SearchReposParams, SearchRepositoryResult
 } from "./types";
 import * as GithubUtils from "@src/api/github/utils";
+import {serializeSearchReposParams} from "@src/api/github/utils";
 
 export default class GithubClient extends ApiClient {
 
@@ -39,7 +40,7 @@ export default class GithubClient extends ApiClient {
 
   async getEvents(
     username: string,
-    query: ListQuery
+    query: ListParams
   ) : Promise<Event[]> {
     const events = await this.get<GithubEvent[]>(`/users/${username}/events`, {
       params: query,
@@ -65,7 +66,7 @@ export default class GithubClient extends ApiClient {
 
   async getAuthUserRepositories(query: Record<string, any>): Promise<Repository[]> {
     const repos = await this.get<GithubRepository[]>('user/repos', {
-      params: GithubUtils.serializeListQuery(query),
+      params: GithubUtils.serializeListParams(query),
       headers: {
         Authorization: `${this.tokenPrefix} ${this.token}`
       }
@@ -73,6 +74,19 @@ export default class GithubClient extends ApiClient {
 
     return repos.map((repo) => {
       return GithubUtils.deserializeRepository(repo);
+    });
+  }
+
+  async searchRepositories(params: SearchReposParams): Promise<Repository[]> {
+    const result = await this.get<SearchRepositoryResult>('search/repositories', {
+      params: serializeSearchReposParams(params),
+      headers: {
+        Authorization: `${this.tokenPrefix} ${this.token}`
+      }
+    });
+
+    return result.items.map((repository) => {
+      return GithubUtils.deserializeRepository(repository);
     });
   }
 }
