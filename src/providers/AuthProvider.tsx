@@ -23,11 +23,15 @@ const AuthContext = createContext<AuthContext|null>(null);
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User|null>(null);
-  const [activeAccount, setActiveAccount] = useLocalStorage<string>('active_account_id');
   const [token, setToken] = useState<string|null>(null);
 
   const {api, service, setService} = useApi();
   const connections = useConnections();
+
+  const {
+    data: activeAccount,
+    setData: setActiveAccount,
+  } = useLocalStorage<string>('active_account_id');
 
   useEffect(() => {
     if (!activeAccount) {
