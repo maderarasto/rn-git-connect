@@ -133,7 +133,7 @@ const DrawerLayout = () => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Drawer 
+      <Drawer
         drawerContent={(props) => <DrawerContent {...{ ...props, dialogRef }} />}
         screenOptions={{
           header: ({ navigation, options }) => (

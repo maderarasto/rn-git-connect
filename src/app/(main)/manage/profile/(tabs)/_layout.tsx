@@ -1,8 +1,7 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity, useWindowDimensions, Dimensions } from 'react-native'
-import React, { useContext } from 'react'
+import { StyleSheet, TouchableOpacity} from 'react-native'
+import React from 'react'
 import { Tabs, useRouter } from 'expo-router'
 import {AntDesign, FontAwesome5} from '@expo/vector-icons';
-import { useAuth } from '@src/providers/AuthProvider';
 
 const TabLayout = () => {
   const router = useRouter();
