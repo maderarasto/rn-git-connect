@@ -1,5 +1,5 @@
 import {View, TouchableOpacity, StyleSheet} from 'react-native'
-import React, {useCallback} from 'react'
+import React from 'react'
 import {Drawer} from "expo-router/drawer";
 import {AntDesign} from "@expo/vector-icons";
 import DrawerHeader from "@src/components/headers/DrawerHeader";
@@ -7,14 +7,15 @@ import {DrawerHeaderProps} from "@react-navigation/drawer";
 import useMemberReposQuery from "@src/hooks/query/useMemberReposQuery";
 import RepositoryListItem from "@src/components/RepositoryListItem";
 import RefreshList from "@src/components/RefreshList";
-import {useFocusEffect, useRouter} from "expo-router";
+import {useRouter} from "expo-router";
+import useResumeHandler from "@src/hooks/useResumeHandler";
 
 const RepositoriesScreen = () => {
   const router = useRouter();
 
-  useFocusEffect(useCallback(() => {
+  useResumeHandler(() => {
     reloadRepos('member_repos');
-  }, []))
+  });
 
   const renderHeader = ({navigation, options}: DrawerHeaderProps) => (
     <DrawerHeader
@@ -23,7 +24,7 @@ const RepositoriesScreen = () => {
       titleStyle={{ flex: 1 }}
       headerRight={() => (
         <>
-          <TouchableOpacity onPress={() => router.navigate('(search)/repositories')}>
+          <TouchableOpacity onPress={() => router.navigate('(main)/search/repositories')}>
             <AntDesign name="search1" size={24} color="black" />
           </TouchableOpacity>
           <TouchableOpacity>
