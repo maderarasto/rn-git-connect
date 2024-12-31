@@ -95,8 +95,8 @@ const EditConnectionScreen = () => {
       navigation.reset({
         index: 0,
         routes: [
-          { name: 'dashboard'} as never,
-          { name: '(manage)/connections/index' } as never,
+          { name: '(main)/(drawer)'} as never,
+          { name: '(main)/manage/connections/index' } as never,
         ]
       });  
     }
@@ -181,7 +181,7 @@ const EditConnectionScreen = () => {
     navigation.reset({
       index: 0,
       routes: [
-        { name: 'dashboard'} as never,
+        { name: '(drawer)'} as never,
         { name: '(manage)/connections/index' } as never,
       ]
     });

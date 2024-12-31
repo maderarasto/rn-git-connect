@@ -33,7 +33,7 @@ const ConnectionsScreen = () => {
   }, []);
 
   const openConnection = (conn: Connection) => {
-    router.navigate(`(manage)/connections/${conn.account_id}`);
+    router.navigate(`(main)/manage/connections/${conn.account_id}`);
   }
 
   const onBackPress = () => {

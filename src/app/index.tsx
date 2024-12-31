@@ -71,7 +71,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (canRedirect) {
-      router.replace('dashboard');
+      router.replace('(main)/(drawer)');
     }
   }, [canRedirect])
 

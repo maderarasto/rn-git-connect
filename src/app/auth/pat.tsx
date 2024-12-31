@@ -75,7 +75,7 @@ const AuthPATScreen = () => {
     }
 
     const navigationRoutes = [
-      { name: 'dashboard'} as never,
+      { name: '(main)/(drawer)'} as never,
     ];
 
     // TODO: navigate to redirect URL
