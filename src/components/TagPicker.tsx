@@ -4,9 +4,11 @@ import TagItem from './TagItem';
 import {Tag} from "@src/types";
 
 export type TagPickerProps = {
+  type: 'pick' | 'click'
   items: (string | Tag)[]
   tagIcon?: React.JSX.Element,
   multiple?: boolean
+  highlight?: boolean
   onPick?: (tag: Tag) => void
   onChange?: (tags: Tag[]) => void
 }
@@ -14,6 +16,7 @@ export type TagPickerProps = {
 const TagPicker = ({
   items,
   multiple = false,
+  highlight = true,
   onPick,
   onChange,
 }: TagPickerProps) => {
@@ -62,7 +65,7 @@ const TagPicker = ({
       ...styles.tagItem,
     };
 
-    if (tag.selected) {
+    if (tag.selected && highlight) {
       style.backgroundColor = '#2563eb';
     }
 
@@ -74,7 +77,7 @@ const TagPicker = ({
       color: 'black',
     };
 
-    if (tag.selected) {
+    if (tag.selected && highlight) {
       style.color = 'white';
     }
 

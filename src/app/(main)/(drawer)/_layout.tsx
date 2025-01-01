@@ -50,7 +50,7 @@ const DrawerContent = ({
     props.navigation.closeDrawer();
     
     setTimeout(() => {
-      router.navigate('(main)/manage/profile/(tabs)');
+      router.navigate('manage/profile/(tabs)');
     }, 300);
   }
 
@@ -58,7 +58,7 @@ const DrawerContent = ({
     props.navigation.closeDrawer();
 
     setTimeout(() => {
-      router.navigate('(main)/manage/connections');
+      router.navigate('manage/connections');
     }, 300);
   }
 

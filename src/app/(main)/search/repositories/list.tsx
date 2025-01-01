@@ -38,7 +38,7 @@ const SearchRepositoriesListScreen = () => {
     resetQuery: reloadRepos,
     invalidateQuery,
   } = useSearchReposQuery({
-    queryKey: 'search_repos',
+    queryKey: 'filter_repos',
     params: {
       owner: authContext.user.username ?? '',
       membership: true,
@@ -46,9 +46,11 @@ const SearchRepositoriesListScreen = () => {
     }
   });
 
+  console.log(language)
+
   useFocusEffect(useCallback(() => {
     return () => {
-      invalidateQuery('search_repos');
+      invalidateQuery('filter_repos');
     }
   }, []))
 

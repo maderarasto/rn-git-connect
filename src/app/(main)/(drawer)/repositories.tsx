@@ -24,7 +24,7 @@ const RepositoriesScreen = () => {
       titleStyle={{ flex: 1 }}
       headerRight={() => (
         <>
-          <TouchableOpacity onPress={() => router.navigate('(main)/search/repositories')}>
+          <TouchableOpacity onPress={() => router.navigate('search/repositories')}>
             <AntDesign name="search1" size={24} color="black" />
           </TouchableOpacity>
           <TouchableOpacity>

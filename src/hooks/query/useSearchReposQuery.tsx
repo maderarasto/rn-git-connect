@@ -33,6 +33,7 @@ const useSearchReposQuery = ({
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
+    refetch
   } = useInfiniteQuery<Repository[], ErrorData>({
     queryKey: [queryKey],
     queryFn: ({pageParam}) => {
@@ -75,7 +76,7 @@ const useSearchReposQuery = ({
     // queryClient.setQueryData([key], null);
   }
 
-  return { data, error, hasNextPage, isFetching, isFetchingNextPage, fetchNextPage, invalidateQuery, resetQuery};
+  return { data, error, hasNextPage, isFetching, isFetchingNextPage, refetch, fetchNextPage, invalidateQuery, resetQuery};
 }
 
 export default useSearchReposQuery;

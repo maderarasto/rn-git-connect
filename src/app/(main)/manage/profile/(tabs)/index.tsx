@@ -47,7 +47,7 @@ const UserProfileScreen = () => {
   }, []));
 
   function onEditProfilePress() {
-    router.navigate('(main)/manage/profile/edit');
+    router.navigate('manage/profile/edit');
   }
 
   if (!authContext?.user) {

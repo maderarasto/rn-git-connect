@@ -93,10 +93,10 @@ const EditConnectionScreen = () => {
       await saveConnection({ ...conn, expired: false});
 
       navigation.reset({
-        index: 0,
+        index: 1,
         routes: [
-          { name: '(main)/(drawer)'} as never,
-          { name: '(main)/manage/connections/index' } as never,
+          { name: '(drawer)'} as never,
+          { name: 'manage/connections/index' } as never,
         ]
       });  
     }
