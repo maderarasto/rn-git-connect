@@ -1,10 +1,10 @@
 import {StyleSheet, Text, TouchableOpacity, View, ViewStyle} from "react-native";
 import {AntDesign} from "@expo/vector-icons";
-import React, {useEffect, useState} from "react";
-import {useRouter} from "expo-router";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import {useFocusEffect, useRouter} from "expo-router";
 import SearchHeader from "@src/components/headers/SearchHeader";
 import UnfocusView from "@src/components/views/UnfocusView";
-import TagPicker from "@src/components/TagPicker";
+import TagPicker, {TagPickerMethods} from "@src/components/TagPicker";
 import {ProgrammingLanguages} from "@src/utils/structs";
 import {Tag} from "@src/types";
 import RefreshList from "@src/components/RefreshList";
@@ -15,6 +15,7 @@ import RepositoryListItem from "@src/components/RepositoryListItem";
 const SearchRepositoriesScreen = () => {
   const [searchText, setSearchText] = useState('');
   const [isQueryEnabled, setIsQueryEnabled] = useState(false);
+  const tagPicker = useRef<TagPickerMethods>(null);
 
   const router = useRouter();
   const authContext = useAuth();
@@ -39,6 +40,10 @@ const SearchRepositoriesScreen = () => {
     },
     enabled: isQueryEnabled,
   });
+
+  useFocusEffect(useCallback(() => {
+    tagPicker.current?.reset();
+  }, []));
 
   useEffect(() => {
     setIsQueryEnabled(searchText.length > 0);
@@ -101,7 +106,7 @@ const SearchRepositoriesScreen = () => {
       />
       <View style={resolveTagFilterStyle()}>
         <Text style={{ marginBottom: 8, fontSize: 14, color: 'gray' }}>List your repositories by language</Text>
-        <TagPicker items={[...ProgrammingLanguages]} highlight={false} onPick={onPickLanguage} />
+        <TagPicker ref={tagPicker} items={[...ProgrammingLanguages]} onPick={onPickLanguage} />
       </View>
       {isQueryEnabled ? (
         <RefreshList

@@ -1,10 +1,13 @@
 import {StyleSheet, TextStyle, View, ViewStyle} from 'react-native'
-import React, {useEffect, useState} from 'react'
+import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react'
 import TagItem from './TagItem';
 import {Tag} from "@src/types";
 
+export type TagPickerMethods = {
+  reset: () => void
+}
+
 export type TagPickerProps = {
-  type: 'pick' | 'click'
   items: (string | Tag)[]
   tagIcon?: React.JSX.Element,
   multiple?: boolean
@@ -13,14 +16,20 @@ export type TagPickerProps = {
   onChange?: (tags: Tag[]) => void
 }
 
-const TagPicker = ({
+const TagPicker = forwardRef<TagPickerMethods, TagPickerProps>(({
   items,
   multiple = false,
   highlight = true,
   onPick,
   onChange,
-}: TagPickerProps) => {
+}: TagPickerProps, ref) => {
   const [tags, setTags] = useState<Tag[]>([]);
+
+  useImperativeHandle(ref, () => ({
+    reset() {
+      setTags(initializeTags());
+    }
+  }))
 
   useEffect(() => {
     setTags(initializeTags());
@@ -114,7 +123,7 @@ const TagPicker = ({
       ))}
     </View>
   )
-}
+});
 
 const styles = StyleSheet.create({
   container: {

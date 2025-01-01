@@ -46,8 +46,6 @@ const SearchRepositoriesListScreen = () => {
     }
   });
 
-  console.log(language)
-
   useFocusEffect(useCallback(() => {
     return () => {
       invalidateQuery('filter_repos');
