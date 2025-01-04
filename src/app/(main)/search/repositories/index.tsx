@@ -1,4 +1,4 @@
-import {Animated, StyleSheet, Text, TouchableOpacity, ViewStyle} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, ViewStyle} from "react-native";
 import {AntDesign} from "@expo/vector-icons";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useFocusEffect, useRouter} from "expo-router";
@@ -11,19 +11,13 @@ import RefreshList from "@src/components/RefreshList";
 import useSearchReposQuery from "@src/hooks/query/useSearchReposQuery";
 import {useAuth} from "@src/providers/AuthProvider";
 import RepositoryListItem from "@src/components/RepositoryListItem";
+import AnimatedView, {AnimatedViewMethods} from "@src/components/views/AnimatedView";
 
 const SearchRepositoriesScreen = () => {
   const [searchText, setSearchText] = useState('');
   const [isQueryEnabled, setIsQueryEnabled] = useState(false);
+  const filterView = useRef<AnimatedViewMethods>(null);
   const tagPicker = useRef<TagPickerMethods>(null);
-
-  const animatedScaleY = useRef(
-    new Animated.Value(0)
-  ).current;
-
-  const animatedOpacity = useRef(
-    new Animated.Value(0)
-  ).current;
 
   const router = useRouter();
   const authContext = useAuth();
@@ -49,20 +43,13 @@ const SearchRepositoriesScreen = () => {
     enabled: isQueryEnabled,
   });
 
-  useEffect(() => {
-    animateValue(animatedScaleY, 1, 500);
-    animateValue(animatedOpacity, 1, 700);
-  }, []);
-
   useFocusEffect(useCallback(() => {
     tagPicker.current?.reset();
   }, []));
 
   useEffect(() => {
     const hasSearchText = searchText.length > 0;
-
-    animateValue(animatedScaleY, hasSearchText ? 0 : 1, 500);
-    animateValue(animatedOpacity, hasSearchText ? 0 : 1, 700);
+    filterView.current?.animate(!hasSearchText ? 'in' : 'out');
 
     setTimeout(() => {
       setIsQueryEnabled(searchText.length > 0);
@@ -73,22 +60,9 @@ const SearchRepositoriesScreen = () => {
     }
   }, [searchText]);
 
-  function animateValue(value: Animated.Value, toValue: number, duration: number) {
-    Animated.timing(value, {
-      useNativeDriver: true,
-      toValue,
-      duration,
-    }).start();
-  }
-
   const resolveTagFilterStyle = () => {
     const resolvedStyle: ViewStyle = {
       ...styles.tagFilter,
-      opacity: animatedOpacity,
-      transformOrigin: 'top',
-      transform: [
-        { scaleY: animatedScaleY }
-      ]
     };
 
     if (isQueryEnabled) {
@@ -136,10 +110,14 @@ const SearchRepositoriesScreen = () => {
           title: 'Repositories',
         }}
       />
-      <Animated.View style={resolveTagFilterStyle()}>
+      {/*<Animated.View style={resolveTagFilterStyle()}>*/}
+      {/*  <Text style={{ marginBottom: 8, fontSize: 14, color: 'gray' }}>List your repositories by language</Text>*/}
+      {/*  <TagPicker ref={tagPicker} items={[...ProgrammingLanguages]} highlight={false} onPick={onPickLanguage} />*/}
+      {/*</Animated.View>*/}
+      <AnimatedView ref={filterView} animation="expand" startAt="mount" duration={500} style={resolveTagFilterStyle()}>
         <Text style={{ marginBottom: 8, fontSize: 14, color: 'gray' }}>List your repositories by language</Text>
         <TagPicker ref={tagPicker} items={[...ProgrammingLanguages]} highlight={false} onPick={onPickLanguage} />
-      </Animated.View>
+      </AnimatedView>
       {isQueryEnabled ? (
         <RefreshList
           data={repos?.pages.flat()}
