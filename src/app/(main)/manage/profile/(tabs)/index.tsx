@@ -10,7 +10,7 @@ import UserInfo from '@src/components/UserInfo'
 import UserContacts from '@src/components/UserContacts'
 import useEventsQuery from '@src/hooks/query/useEventsQuery';
 import EventListItem from '@src/components/EventListItem';
-import RefreshListView from '@src/components/RefreshListView';
+import RefreshListView from '@src/components/views/RefreshListView';
 import {useApi} from "@src/providers/ApiProvider";
 
 const UserProfileScreen = () => {
@@ -47,30 +47,27 @@ const UserProfileScreen = () => {
   }, []));
 
   function onEditProfilePress() {
-    router.navigate('(manage)/profile/edit');
+    router.navigate('manage/profile/edit');
   }
 
   if (!authContext?.user) {
     return null;
   }
-  console.log(api.service);
+
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 70 }}>
-      <View style={{ marginBottom: 24, paddingHorizontal: 24, }}>
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.userCardWrapper}>
         <UserCard 
-          user={authContext?.user} 
+          user={authContext.user}
           size="large" 
-          style={{ 
-            width: '100%', 
-            paddingHorizontal: 0 
-          }} />
+          style={styles.userCard} />
       </View>
-      <View style={{ marginHorizontal: 24, paddingBottom: 12, borderBottomColor: '#ccc', borderBottomWidth: 1 }}>
+      <View style={styles.bioSection}>
         <Text style={{ fontSize: 14, fontWeight: 'bold', textTransform: 'uppercase' }}>About</Text>
         <Text style={{ fontSize: 16, color: '#707070' }}>{authContext?.user?.bio}</Text>
       </View>
       <View style={{ gap: 12, marginHorizontal: 24, paddingVertical: 12,  }}>
-        <View style={{ gap: 12, paddingBottom: 12, borderBottomColor: '#ccc', borderBottomWidth: 1 }}>
+        <View style={styles.detailsSection}>
           <UserInfo user={authContext.user} style={{ flex: 1, }} />
           <UserContacts user={authContext.user} style={{ flex: 1 }} />
         </View>
@@ -78,16 +75,12 @@ const UserProfileScreen = () => {
           <PrimaryButton
             text="Edit profile"
             icon={<Feather name="edit-2" size={14} color="white" />}
-            style={{
-              alignSelf: 'flex-end',
-              marginVertical: 12,
-              backgroundColor: colors.primary
-            }}
+            style={styles.editProfileButton}
             onPress={onEditProfilePress} />
         ) : ''}
       </View>
-      <View style={{ flex: 1, paddingHorizontal: 24, paddingVertical: 12, }}>
-        <Text style={{ marginBottom: 16, fontSize: 20, fontWeight: 'bold' }}>Your recent activity</Text>
+      <View style={styles.recentActivitySection}>
+        <Text style={styles.recentActivityHeader}>Your recent activity</Text>
         <RefreshListView 
           data={events?.pages.flat()} 
           keyExtractor={(item) => item.id.toString()}
@@ -106,18 +99,50 @@ const UserProfileScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-  },
-
-  loadingContainer: {
-    position: 'relative',
     flexGrow: 1,
+    paddingBottom: 70,
   },
 
-  loadingIndicator: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
+  userCardWrapper: {
+    marginBottom: 24,
+    paddingHorizontal: 24,
+  },
+
+  userCard: {
+    width: '100%',
+    paddingHorizontal: 0
+  },
+
+  bioSection: {
+    marginHorizontal: 24,
+    paddingBottom: 12,
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 1
+  },
+
+  detailsSection: {
+    gap: 12,
+    paddingBottom: 12,
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 1
+  },
+
+  editProfileButton: {
+    alignSelf: 'flex-end',
+    marginVertical: 12,
+    backgroundColor: colors.primary
+  },
+
+  recentActivitySection: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+  },
+
+  recentActivityHeader: {
+    marginBottom: 16,
+    fontSize: 20,
+    fontWeight: 'bold'
   }
 })
 

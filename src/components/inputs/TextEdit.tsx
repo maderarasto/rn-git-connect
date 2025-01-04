@@ -1,5 +1,11 @@
 import { StyleSheet, Text, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'react-native'
-import React, { ReactNode, useState } from 'react'
+import React, {forwardRef, ReactNode, useImperativeHandle, useRef, useState} from 'react'
+
+export type TextEditMethods = {
+  clearText: () => void
+  getText: () => string
+  setText: (text: string) => void
+}
 
 export type TextEditProps = TextInputProps & {
   label?: string
@@ -13,7 +19,7 @@ export type TextEditProps = TextInputProps & {
   inputWrapperStyle?: ViewStyle
 }
 
-const TextEdit = ({
+const TextEdit = forwardRef<TextEditMethods, TextEditProps>(({
   label,
   icon,
   iconSide = 'left',
@@ -25,25 +31,44 @@ const TextEdit = ({
   inputWrapperStyle = {},
   style: inputStyle = {},
   ...inputProps
-} : TextEditProps) => {
+} : TextEditProps, ref) => {
   const [focused, setFocused] = useState(false);
+  const textInputRef = useRef<TextInput>(null);
+
+  useImperativeHandle(ref, () => ({
+    clearText: function () {
+      textInputRef.current?.clear();
+
+      if (inputProps.onChangeText) {
+        inputProps.onChangeText('');
+      }
+    },
+
+    getText: function () {
+      if (!textInputRef.current) {
+        return '';
+      }
+
+      return textInputRef.current.props.value ?? '';
+    },
+
+    setText: function (text: string) {
+      textInputRef.current?.setNativeProps({ text });
+    }
+  }));
 
   function resolveContainerStyle() {
-    const resolvedStyle = {
+    return {
       ...styles.container,
       ...containerStyle
     };
-    
-    return resolvedStyle;
   }
 
   function resolveLabelStyle() {
-    const resolvedStyle = {
+    return {
       ...styles.labelText,
       ...labelStyle,
-    }
-
-    return resolvedStyle;
+    };
   }
 
   function resolveInputWrapperStyle() {
@@ -60,12 +85,10 @@ const TextEdit = ({
   }
 
   function resolveInputStyle() {
-    const resolvedStyle = {
+    return {
       ...styles.textInput,
       ...inputStyle as TextStyle,
     };
-
-    return resolvedStyle;
   }
 
   function resolveErrorText() {
@@ -87,8 +110,9 @@ const TextEdit = ({
       ) : ''}
       <View style={resolveInputWrapperStyle()}>
         {icon && iconSide === 'left' ? icon : ''}
-        <TextInput 
-          style={resolveInputStyle()} 
+        <TextInput
+          ref={textInputRef}
+          style={resolveInputStyle()}
           onFocus={onInputFocus}
           onBlur={onInputBlur}
           {...inputProps} />
@@ -99,7 +123,7 @@ const TextEdit = ({
       ) : ''}
     </View>
   )
-}
+});
 
 const styles = StyleSheet.create({
   container: {

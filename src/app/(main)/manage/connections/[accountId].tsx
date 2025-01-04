@@ -93,10 +93,10 @@ const EditConnectionScreen = () => {
       await saveConnection({ ...conn, expired: false});
 
       navigation.reset({
-        index: 0,
+        index: 1,
         routes: [
-          { name: 'dashboard'} as never,
-          { name: '(manage)/connections/index' } as never,
+          { name: '(drawer)'} as never,
+          { name: 'manage/connections/index' } as never,
         ]
       });  
     }
@@ -181,7 +181,7 @@ const EditConnectionScreen = () => {
     navigation.reset({
       index: 0,
       routes: [
-        { name: 'dashboard'} as never,
+        { name: '(drawer)'} as never,
         { name: '(manage)/connections/index' } as never,
       ]
     });

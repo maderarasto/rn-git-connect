@@ -1,6 +1,6 @@
 import {
   SimpleUser, User, Repository, SimpleRepository,
-  ListQuery, Event, EventType, EventPayload
+  ListParams, Event, EventType, EventPayload, SearchReposParams, RepositoryListParams
 } from '@src/api/types';
 import {
   User as GitlabUser,
@@ -8,7 +8,9 @@ import {
   Project as GitlabProject,
   SimpleProject as GitlabSimpleProject,
   Event as GitlabEvent,
-  ListQuery as GitlabListQuery,
+  ListParams as GitlabListParams,
+  ProjectListPrams as GitlabProjectListParams,
+  SearchProjectParams as GitlabSearchProjectParams,
 } from '@src/api/gitlab/types';
 
 function resolveEventType(actionName: string, targetType: string, pushAction: string): EventType {
@@ -184,9 +186,25 @@ export function deserializeEvent(event: GitlabEvent): Event {
   }
 }
 
-export function serializeListQuery(params: ListQuery): GitlabListQuery {
+export function serializeListParams(params: ListParams): GitlabListParams {
   return {
     page: params.page ?? 1,
     per_page: params.perPage ?? 10,
   };
+}
+
+export function serializeRepositoryListParams(params: RepositoryListParams): GitlabProjectListParams {
+  return {
+    ...serializeListParams(params),
+    owned: params.owned ?? false,
+    membership: params.membership ?? false,
+  }
+}
+
+export function serializeSearchProjectsParams(params: SearchReposParams): GitlabSearchProjectParams {
+  return {
+    ...serializeRepositoryListParams(params),
+    search: params.searchText,
+    with_programming_language: params.language?.toLowerCase(),
+  }
 }

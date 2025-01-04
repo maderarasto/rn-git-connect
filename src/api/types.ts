@@ -202,7 +202,19 @@ export type Label = {
   color: string|null
 }
 
-export type ListQuery = Partial<{
+export type ListParams = Partial<{
   page: number
   perPage: number
 }>
+
+export type RepositoryListParams = ListParams & Partial<{
+  owned: boolean
+  membership: boolean
+}>;
+
+export type SearchReposParams = RepositoryListParams & Partial<{
+  owner: string
+  searchText: string
+  language: string
+}>;
+

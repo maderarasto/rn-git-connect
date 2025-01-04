@@ -1,9 +1,9 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import { Drawer } from 'expo-router/drawer'
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useRouter } from 'expo-router';
+import { useRouter} from 'expo-router';
 import {MaterialIcons, FontAwesome, Ionicons, Octicons, Feather} from '@expo/vector-icons';
 
 import { DialogMethods } from '@src/components/dialogs/Dialog';
@@ -45,17 +45,12 @@ const DrawerContent = ({
   const switchAccount = ({ account_id: accountId}: Connection) => {
     router.navigate(`auth/switch?accountId=${accountId}`);
   }
-  
-  const onAddConnectionPress = () => {
-    props.navigation.closeDrawer();
-    dialogRef?.current?.show();
-  }
 
   const onProfilePress = () => {
     props.navigation.closeDrawer();
     
     setTimeout(() => {
-      router.navigate('(manage)/profile/(tabs)');
+      router.navigate('manage/profile/(tabs)');
     }, 300);
   }
 
@@ -63,7 +58,7 @@ const DrawerContent = ({
     props.navigation.closeDrawer();
 
     setTimeout(() => {
-      router.navigate('(manage)/connections');
+      router.navigate('manage/connections');
     }, 300);
   }
 
@@ -113,7 +108,6 @@ const DrawerContent = ({
       </View>
     </DrawerContentScrollView>
   );
-
 }
 
 const DrawerLayout = () => {
@@ -137,13 +131,12 @@ const DrawerLayout = () => {
     }, 150);
   }
 
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Drawer 
+      <Drawer
         drawerContent={(props) => <DrawerContent {...{ ...props, dialogRef }} />}
         screenOptions={{
-          header: ({ navigation, route, options }) => (
+          header: ({ navigation, options }) => (
             <DrawerHeader 
               navigation={navigation}
               title={options.title} />

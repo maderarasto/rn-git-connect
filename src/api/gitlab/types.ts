@@ -164,7 +164,17 @@ export type Event = {
 //                     QUERY PARAMETERS                   \\
 //--------------------------------------------------------\\
 
-export type ListQuery = Partial<{
+export type ListParams = Partial<{
   page: number
   per_page: number
+}>
+
+export type ProjectListPrams = ListParams & {
+  owned: boolean,
+  membership: boolean
+}
+
+export type SearchProjectParams = ProjectListPrams & Partial<{
+  search: string
+  with_programming_language: string
 }>

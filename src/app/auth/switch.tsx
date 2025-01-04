@@ -105,7 +105,7 @@ const AuthSwitchScreen = () => {
     
     navigation.reset({
       index: 0,
-      routes: [{ name: 'dashboard' } as never],
+      routes: [{ name: '(main)' } as never],
     });
   }, [authContext?.accountId]);
 

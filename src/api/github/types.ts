@@ -274,11 +274,21 @@ export type Event = {
   created_at: string
 }
 
+export type SearchRepositoryResult = {
+  incomplete_results: boolean
+  items: Repository[]
+  total_count: number
+}
+
 //--------------------------------------------------------\\
 //                     QUERY PARAMETERS                   \\
 //--------------------------------------------------------\\
 
-export type ListQuery = {
+export type ListParams = {
   page: number
   per_page: number
+}
+
+export type SearchReposParams = ListParams & {
+  q: string
 }
