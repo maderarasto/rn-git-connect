@@ -24,9 +24,9 @@ An idea for this project was to easily maintain project repositories and also us
 :white_check_mark:&nbsp;&nbsp;Services for interacting with GitHub and GitLab<br />
 :white_check_mark:&nbsp;&nbsp;Access to profile and activity events of user<br />
 :white_check_mark:&nbsp;&nbsp;Editing basic fields in your profile<br />
+:white_check_mark:&nbsp;&nbsp;Showing and filtering user's repositories.<br />
 
 ## Features to implement
-:hourglass:&nbsp;&nbsp;Access to list of repositories.</br>
 :hourglass:&nbsp;&nbsp;Access to list of merge requests.</br>
 :hourglass:&nbsp;&nbsp;Access to list of issues.</br>
 :hourglass:&nbsp;&nbsp;Dashboard screen for quick management.</br>
@@ -52,4 +52,8 @@ An idea for this project was to easily maintain project repositories and also us
     <img src="readme/screenshot_14.png" alt="Screenshot of User Profile Screen" width="128" />
     <img src="readme/screenshot_15.png" alt="Screenshot of Edit User Profile Screen" width="128" />
     <img src="readme/screenshot_16.png" alt="Screenshot of User Activity Screen" width="128" />
+    <img src="readme/screenshot_17.png" alt="Screenshot of Repositories Screen" width="128" />
+    <img src="readme/screenshot_18.png" alt="Screenshot of Repository Filter Screen" width="128" />
+    <img src="readme/screenshot_19.png" alt="Screenshot of Repository Filter Result Screen" width="128" />
+    <img src="readme/screenshot_20.png" alt="Screenshot of Repository Search Result Screen" width="128" />
 </div>

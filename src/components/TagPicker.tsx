@@ -14,6 +14,7 @@ export type TagPickerProps = {
   highlight?: boolean
   onPick?: (tag: Tag) => void
   onChange?: (tags: Tag[]) => void
+  onLayout?: () => void
 }
 
 const TagPicker = forwardRef<TagPickerMethods, TagPickerProps>(({
@@ -22,6 +23,7 @@ const TagPicker = forwardRef<TagPickerMethods, TagPickerProps>(({
   highlight = true,
   onPick,
   onChange,
+  onLayout,
 }: TagPickerProps, ref) => {
   const [tags, setTags] = useState<Tag[]>([]);
 
@@ -111,7 +113,7 @@ const TagPicker = forwardRef<TagPickerMethods, TagPickerProps>(({
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={onLayout}>
       {tags.map((tag) => (
         <TagItem
           key={tag.key}
